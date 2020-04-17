@@ -28,7 +28,7 @@ router.get("/botinfo", async function(request, response) {
   try {
     authURL =
       "https://discordapp.com/api/oauth2/authorize?client_id=" +
-      discordBot.config.client.user.id +
+      "b6jxNB-mi9HKmEZ9kdQzmgHy6iqsm0Uh"+
       "&permissions=0&scope=bot";
   } catch (e) {
     console.error(e);

@@ -10,7 +10,9 @@ var Client = require("uptime-robot");
 const app = express();
 
 const discordBot = require("./bot");
-
+const Discord = require('discord.js');
+const clientdc = new Discord.Client();
+clientdc.login(process.env.)
 // this is the code for the guides
 app.use(require('./guides'));
 

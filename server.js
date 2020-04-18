@@ -15,6 +15,19 @@ const exists = fs.existsSync(dbFile);
 const sqlite3 = require("sqlite3").verbose();
 const db = new sqlite3.Database(dbFile);
 
+//simple test query
+let sql = `SELECT DISTINCT birthdate FROM birthdates
+           `;
+
+db.all(sql, [], (err, rows) => {
+  if (err) {
+    throw err;
+  }
+  rows.forEach((row) => {
+    console.log(row.name);
+  });
+});
+
 
 
 const discordBot = require("./bot");

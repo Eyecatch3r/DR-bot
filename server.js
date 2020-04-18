@@ -14,7 +14,7 @@ const dbFile = "./.data/DR.db";
 const exists = fs.existsSync(dbFile);
 const sqlite3 = require("sqlite3").verbose();
 const db = new sqlite3.Database(dbFile);
-
+if(!exists){
 //simple test query
 let sql = `SELECT Birthdate FROM Birthdates;`;
 
@@ -26,7 +26,7 @@ db.all(sql, [], (err, rows) => {
     console.log(row.name);
   });
 });
-
+}
 const discordBot = require("./bot");
 const Discord = require("discord.js");
 const clientdc = new Discord.Client();

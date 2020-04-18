@@ -10,7 +10,7 @@ var Client = require("uptime-robot");
 const app = express();
 
 //init sqlite API
-const dbFile = "./.data/DR.db";
+const dbFile = "./DR.db";
 const exists = fs.existsSync(dbFile);
 const sqlite3 = require("sqlite3").verbose();
 const db = new sqlite3.Database(dbFile);

@@ -16,6 +16,7 @@ const sqlite3 = require("sqlite3").verbose();
 const db = new sqlite3.Database(dbFile);
 
 
+
 const discordBot = require("./bot");
 const Discord = require("discord.js");
 const clientdc = new Discord.Client();

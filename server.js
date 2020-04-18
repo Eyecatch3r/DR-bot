@@ -10,11 +10,11 @@ var Client = require("uptime-robot");
 const app = express();
 
 //init sqlite API
-const dbFile = "./.data/sqlite.db";
+const dbFile = "./.data/DR.db";
 const exists = fs.existsSync(dbFile);
 const sqlite3 = require("sqlite3").verbose();
 const db = new sqlite3.Database(dbFile);
-
+db.
 
 const discordBot = require("./bot");
 const Discord = require("discord.js");

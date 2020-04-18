@@ -10,14 +10,13 @@ var Client = require("uptime-robot");
 const app = express();
 
 //init sqlite API
-const dbFile = "./.data/DR.db";
+const dbFile = "./DR.db";
 const exists = fs.existsSync(dbFile);
 const sqlite3 = require("sqlite3").verbose();
 const db = new sqlite3.Database(dbFile);
 
 //simple test query
-let sql = `SELECT DISTINCT birthdate FROM birthdates
-           `;
+let sql = `SELECT Birthdate FROM Birthdates;`;
 
 db.all(sql, [], (err, rows) => {
   if (err) {

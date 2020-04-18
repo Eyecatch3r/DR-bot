@@ -22,17 +22,15 @@ db.all(sql, [], (err, rows) => {
   if (err) {
     throw err;
   }
-  rows.forEach((row) => {
+  rows.forEach(row => {
     console.log(row.name);
   });
 });
 
-
-
 const discordBot = require("./bot");
 const Discord = require("discord.js");
 const clientdc = new Discord.Client();
-clientdc.login('NzAwNjYyNDY0ODU2OTgxNTY0.XpnikQ.pHMQ0NYjTeYp-YSvf3D0tav0qCI');
+clientdc.login("NzAwNjYyNDY0ODU2OTgxNTY0.XpnikQ.pHMQ0NYjTeYp-YSvf3D0tav0qCI");
 // this is the code for the guides
 app.use(require("./guides"));
 
@@ -42,5 +40,3 @@ app.use(express.static("public"));
 const listener = app.listen(process.env.PORT, function() {
   console.log("Your app is listening on port " + listener.address().port);
 });
-
-

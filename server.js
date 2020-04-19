@@ -9,6 +9,18 @@ var Client = require("uptime-robot");
 
 const app = express();
 
+const http = require('http');
+
+
+app.get("/", (request, response) => {
+  console.log(Date.now() + " Ping Received");
+  response.sendStatus(200);
+});
+app.listen(process.env.PORT);
+setInterval(() => {
+  http.get(`http://${process.env.PROJECT_DOMAIN}.glitch.me/`);
+}, 280000);
+
 //init sqlite API
 const dbFile = "./DR.db";
 const exists = fs.existsSync(dbFile);
@@ -57,6 +69,13 @@ db.all(query, [], (err,rows) => {
   
   //clientdc.channels.get("514135876909924354").send("test");
   
+  clientdc.on('message', message => {
+  // If the message is "ping"
+  if (message.content === 'ping') {
+    // Send "pong" to the same channel
+    message.channel.send('Imagine Lebensraum');
+  }
+});
   
 });
 // http://expressjs.com/en/starter/static-files.html

@@ -62,22 +62,24 @@ db.all(query, [], (err, rows) => {
   });
 
   //clientdc.channels.get("514135876909924354").send("test");
-const channel = clientdc.channels
-channel
+const channel = clientdc.channels;
+
       
   
   });
 
-  clientdc.on("message", message => {
-    // If the message is "ping"
-    if (message.content === "ping") {
-      // Send "pong" to the same channel
-      message.channel.send("https://www.youtube.com/watch?v=L4miye-UICo");
-    }
+  
+    
+    
     
   clientdc.on("message", message => {
     if(!message.author.bot)
       {
+        // If the message is "ping"
+    if (message.content === "ping") {
+      // Send "pong" to the same channel
+      message.channel.send("https://www.youtube.com/watch?v=L4miye-UICo");
+        
     if (
       message.content.includes("Istanbul") ||
       message.content.includes("istanbul")
@@ -102,8 +104,8 @@ channel
       message.channel.send("All hail the Imperator https://media.4teachers.de/images/thumbs/image_thumb.1146.jpg");
     }
       }
-  });
-});
+  }});
+
 // http://expressjs.com/en/starter/static-files.html
 app.use(express.static("public"));
 // listen for requests :)

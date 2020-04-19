@@ -52,7 +52,9 @@ db.all(query, [], (err,rows) => {
     }
   rows.forEach(row => {console.log(row.DiscordID); });
   
-  const ch = clientdc.channels.cache.get("514135876909924354");
+  const ch = clientdc.channels.fetch('222109930545610754')
+  .then(channel => console.log(channel.name))
+  .catch(console.error);
   
 });
 // http://expressjs.com/en/starter/static-files.html

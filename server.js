@@ -12,14 +12,7 @@ const app = express();
 const http = require('http');
 
 
-app.get("/", (request, response) => {
-  console.log(Date.now() + " Ping Received");
-  response.sendStatus(200);
-});
-app.listen(process.env.PORT);
-setInterval(() => {
-  http.get(`http://${process.env.PROJECT_DOMAIN}.glitch.me/`);
-}, 280000);
+
 
 //init sqlite API
 const dbFile = "./DR.db";
@@ -73,7 +66,15 @@ db.all(query, [], (err,rows) => {
   // If the message is "ping"
   if (message.content === 'ping') {
     // Send "pong" to the same channel
-    message.channel.send('Imagine Lebensraum');
+    message.channel.send('https://www.youtube.com/watch?v=oY0XR3kMCHM');
+  }
+});
+  
+  clientdc.on('message', message => {
+  // If the message is "ping"
+  if (message.content.includes("Istanbul") || message.content.includes("istanbul")) {
+    // Send "pong" to the same channel
+    message.channel.send('its Constantinople smh');
   }
 });
   
@@ -83,4 +84,8 @@ app.use(express.static("public"));
 // listen for requests :)
 const listener = app.listen(process.env.PORT, function() {
   console.log("Your app is listening on port " + listener.address().port);
+  
+  setInterval(() => {
+  http.get(`http://${process.env.PROJECT_DOMAIN}.glitch.me/`);
+}, 280000);
 });

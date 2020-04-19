@@ -62,7 +62,8 @@ db.all(query, [], (err, rows) => {
   });
 
   //clientdc.channels.get("514135876909924354").send("test");
-clientdc.channels.cache.get("514135876909924354");
+const channel = clientdc.channels
+channel
       
   
   });

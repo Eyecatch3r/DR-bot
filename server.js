@@ -52,7 +52,7 @@ db.all(query, [], (err,rows) => {
     }
   rows.forEach(row => {console.log(row.DiscordID); });
   
-  const ch = clientdc.channels.fetch('222109930545610754')
+  const ch = clientdc.guilds.get("514135876909924352").channels.get("514135876909924354")
   .then(channel => console.log(channel.name))
   .catch(console.error);
   

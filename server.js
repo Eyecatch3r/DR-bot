@@ -63,27 +63,21 @@ db.all(query, [], (err, rows) => {
 
   //clientdc.channels.get("514135876909924354").send("test");
 
-
-      
-  
-  });
-
-  
-    
-    
-    
   clientdc.on("message", message => {
-    //if(!message.author.bot)
-      //{
-        // If the message is "ping"
+    // If the message is "ping"
     if (message.content === "ping") {
       // Send "pong" to the same channel
-      message.channel.send("https://www.youtube.com/watch?v=L4miye-UICo");
-        
+      message.channel.send("https://www.youtube.com/watch?v=YC7IR-qHUpk");
+    }
+  });
+
+  clientdc.on("message", message => {
+    // If the message is "ping"
     if (
       message.content.includes("Istanbul") ||
       message.content.includes("istanbul")
     ) {
+      // Send "pong" to the same channel
       message.channel.send("its Constantinople smh");
     }
 
@@ -91,6 +85,7 @@ db.all(query, [], (err, rows) => {
       message.content.includes("HRE") ||
       message.content.includes("Holy Roman Empire")
     ) {
+      // Send "pong" to the same channel
       message.channel.send("shame on you");
     }
 
@@ -100,12 +95,11 @@ db.all(query, [], (err, rows) => {
       message.content.includes("imperator") ||
       message.content.includes("emperor")
     ) {
-      
-      message.channel.send("All hail the Imperator https://media.4teachers.de/images/thumbs/image_thumb.1146.jpg");
+      // Send "pong" to the same channel
+      message.channel.send("All hail the https://media.4teachers.de/images/thumbs/image_thumb.1146.jpg");
     }
-      //}
-  }});
-
+  });
+});
 // http://expressjs.com/en/starter/static-files.html
 app.use(express.static("public"));
 // listen for requests :)

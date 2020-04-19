@@ -14,26 +14,27 @@ const dbFile = "./DR.db";
 const exists = fs.existsSync(dbFile);
 const sqlite3 = require("sqlite3").verbose();
 const db = new sqlite3.Database(dbFile);
-if(!exists){
-//simple test query
-let sql = `SELECT Birthdate FROM Birthdates;`;
+if (exists) {
+  //simple test query
+  let sql = `SELECT Birthdate FROM Birthdates;`;
 
-db.all(sql, [], (err, rows) => {
-  if (err) {
-    throw err;
-  }
-  rows.forEach(row => {
-    console.log(row.name);
+  const discordBot = require("./bot");
+  const Discord = require("discord.js");
+  const clientdc = new Discord.Client();
+
+  clientdc.login(process.env.DISCORD_TOKEN);
+  // this is the code for the guides
+  app.use(require("./guides"));
+
+  db.all(sql, [], (err, rows) => {
+    if (err) {
+      throw err;
+    }
+    rows.forEach(row => {
+      console.log(row.Birthdate);
+    });
   });
-});
 }
-const discordBot = require("./bot");
-const Discord = require("discord.js");
-const clientdc = new Discord.Client();
-
-clientdc.login(process.env.DISCORD_TOKEN);
-// this is the code for the guides
-app.use(require("./guides"));
 
 // http://expressjs.com/en/starter/static-files.html
 app.use(express.static("public"));

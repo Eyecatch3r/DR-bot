@@ -43,6 +43,10 @@ const dateformat = require("dateformat");
 console.log(dateformat("isoDate"));
 var dates = dateformat("isoDate").split("-");
 console.log(dates[1]+dates[2]);
+
+let query = `SELECT * FROM Birthdates WHERE Birthdate LIKE `+ dates[1]+dates[2];
+
+
 // http://expressjs.com/en/starter/static-files.html
 app.use(express.static("public"));
 // listen for requests :)

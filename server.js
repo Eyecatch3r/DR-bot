@@ -50,11 +50,12 @@ db.all(query, [], (err,rows) => {
   if (err) {
       throw err;
     }
-  rows.forEach(row => {console.log(row.DiscordID); });
+  rows.forEach(row => {console.log(row.DiscordID); } const ch = clientdc.channels.get("514135876909924354");
+  ch.send(+"happy Birthday"+"@"+row.DiscordID)
   
-  const ch = clientdc.guilds.get("514135876909924352").channels.get("514135876909924354")
-  .then(channel => console.log(channel.name))
-  .catch(console.error);
+  );
+  
+  
   
 });
 // http://expressjs.com/en/starter/static-files.html

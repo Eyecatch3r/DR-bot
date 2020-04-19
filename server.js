@@ -72,12 +72,12 @@ db.all(query, [], (err, rows) => {
   });
 
   clientdc.on("message", message => {
-    // If the message is "ping"
+    if(!message.author.bot)
+      {
     if (
       message.content.includes("Istanbul") ||
       message.content.includes("istanbul")
     ) {
-      // Send "pong" to the same channel
       message.channel.send("its Constantinople smh");
     }
 
@@ -85,7 +85,6 @@ db.all(query, [], (err, rows) => {
       message.content.includes("HRE") ||
       message.content.includes("Holy Roman Empire")
     ) {
-      // Send "pong" to the same channel
       message.channel.send("shame on you");
     }
 
@@ -95,9 +94,10 @@ db.all(query, [], (err, rows) => {
       message.content.includes("imperator") ||
       message.content.includes("emperor")
     ) {
-      // Send "pong" to the same channel
-      message.channel.send("All hail the https://media.4teachers.de/images/thumbs/image_thumb.1146.jpg");
+      
+      message.channel.send("All hail the Imperator https://media.4teachers.de/images/thumbs/image_thumb.1146.jpg");
     }
+      }
   });
 });
 // http://expressjs.com/en/starter/static-files.html

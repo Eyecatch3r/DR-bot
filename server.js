@@ -44,7 +44,7 @@ console.log(dateformat("isoDate"));
 var dates = dateformat("isoDate").split("-");
 console.log(dates[1]+dates[2]);
 
-let query = `SELECT * FROM Birthdates WHERE Birthdate LIKE `+ dates[1]+dates[2];
+let query = `SELECT * FROM Birthdates WHERE Birthdate LIKE `+"'"+dates[1]+dates[2]+"'";
 
 db.all(query, [], (err,rows) => {
   if (err) {
@@ -52,7 +52,7 @@ db.all(query, [], (err,rows) => {
     }
   rows.forEach(row => {console.log(row.DiscordID); });
   
-  const ch = clientdc.channels.cache.get(514135876909924354);
+  const ch = clientdc.channels.cache.get("514135876909924354");
   
 });
 // http://expressjs.com/en/starter/static-files.html

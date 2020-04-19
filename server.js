@@ -36,8 +36,8 @@ if (exists) {
   });
 }
 //compare dates with the current date
-const DateTime = require("date-format");
-console.log(DateTime("d","m"));
+const dateformat = require("dateformat");
+console.log(dateformat("isoDate"));
 
 // http://expressjs.com/en/starter/static-files.html
 app.use(express.static("public"));

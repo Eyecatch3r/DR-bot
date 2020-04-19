@@ -1,6 +1,6 @@
 dependencies:
   botkit-discord: 0.1.3
-  date-format: 3.0.0
+  dateformat: 3.0.3
   each-async: 1.1.1
   express: 4.17.1
   minimist: 1.2.5
@@ -1140,12 +1140,10 @@ packages:
       node: '>=0.10'
     resolution:
       integrity: sha1-hTz6D3y+L+1d4gMmuN1YEDX24vA=
-  /date-format/3.0.0:
+  /dateformat/3.0.3:
     dev: false
-    engines:
-      node: '>=4.0'
     resolution:
-      integrity: sha512-eyTcpKOcamdhWJXj56DpQMo1ylSQpcGtGKXcU0Tb97+K56/CF5amAqqqNj0+KvA0iw2ynxtHWFsPDSClCxe48w==
+      integrity: sha512-jyCETtSl3VMZMWeRo7iY1FL19ges1t55hMo5yaam4Jrsm5EPL89UQkoQRyiI+Yf4k8r2ZpdngkV8hr1lIdjb3Q==
   /dayjs/1.8.24:
     dev: false
     resolution:
@@ -3523,7 +3521,7 @@ shrinkwrapMinorVersion: 9
 shrinkwrapVersion: 3
 specifiers:
   botkit-discord: ^0.1.3
-  date-format: ^3.0.0
+  dateformat: ^3.0.3
   each-async: ^1.1.1
   express: ^4.17.1
   minimist: ^1.2.5

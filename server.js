@@ -23,7 +23,7 @@ const discordBot = require("./bot");
   // this is the code for the guides
   app.use(require("./guides"));
 
-if (exists) {
+
   //simple test query
   let sql = `SELECT Birthdate FROM Birthdates;`;
 
@@ -37,7 +37,7 @@ if (exists) {
       console.log(row.Birthdate);
     });
   });
-} 
+
 //compare dates with the current date
 const dateformat = require("dateformat");
 console.log(dateformat("isoDate"));
@@ -46,7 +46,15 @@ console.log(dates[1]+dates[2]);
 
 let query = `SELECT * FROM Birthdates WHERE Birthdate LIKE `+ dates[1]+dates[2];
 
-
+db.all(query, [], (err,rows) => {
+  if (err) {
+      throw err;
+    }
+  rows.forEach(row => {console.log(row.DiscordID); });
+  
+  const ch = clientdc.channels.cache.get(514135876909924354);
+  
+});
 // http://expressjs.com/en/starter/static-files.html
 app.use(express.static("public"));
 // listen for requests :)

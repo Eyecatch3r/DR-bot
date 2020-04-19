@@ -50,11 +50,12 @@ db.all(query, [], (err,rows) => {
   if (err) {
       throw err;
     }
-  rows.forEach(row => {console.log(row.DiscordID); } const ch = clientdc.channels.get("514135876909924354");
-  ch.send(+"happy Birthday"+"@"+row.DiscordID)
+  rows.forEach(row => {console.log(row.DiscordID); clientdc.channels.get("514135876909924354").send("happy Birthday"+"<@"+row.DiscordID+">")} 
+
   
   );
   
+  //clientdc.channels.get("514135876909924354").send("test");
   
   
 });

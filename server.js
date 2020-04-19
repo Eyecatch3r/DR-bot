@@ -62,6 +62,10 @@ db.all(query, [], (err, rows) => {
   });
 
   //clientdc.channels.get("514135876909924354").send("test");
+clientdc.channels.cache.get("514135876909924354");
+      
+  
+  });
 
   clientdc.on("message", message => {
     // If the message is "ping"
@@ -69,8 +73,7 @@ db.all(query, [], (err, rows) => {
       // Send "pong" to the same channel
       message.channel.send("https://www.youtube.com/watch?v=L4miye-UICo");
     }
-  });
-
+    
   clientdc.on("message", message => {
     if(!message.author.bot)
       {

@@ -30,7 +30,8 @@ db.all(sql, [], (err, rows) => {
 const discordBot = require("./bot");
 const Discord = require("discord.js");
 const clientdc = new Discord.Client();
-clientdc.login("NzAwNjYyNDY0ODU2OTgxNTY0.XpnikQ.pHMQ0NYjTeYp-YSvf3D0tav0qCI");
+
+clientdc.login(process.env.DISCORD_TOKEN);
 // this is the code for the guides
 app.use(require("./guides"));
 

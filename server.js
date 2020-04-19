@@ -35,6 +35,9 @@ if (exists) {
     });
   });
 }
+//compare dates with the current date
+const DateTime = require("date-format");
+console.log(DateTime("d","m"));
 
 // http://expressjs.com/en/starter/static-files.html
 app.use(express.static("public"));

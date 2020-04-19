@@ -14,17 +14,20 @@ const dbFile = "./DR.db";
 const exists = fs.existsSync(dbFile);
 const sqlite3 = require("sqlite3").verbose();
 const db = new sqlite3.Database(dbFile);
-if (exists) {
-  //simple test query
-  let sql = `SELECT Birthdate FROM Birthdates;`;
 
-  const discordBot = require("./bot");
+const discordBot = require("./bot");
   const Discord = require("discord.js");
   const clientdc = new Discord.Client();
 
   clientdc.login(process.env.DISCORD_TOKEN);
   // this is the code for the guides
   app.use(require("./guides"));
+
+if (exists) {
+  //simple test query
+  let sql = `SELECT Birthdate FROM Birthdates;`;
+
+  
 
   db.all(sql, [], (err, rows) => {
     if (err) {
@@ -34,7 +37,7 @@ if (exists) {
       console.log(row.Birthdate);
     });
   });
-}
+} 
 //compare dates with the current date
 const dateformat = require("dateformat");
 console.log(dateformat("isoDate"));

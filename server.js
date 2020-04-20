@@ -90,7 +90,7 @@ db.all(query, [], (err, rows) => {
         message.content.includes("carthage")
       ) {
         // Send "pong" to the same channel
-        message.channel.send("::");
+        message.channel.send(":face_vomiting:");
       }
       if (
         message.content.includes("HRE") ||

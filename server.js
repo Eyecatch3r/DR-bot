@@ -50,7 +50,7 @@ let query =
   dates[2] +
   "'";
 
-clientdc.on('ready', () => {
+clientdc.on("ready", () => {
   //clientdc.channels.cache.get("514135876909924354").send("test");
 });
 
@@ -64,7 +64,7 @@ db.all(query, [], (err, rows) => {
       .get("514135876909924354")
       .send("happy Birthday" + "<@" + row.DiscordID + ">");
   });
-  
+
   //clientdc.channels.cache.get("514135876909924354").send("test");
 
   clientdc.on("message", message => {
@@ -77,15 +77,15 @@ db.all(query, [], (err, rows) => {
 
   clientdc.on("message", async message => {
     // If the message is "ping"
-    if(!message.author.bot){
-    if (
-      message.content.includes("Istanbul") ||
-      message.content.includes("istanbul")
-    ) {
-      // Send "pong" to the same channel
-      message.channel.send("its Constantinople smh");
-    }
-      
+    if (!message.author.bot || !message.author.id === "365577946225704964") {
+      if (
+        message.content.includes("Istanbul") ||
+        message.content.includes("istanbul")
+      ) {
+        // Send "pong" to the same channel
+        message.channel.send("its Constantinople smh");
+      }
+
       if (
         message.content.includes("the General") ||
         message.content.includes("General") ||
@@ -97,49 +97,48 @@ db.all(query, [], (err, rows) => {
         message.react("640270832115122196");
       }
 
-    if (
-      message.content.includes("HRE") ||
-      message.content.includes("Holy Roman Empire") ||
-      message.content.includes("hre ")
-    ) {
-      // Send "pong" to the same channel
-      message.channel.send("shame on you");
-    }
-      
-    if (
-      message.content.includes("Civil war") ||
-      message.content.includes("civil war")
-    ) {
-      // Send "pong" to the same channel
-      message.channel.send("yall know who won right :wink:");
-    }
-      
-      
-    if (
-      message.content.includes("Imperator") ||
-      message.content.includes("Emperor") ||
-      message.content.includes("imperator") ||
-      message.content.includes("emperor")
-    ) {
-      // Send "pong" to the same channel
-      message.channel.send("All hail the Imperator https://media.4teachers.de/images/thumbs/image_thumb.1146.jpg");
-      message.react("664229248944439301");
-    }
+      if (
+        message.content.includes("HRE") ||
+        message.content.includes("Holy Roman Empire") ||
+        message.content.includes("hre ")
+      ) {
+        // Send "pong" to the same channel
+        message.channel.send("shame on you");
+      }
+
+      if (
+        message.content.includes("Civil war") ||
+        message.content.includes("civil war")
+      ) {
+        // Send "pong" to the same channel
+        message.channel.send("yall know who won right :wink:");
+      }
+
+      if (
+        message.content.includes("Imperator") ||
+        message.content.includes("Emperor") ||
+        message.content.includes("imperator") ||
+        message.content.includes("emperor")
+      ) {
+        // Send "pong" to the same channel
+        message.channel.send(
+          "All hail the Imperator https://media.4teachers.de/images/thumbs/image_thumb.1146.jpg"
+        );
+        message.react("664229248944439301");
+      }
     }
   });
 });
 
-
-
 clientdc.on("messageUpdate", message => {
-  if(!message.author.bot){
-  //message.channel.send("I saw that edit");
+  if (!message.author.bot) {
+    //message.channel.send("I saw that edit");
   }
 });
 
 clientdc.on("messageDelete", message => {
-  if(!message.author.bot){
-  message.channel.send("u trying to hide something?");
+  if (!message.author.bot) {
+    message.channel.send("u trying to hide something?");
   }
 });
 

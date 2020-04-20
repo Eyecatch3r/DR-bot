@@ -131,11 +131,15 @@ db.all(query, [], (err, rows) => {
 
 
 clientdc.on("messageUpdate", message => {
+  if(!message.author.bot){
   message.channel.send("I saw that edit");
+  }
 });
 
 clientdc.on("messageDelete", message => {
+  if(!message.author.bot){
   message.channel.send("u trying to hide something?");
+  }
 });
 
 // http://expressjs.com/en/starter/static-files.html

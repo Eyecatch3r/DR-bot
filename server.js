@@ -60,7 +60,7 @@ db.all(query, [], (err, rows) => {
       .get("514135876909924354")
       .send("happy Birthday" + "<@" + row.DiscordID + ">");
   });
-
+  clientdc.channels.find("forvm-romanvm", "514135876909924354").cache.send("test");
   //clientdc.channels.get("514135876909924354").send("test");
 
   clientdc.on("message", message => {

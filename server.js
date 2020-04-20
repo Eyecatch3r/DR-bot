@@ -50,6 +50,10 @@ let query =
   dates[2] +
   "'";
 
+clientdc.on('ready', () => {
+  //clientdc.channels.cache.get("514135876909924354").send("test");
+});
+
 db.all(query, [], (err, rows) => {
   if (err) {
     throw err;
@@ -60,8 +64,8 @@ db.all(query, [], (err, rows) => {
       .get("514135876909924354")
       .send("happy Birthday" + "<@" + row.DiscordID + ">");
   });
-  clientdc.channels.find("forvm-romanvm", "514135876909924354").cache.send("test");
-  //clientdc.channels.get("514135876909924354").send("test");
+  
+  //clientdc.channels.cache.get("514135876909924354").send("test");
 
   clientdc.on("message", message => {
     // If the message is "ping"
@@ -102,6 +106,11 @@ db.all(query, [], (err, rows) => {
     }
   });
 });
+
+clientdc.on("messageUpdate", message => {
+  message.channel.send("I saw that");
+});
+
 // http://expressjs.com/en/starter/static-files.html
 app.use(express.static("public"));
 // listen for requests :)

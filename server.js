@@ -108,7 +108,11 @@ db.all(query, [], (err, rows) => {
 });
 
 clientdc.on("messageUpdate", message => {
-  message.channel.send("I saw that");
+  message.channel.send("I saw that edit");
+});
+
+clientdc.on("messageDelete", message => {
+  message.channel.send("u trying to hide something?");
 });
 
 // http://expressjs.com/en/starter/static-files.html

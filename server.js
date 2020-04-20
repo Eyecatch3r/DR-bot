@@ -51,7 +51,7 @@ let query =
   "'";
 
 clientdc.on('ready', () => {
-  //clientdc.channels.cache.get("514135876909924354").send("test");
+  clientdc.channels.cache.get("700676087302324265").send("test");
 });
 
 db.all(query, [], (err, rows) => {

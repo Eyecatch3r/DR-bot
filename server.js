@@ -100,7 +100,7 @@ db.all(query, [], (err, rows) => {
     if (
       message.content.includes("HRE") ||
       message.content.includes("Holy Roman Empire") ||
-      message.content.includes("hre")
+      message.content.includes("hre ")
     ) {
       // Send "pong" to the same channel
       message.channel.send("shame on you");
@@ -133,7 +133,7 @@ db.all(query, [], (err, rows) => {
 
 clientdc.on("messageUpdate", message => {
   if(!message.author.bot){
-  message.channel.send("I saw that edit");
+  //message.channel.send("I saw that edit");
   }
 });
 

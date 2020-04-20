@@ -51,7 +51,7 @@ let query =
   "'";
 
 clientdc.on('ready', () => {
-  clientdc.channels.cache.get("700676087302324265").send("test");
+  //clientdc.channels.cache.get("514135876909924354").send("test");
 });
 
 db.all(query, [], (err, rows) => {
@@ -93,7 +93,22 @@ db.all(query, [], (err, rows) => {
       // Send "pong" to the same channel
       message.channel.send("shame on you");
     }
-
+      
+    if (
+      message.content.includes("Civil war") ||
+      message.content.includes("civil war")
+    ) {
+      // Send "pong" to the same channel
+      message.channel.send("yall know who won right :wink:");
+    }
+      
+      if (
+      message.content.includes("the General") ||
+      message.content.includes("Ge")
+    ) {
+      // Send "pong" to the same channel
+      message.channel.send("yall know who won right :wink:");
+    }
     if (
       message.content.includes("Imperator") ||
       message.content.includes("Emperor") ||
@@ -106,6 +121,8 @@ db.all(query, [], (err, rows) => {
     }
   });
 });
+
+
 
 clientdc.on("messageUpdate", message => {
   message.channel.send("I saw that edit");

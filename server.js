@@ -75,7 +75,7 @@ db.all(query, [], (err, rows) => {
     }
   });
 
-  clientdc.on("message", message => {
+  clientdc.on("message", async message => {
     // If the message is "ping"
     if(!message.author.bot){
     if (
@@ -85,6 +85,17 @@ db.all(query, [], (err, rows) => {
       // Send "pong" to the same channel
       message.channel.send("its Constantinople smh");
     }
+      
+      if (
+        message.content.includes("the General") ||
+        message.content.includes("General") ||
+        message.content.includes("general") ||
+        message.content.includes("the general")
+      ) {
+        // Send "pong" to the same channel
+        message.channel.send("hail Apicius");
+        message.react("640270832115122196");
+      }
 
     if (
       message.content.includes("HRE") ||
@@ -102,13 +113,7 @@ db.all(query, [], (err, rows) => {
       message.channel.send("yall know who won right :wink:");
     }
       
-      if (
-      message.content.includes("the General") ||
-      message.content.includes("Ge")
-    ) {
-      // Send "pong" to the same channel
-      message.channel.send("yall know who won right :wink:");
-    }
+      
     if (
       message.content.includes("Imperator") ||
       message.content.includes("Emperor") ||
@@ -117,6 +122,7 @@ db.all(query, [], (err, rows) => {
     ) {
       // Send "pong" to the same channel
       message.channel.send("All hail the Imperator https://media.4teachers.de/images/thumbs/image_thumb.1146.jpg");
+      message.react("664229248944439301");
     }
     }
   });

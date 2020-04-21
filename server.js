@@ -39,10 +39,12 @@ db.all(sql, [], (err, rows) => {
 
 //compare dates with the current date
 const dateformat = require("dateformat");
+var date = new Date();
 console.log(dateformat("isoDate"));
 var dates = dateformat("isoDate").split("-");
-var time = dateformat("longtime").split(":");
+var time = dateformat(date,"longTime",true).split(":");
 console.log(dates[1] + dates[2]);
+console.log(dateformat(date,"longTime",true))
 console.log(time[0]+time[1]);
 
 let query =
@@ -61,12 +63,12 @@ db.all(query, [], (err, rows) => {
     throw err;
   }
   rows.forEach(row => {
-    //if(){
+    if(dates[0]+dates[1] === "1800"){
     console.log(row.DiscordID);
     clientdc.channels
       .get("514135876909924354")
       .send("happy Birthday" + "<@" + row.DiscordID + ">");
-    //}
+    }
   });
 
   //clientdc.channels.cache.get("514135876909924354").send("test");

@@ -77,7 +77,9 @@ db.all(query, [], (err, rows) => {
     // If the message is "ping"
     if (message.content === "ping") {
       // Send "pong" to the same channel
-      message.channel.send("https://www.youtube.com/watch?v=lfnuLq-kBkU");
+      message.channel.send(process.env.Prefix);
+      
+    if (message.content === process.env.Prefix + "addDate") {message.channel.send("Date added succesfully") }
     }
   });
 

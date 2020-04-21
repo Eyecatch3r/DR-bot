@@ -41,7 +41,9 @@ db.all(sql, [], (err, rows) => {
 const dateformat = require("dateformat");
 console.log(dateformat("isoDate"));
 var dates = dateformat("isoDate").split("-");
+var time = dateformat("longtime").split(":");
 console.log(dates[1] + dates[2]);
+console.log(time[0]+time[1]);
 
 let query =
   `SELECT * FROM Birthdates WHERE Birthdate LIKE ` +
@@ -59,10 +61,12 @@ db.all(query, [], (err, rows) => {
     throw err;
   }
   rows.forEach(row => {
+    //if(){
     console.log(row.DiscordID);
     clientdc.channels
       .get("514135876909924354")
       .send("happy Birthday" + "<@" + row.DiscordID + ">");
+    //}
   });
 
   //clientdc.channels.cache.get("514135876909924354").send("test");
@@ -76,13 +80,11 @@ db.all(query, [], (err, rows) => {
   });
 
   clientdc.on("message", async message => {
-    // If the message is "ping"
     if (!message.author.bot || !message.author.id === "365577946225704964") {
       if (
         message.content.includes("Istanbul") ||
         message.content.includes("istanbul")
       ) {
-        // Send "pong" to the same channel
         message.channel.send("its Constantinople smh");
       }
 
@@ -92,7 +94,6 @@ db.all(query, [], (err, rows) => {
         message.content.includes("general") ||
         message.content.includes("the general")
       ) {
-        // Send "pong" to the same channel
         message.channel.send("hail Apicius");
         message.react("640270832115122196");
       }
@@ -102,7 +103,6 @@ db.all(query, [], (err, rows) => {
         message.content.includes("Holy Roman Empire") ||
         message.content.includes("hre ")
       ) {
-        // Send "pong" to the same channel
         message.channel.send("shame on you");
       }
 
@@ -110,7 +110,6 @@ db.all(query, [], (err, rows) => {
         message.content.includes("Civil war") ||
         message.content.includes("civil war")
       ) {
-        // Send "pong" to the same channel
         message.channel.send("yall know who won right :wink:");
       }
 
@@ -120,7 +119,6 @@ db.all(query, [], (err, rows) => {
         message.content.includes("imperator") ||
         message.content.includes("emperor")
       ) {
-        // Send "pong" to the same channel
         message.channel.send(
           "All hail the Imperator https://media.4teachers.de/images/thumbs/image_thumb.1146.jpg"
         );

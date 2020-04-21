@@ -72,15 +72,20 @@ db.all(query, [], (err, rows) => {
   });
 
   //clientdc.channels.cache.get("514135876909924354").send("test");
-
+var command = process.env.Prefix + "addDate";
+      console.log(command);
   clientdc.on("message", message => {
     // If the message is "ping"
     if (message.content === "ping") {
       // Send "pong" to the same channel
       message.channel.send(process.env.Prefix);
-      
-    if (message.content === process.env.Prefix + "addDate") {message.channel.send("Date added succesfully") }
     }
+    if (message.content.includes(command)) {
+      var args = message.content.split("");
+      
+      if(args[1].length === 4 && args[2].length ===)
+      message.channel.send("Date added succesfully") }
+    
   });
 
   clientdc.on("message", async message => {

@@ -55,7 +55,7 @@ let query =
   dates[2] +
   "'";
 
-clientdc.on("presenceUpdate", () => {
+clientdc.on("presenceUpdate", (newMember) => {
   //clientdc.channels.cache.get("514135876909924354").send("test");
 
 
@@ -65,9 +65,9 @@ db.all(query, [], (err, rows) => {
   }
   rows.forEach(row => {
     
-    if(time[0]+time[1] === "1018"){
+    if(newMember.user.id === row.DiscordID){
     console.log(row.DiscordID);
-    clientdc.channels.cache.get("514135876909924354").send("happy Birthday" + "<@" + row.DiscordID + ">");
+    clientdc.channels.cache.get("514135876909924354").send("happy Birthday" + "<@" + row.DiscordID + "> :partying_face: :confetti_ball: :tada: ");
       //clientdc.channels.cache.get("514135876909924354").send("test");
     }
   });

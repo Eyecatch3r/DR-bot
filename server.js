@@ -85,6 +85,13 @@ var command = process.env.Prefix + "addDate";
       console.log(args[1]);
       if(args[1].length === 4)
         {
+          if(args[2] != null)
+            {
+             vat id message.mentions.users.first().id;
+              
+              let add = "INSERT INTO Birthdates(Birthdate,DiscordID) VALUES("+args[1]+","+args[2]+")";
+            console.log(add);
+            }
           var userID = message.author.id;
           console.log(userID);
           

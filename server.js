@@ -85,22 +85,28 @@ var command = process.env.Prefix + "addDate";
       console.log(args[1]);
       if(args[1].length === 4)
         {
+          let bdate = args[1].toString();
           if(args[2] != null)
             {
              var id = message.mentions.users.first().id;
               
-              let add = "INSERT INTO Birthdates(Birthdate,DiscordID) VALUES("+args[1]+","+id+")";
+              let add = "INSERT INTO Birthdates(Birthdate,DiscordID) VALUES("+bdate+","+id+")";
             db.run(add);
             }
           var userID = message.author.id;
           console.log(userID);
           
-          let add = "INSERT INTO Birthdates(Birthdate,DiscordID) VALUES("+args[1]+","+userID+")";
+          let add = "INSERT INTO Birthdates(Birthdate,DiscordID) VALUES("+bdate+","+userID+")";
           
           db.run(add);
           
       message.channel.send("Date added succesfully") }}
-    if(message.content)
+    if(message.content.includes(process.env.Prefix + "deleteDate")){
+    
+      var id = message.mentions.users.first().id;
+      let add = "DELETE FROM Birthdates WHERE DiscordID ="+id+";";
+      if (id != null){db.run(add); message.channel.send("Date removed succesfully") }
+    }
     
   });
 

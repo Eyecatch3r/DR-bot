@@ -55,10 +55,10 @@ let query =
   dates[2] +
   "'";
 
-clientdc.on("presenceUpdate", (newMember) => {
+clientdc.on("presenceUpdate", (oldMember,newMember) => {
   //clientdc.channels.cache.get("514135876909924354").send("test");
 
-
+console.log(newMember.id);
 db.all(query, [], (err, rows) => {
   if (err) {
     throw err;

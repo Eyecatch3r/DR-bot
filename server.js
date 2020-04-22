@@ -88,7 +88,8 @@ var command = process.env.Prefix + "addDate";
           var userID = message.author.id;
           console.log(userID);
           
-          let add = "INSERT Birthdates(Birthdate, DiscordID) ("+")INTO Birthdates "
+          let add = "INSERT INTO Birthdates(Birthdate,DiscordID) VALUES("+args[1]+","+userID+")";
+          console.log(add);
       message.channel.send("Date added succesfully") }}
     
     

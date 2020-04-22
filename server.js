@@ -57,7 +57,7 @@ let query =
 
 clientdc.on("ready", () => {
   //clientdc.channels.cache.get("514135876909924354").send("test");
-});
+
 
 db.all(query, [], (err, rows) => {
   if (err) {
@@ -65,12 +65,12 @@ db.all(query, [], (err, rows) => {
   }
   rows.forEach(row => {
     
-    if(time[0]+time[1] === "1009"){
+    //if(time[0]+time[1] === "1018"){
     console.log(row.DiscordID);
-    clientdc.channels.cache
-      .get("514135876909924354")
-      .send("happy Birthday" + "<@" + row.DiscordID + ">");
-    }
+    clientdc.channels.cache.get("514135876909924354").send("happy Birthday" + "<@" + row.DiscordID + ">");
+      //clientdc.channels.cache.get("514135876909924354").send("test");
+    //}
+  });
   });
 
   //clientdc.channels.cache.get("514135876909924354").send("test");

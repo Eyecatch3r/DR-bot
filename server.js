@@ -43,6 +43,7 @@ var date = new Date();
 console.log(dateformat("isoDate"));
 var dates = dateformat("isoDate").split("-");
 var time = dateformat(date,"longTime",true).split(":");
+if(dates[1].startsWith("0")){dates[1] = dates[1].substring(1);}
 console.log(dates[1] + dates[2]);
 console.log(dateformat(date,"longTime",true))
 console.log(time[0]+time[1]);
@@ -63,9 +64,10 @@ db.all(query, [], (err, rows) => {
     throw err;
   }
   rows.forEach(row => {
-    if(time[0]+time[1] === "1800"){
+    
+    if(time[0]+time[1] === "1009"){
     console.log(row.DiscordID);
-    clientdc.channels
+    clientdc.channels.cache
       .get("514135876909924354")
       .send("happy Birthday" + "<@" + row.DiscordID + ">");
     }

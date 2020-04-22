@@ -65,12 +65,12 @@ db.all(query, [], (err, rows) => {
   }
   rows.forEach(row => {
     
-    if(newPresence.userID === row.DiscordID){
-    console.log(row.DiscordID);
-    clientdc.channels.cache.get("514135876909924354").send("happy Birthday" + "<@" + row.DiscordID + "> :partying_face: :confetti_ball: :tada: ");
+    if(newPresence.userID == row.DiscordID){
+    
+    clientdc.channels.cache.get("514135876909924354").send("happy Birthday " + newPresence.user.toString() +" :partying_face: :confetti_ball: :tada: ");
       //clientdc.channels.cache.get("514135876909924354").send("test");
     }
-    console.log(row.DiscordID);
+    //console.log(row.DiscordID);
   });
   });
 });

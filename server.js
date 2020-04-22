@@ -55,17 +55,17 @@ let query =
   dates[2] +
   "'";
 
-clientdc.on("presenceUpdate", (oldMember,newMember) => {
+clientdc.on("presenceUpdate", (oldPresence,newPresence) => {
   //clientdc.channels.cache.get("514135876909924354").send("test");
 
-console.log(oldMember.id);
+
 db.all(query, [], (err, rows) => {
   if (err) {
     throw err;
   }
   rows.forEach(row => {
     
-    if(newMember.id === row.DiscordID){
+    if(oldPresence.userID === row.DiscordID){
     console.log(row.DiscordID);
     clientdc.channels.cache.get("514135876909924354").send("happy Birthday" + "<@" + row.DiscordID + "> :partying_face: :confetti_ball: :tada: ");
       //clientdc.channels.cache.get("514135876909924354").send("test");

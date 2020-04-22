@@ -70,6 +70,7 @@ db.all(query, [], (err, rows) => {
     clientdc.channels.cache.get("514135876909924354").send("happy Birthday" + "<@" + row.DiscordID + "> :partying_face: :confetti_ball: :tada: ");
       //clientdc.channels.cache.get("514135876909924354").send("test");
     }
+    console.log(row.DiscordID);
   });
   });
 });

@@ -65,13 +65,14 @@ db.all(query, [], (err, rows) => {
   }
   rows.forEach(row => {
     
-    if(newMember.user.id === row.DiscordID){
+    if(newMember.id === row.DiscordID){
     console.log(row.DiscordID);
     clientdc.channels.cache.get("514135876909924354").send("happy Birthday" + "<@" + row.DiscordID + "> :partying_face: :confetti_ball: :tada: ");
       //clientdc.channels.cache.get("514135876909924354").send("test");
     }
   });
   });
+});
 
   //clientdc.channels.cache.get("514135876909924354").send("test");
 var command = process.env.Prefix + "addDate";
@@ -159,7 +160,7 @@ var command = process.env.Prefix + "addDate";
       }
     }
   });
-});
+
 
 clientdc.on("messageUpdate", message => {
   if (!message.author.bot) {

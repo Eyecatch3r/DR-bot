@@ -63,7 +63,7 @@ db.all(query, [], (err, rows) => {
     throw err;
   }
   rows.forEach(row => {
-    if(dates[0]+dates[1] === "1800"){
+    if(time[0]+time[1] === "1800"){
     console.log(row.DiscordID);
     clientdc.channels
       .get("514135876909924354")
@@ -80,25 +80,27 @@ var command = process.env.Prefix + "addDate";
       message.channel.send(process.env.Prefix);
     }
     if (message.content.includes(command)) {
-      var args = message.content.split(" ");
+      let args = message.content.split(" ");
       
       console.log(args[1]);
       if(args[1].length === 4)
         {
           if(args[2] != null)
             {
-             vat id message.mentions.users.first().id;
+             var id = message.mentions.users.first().id;
               
-              let add = "INSERT INTO Birthdates(Birthdate,DiscordID) VALUES("+args[1]+","+args[2]+")";
-            console.log(add);
+              let add = "INSERT INTO Birthdates(Birthdate,DiscordID) VALUES("+args[1]+","+id+")";
+            db.run(add);
             }
           var userID = message.author.id;
           console.log(userID);
           
           let add = "INSERT INTO Birthdates(Birthdate,DiscordID) VALUES("+args[1]+","+userID+")";
-          console.log(add);
+          
+          db.run(add);
+          
       message.channel.send("Date added succesfully") }}
-    
+    if(message.content)
     
   });
 

@@ -48,6 +48,20 @@ console.log(dates[1] + dates[2]);
 console.log(dateformat(date,"longTime",true))
 console.log(time[0]+time[1]);
 
+async function createDate(){
+  while(dateformat() == date){
+ date = new Date();
+console.log(dateformat("isoDate"));
+ dates = dateformat("isoDate").split("-");
+ time = dateformat(date,"longTime",true).split(":");
+if(dates[1].startsWith("0")){dates[1] = dates[1].substring(1);}
+console.log(dates[1] + dates[2]);
+console.log(dateformat(date,"longTime",true))
+console.log(time[0]+time[1]);
+  }
+                  }
+
+  
 let query =
   `SELECT * FROM Birthdates WHERE Birthdate LIKE ` +
   "'" +
@@ -57,7 +71,7 @@ let query =
 
 clientdc.on("presenceUpdate", (oldPresence,newPresence) => {
   //clientdc.channels.cache.get("514135876909924354").send("test");
-
+createDate();
 
 db.all(query, [], (err, rows) => {
   if (err) {

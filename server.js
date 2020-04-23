@@ -79,8 +79,8 @@ db.all(query, [], (err, rows) => {
   }
   rows.forEach(row => {
     updateDate();
-    if(newPresence.userID == row.DiscordID){
-    
+    if(newPresence.userID == row.DiscordID && row.congratulated == 0){
+    db.run("ALTER congratulated FROM Birthdates WHERE ");
     clientdc.channels.cache.get("514135876909924354").send("happy Birthday " + newPresence.user.toString() +" :partying_face: :confetti_ball: :tada: ");
       //clientdc.channels.cache.get("514135876909924354").send("test");
     }
@@ -95,7 +95,7 @@ var command = process.env.Prefix + "addDate";
     // If the message is "ping"
     if (message.content === "ping") {
       // Send "pong" to the same channel
-      console.log(time[0]+time[1]);
+      message.channel.send("Pong I guess");
     }
     if (message.content.includes(command)) {
       let args = message.content.split(" ");
@@ -108,7 +108,7 @@ var command = process.env.Prefix + "addDate";
             {
              var id = message.mentions.users.first().id;
               
-              let add = "INSERT INTO Birthdates(Birthdate,DiscordID) VALUES("+bdate+","+id+")";
+              let add = "INSERT INTO Birthdates(Birthdate,DiscordID) VALUES("+bdate+","+id+",0)";
             db.run(add);
             }
           var userID = message.author.id;

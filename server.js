@@ -81,7 +81,7 @@ db.all(query, [], (err, rows) => {
   rows.forEach(row => {
     updateDate();
     if(newPresence.userID == row.DiscordID && row.celebrated== 0){
-    db.run("UPDATE Birthdates SET celebrated = 1 WHERE bID = "+ rows.bID);
+    db.run("UPDATE Birthdates SET celebrated = 1 WHERE bID = "+ row.bID);
     clientdc.channels.cache.get("514135876909924354").send("happy Birthday " + newPresence.user.toString() +" :partying_face: :confetti_ball: :tada: ");
       //clientdc.channels.cache.get("514135876909924354").send("test");
     }

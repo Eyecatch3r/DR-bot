@@ -24,7 +24,7 @@ clientdc.login(process.env.DISCORD_TOKEN);
 app.use(require("./guides"));
 
 //simple test query
-let sql = `SELECT Birthdate FROM Birthdates;`;
+let sql = `SELECT * FROM Birthdates;`;
 
 db.all(sql, [], (err, rows) => {
   if (err) {
@@ -33,6 +33,7 @@ db.all(sql, [], (err, rows) => {
   rows.forEach(row => {
     
     console.log(row.Birthdate);
+    console.log(row.celebrated);
   });
 });
 
@@ -79,8 +80,8 @@ db.all(query, [], (err, rows) => {
   }
   rows.forEach(row => {
     updateDate();
-    if(newPresence.userID == row.DiscordID && row.congratulated == 0){
-    db.run("ALTER congratulated FROM Birthdates WHERE ");
+    if(newPresence.userID == row.DiscordID && row.celebrated== 0){
+    db.run("UPDATE Birthdates SET celebrated = 1 WHERE bID = "+ rows.bID);
     clientdc.channels.cache.get("514135876909924354").send("happy Birthday " + newPresence.user.toString() +" :partying_face: :confetti_ball: :tada: ");
       //clientdc.channels.cache.get("514135876909924354").send("test");
     }
@@ -108,13 +109,13 @@ var command = process.env.Prefix + "addDate";
             {
              var id = message.mentions.users.first().id;
               
-              let add = "INSERT INTO Birthdates(Birthdate,DiscordID) VALUES("+bdate+","+id+",0)";
+              let add = "INSERT INTO Birthdates(Birthdate,DiscordID,celebrated) VALUES("+bdate+","+id+",0)";
             db.run(add);
             }
           var userID = message.author.id;
           console.log(userID);
           
-          let add = "INSERT INTO Birthdates(Birthdate,DiscordID) VALUES("+bdate+","+userID+")";
+          let add = "INSERT INTO Birthdates(Birthdate,DiscordID,celebrated) VALUES("+bdate+","+userID+",0)";
           
           db.run(add);
           

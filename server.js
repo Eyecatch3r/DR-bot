@@ -20,9 +20,7 @@ const db = new sqlite3.Database(dbFile);
 const discordBot = require("./bot");
 const Discord = require("discord.js");
 const clientdc = new Discord.Client();
-
 clientdc.login(process.env.DISCORD_TOKEN);
-
 app.use(require("./guides"));
 
 //simple test query
@@ -33,6 +31,7 @@ db.all(sql, [], (err, rows) => {
     throw err;
   }
   rows.forEach(row => {
+    
     console.log(row.Birthdate);
   });
 });

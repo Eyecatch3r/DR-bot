@@ -22,7 +22,7 @@ const Discord = require("discord.js");
 const clientdc = new Discord.Client();
 
 clientdc.login(process.env.DISCORD_TOKEN);
-// this is the code for the guides
+
 app.use(require("./guides"));
 
 //simple test query
@@ -81,7 +81,7 @@ var command = process.env.Prefix + "addDate";
     // If the message is "ping"
     if (message.content === "ping") {
       // Send "pong" to the same channel
-      message.channel.send(process.env.Prefix);
+      console.log(time[0]+time[1]);
     }
     if (message.content.includes(command)) {
       let args = message.content.split(" ");

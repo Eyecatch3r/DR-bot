@@ -48,8 +48,8 @@ console.log(dates[1] + dates[2]);
 console.log(dateformat(date,"longTime",true))
 console.log(time[0]+time[1]);
 
-async function createDate(){
-  while(dateformat() == date){
+async function updateDate(){
+  if(dateformat() != date){
  date = new Date();
 console.log(dateformat("isoDate"));
  dates = dateformat("isoDate").split("-");
@@ -71,14 +71,15 @@ let query =
 
 clientdc.on("presenceUpdate", (oldPresence,newPresence) => {
   //clientdc.channels.cache.get("514135876909924354").send("test");
-createDate();
+
 
 db.all(query, [], (err, rows) => {
+  
   if (err) {
     throw err;
   }
   rows.forEach(row => {
-    
+    updateDate();
     if(newPresence.userID == row.DiscordID){
     
     clientdc.channels.cache.get("514135876909924354").send("happy Birthday " + newPresence.user.toString() +" :partying_face: :confetti_ball: :tada: ");

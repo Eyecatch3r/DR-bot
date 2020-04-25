@@ -131,8 +131,9 @@ var command = process.env.Prefix;
       let role = message.guild.roles.resolve(role => role.name == args[1]);
       let ment = new Array;
       
-      for(var i = 2;i< args.length; i++){ment[i] = args[i]};
-      args.foreach(element => message.member.)
+      for(var i = 2;i< args.length; i++){ment[i-2] = args[i]};
+      console.log(ment[0]);
+      //ment.foreach(element => message.guild.element.member.edit('roles','election'))
     }
     
   });

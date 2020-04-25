@@ -139,14 +139,18 @@ var command = process.env.Prefix;
   });
 
   clientdc.on("message", async message => {
-    if (!message.author.bot || message.author.id != "365577946225704964") {
+    if (!message.author.bot) {
       if (
+        
         message.content.includes("Istanbul") ||
         message.content.includes("istanbul")
       ) {
         message.channel.send("its Constantinople smh");
       }
-
+    
+      if(message.content.includes("bad bot"))
+      {message.channel.send("Sorry Master");}
+      
       if (
         message.content.includes("the General") ||
         message.content.includes("General") ||

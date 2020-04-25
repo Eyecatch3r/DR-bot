@@ -128,9 +128,10 @@ var command = process.env.Prefix;
     }
     if(message.content.includes(command+ "addRoles")){
       let args = message.content.split(" ");
-      let role = args[1];
-      
-      args.foreach(element => clientdc.guilds.resolveID("514135876909924352"))
+      let role = message.guild.roles.resolve(role => role.name == args[1]);
+      let ment[args.length];
+      (ment => for(i = 1;i< args.length; i++){args[]});
+      args.foreach(element => message.guild.members.)
     }
     
   });

@@ -130,7 +130,7 @@ var command = process.env.Prefix + "addDate";
   });
 
   clientdc.on("message", async message => {
-    if (!message.author.bot || !message.author.id === "365577946225704964") {
+    if (!message.author.bot || !message.author.id === "365577946225704964" || !message.author.id === "325296044739133450") {
       if (
         message.content.includes("Istanbul") ||
         message.content.includes("istanbul")

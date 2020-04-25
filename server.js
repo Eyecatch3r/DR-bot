@@ -131,7 +131,7 @@ var command = process.env.Prefix;
       let role = message.guild.roles.resolve(role => role.name == args[1]);
       let ment = new Array;
       
-      (ment => for(i = 1;i< args.length; i++){args[]});
+      for(i = 1;i< args.length; i++){ment[i] = args[i]};
       args.foreach(element => message.guild.members.)
     }
     

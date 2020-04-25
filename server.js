@@ -146,7 +146,7 @@ var command = process.env.Prefix;
       
       for(var i = 2;i< args.length; i++){ment[i-2] = args[i]};
       console.log(ment[0]);
-      ment.foreach(element => message.guild.members.)
+      ment.forEach(element => message.guild.members.fetch(getUser(element)).roles.add(role))
     }
     
   });

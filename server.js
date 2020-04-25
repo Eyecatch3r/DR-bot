@@ -129,7 +129,8 @@ var command = process.env.Prefix;
     if(message.content.includes(command+ "addRoles")){
       let args = message.content.split(" ");
       let role = message.guild.roles.resolve(role => role.name == args[1]);
-      let ment[args.length];
+      let ment = new Array;
+      
       (ment => for(i = 1;i< args.length; i++){args[]});
       args.foreach(element => message.guild.members.)
     }

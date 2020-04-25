@@ -133,7 +133,9 @@ var command = process.env.Prefix;
       
       for(var i = 2;i< args.length; i++){ment[i-2] = args[i]};
       console.log(ment[0]);
-      //ment.foreach(element => message.guild.element.member.edit('roles','election'))
+      ment.foreach(element => 
+                   
+                   message.guild.element.member.edit('roles','election'))
     }
     
   });
@@ -148,8 +150,7 @@ var command = process.env.Prefix;
         message.channel.send("its Constantinople smh");
       }
     
-      if(message.content.includes("bad bot"))
-      {message.channel.send("Sorry Master");}
+      
       
       if (
         message.content.includes("the General") ||

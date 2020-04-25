@@ -132,7 +132,7 @@ var command = process.env.Prefix;
       let ment = new Array;
       
       for(var i = 2;i< args.length; i++){ment[i] = args[i]};
-      args.foreach(element => message.guild.)
+      args.foreach(element => message.member.)
     }
     
   });

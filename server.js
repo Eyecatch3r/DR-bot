@@ -89,7 +89,20 @@ db.all(query, [], (err, rows) => {
   });
   });
 });
+function getUser(mention)
+{
+  if (!mention) return;
 
+	if (mention.startsWith('<@') && mention.endsWith('>')) {
+		mention = mention.slice(2, -1);
+
+		if (mention.startsWith('!')) {
+			mention = mention.slice(1);
+		}
+
+		return clientdc.users.cache.get(mention);
+	}
+}
   //clientdc.channels.cache.get("514135876909924354").send("test");
 var command = process.env.Prefix;
   clientdc.on("message", message => {
@@ -133,9 +146,7 @@ var command = process.env.Prefix;
       
       for(var i = 2;i< args.length; i++){ment[i-2] = args[i]};
       console.log(ment[0]);
-      ment.foreach(element => 
-                   
-                   message.guild.element.member.edit('roles','election'))
+      ment.foreach(element => getUser(element).message.guild.element.member.edit('roles','election'))
     }
     
   });

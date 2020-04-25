@@ -91,14 +91,14 @@ db.all(query, [], (err, rows) => {
 });
 
   //clientdc.channels.cache.get("514135876909924354").send("test");
-var command = process.env.Prefix + "addDate";
+var command = process.env.Prefix;
   clientdc.on("message", message => {
     // If the message is "ping"
     if (message.content === "ping") {
       // Send "pong" to the same channel
       message.channel.send("Pong I guess");
     }
-    if (message.content.includes(command)) {
+    if (message.content.includes(command + "addDate")) {
       let args = message.content.split(" ");
       
       console.log(args[1]);
@@ -120,11 +120,17 @@ var command = process.env.Prefix + "addDate";
           db.run(add);
           
       message.channel.send("Date added succesfully") }}
-    if(message.content.includes(process.env.Prefix + "deleteDate")){
+    if(message.content.includes(command+ "deleteDate")){
     
       var id = message.mentions.users.first().id;
       let add = "DELETE FROM Birthdates WHERE DiscordID ="+id+";";
       if (id != null){db.run(add); message.channel.send("Date removed succesfully") }
+    }
+    if(message.content.includes(command+ "addRoles")){
+      let args = message.content.split(" ");
+      let role = args[1];
+      
+      args.foreach(element => )
     }
     
   });

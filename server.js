@@ -103,6 +103,21 @@ function getUser(mention)
 		return clientdc.users.cache.get(mention);
 	}
 }
+
+function getRole(mention)
+{
+  if (!mention) return;
+
+	if (mention.startsWith('<@') && mention.endsWith('>')) {
+		mention = mention.slice(2, -1);
+
+		if (mention.startsWith('&')) {
+			mention = mention.slice(1);
+		}
+
+		return clientdc.roles.cache.get(mention);
+	}
+}
   //clientdc.channels.cache.get("514135876909924354").send("test");
 var command = process.env.Prefix;
   clientdc.on("message", message => {
@@ -143,11 +158,12 @@ var command = process.env.Prefix;
       let args = message.content.split(" ");
       let role = message.guild.roles.cache.findKey(role => role.name === args[1]);
       let ment = new Array;
-      if(role.name == args[1])
+      if(role.name === args[1])
         {
       for(var i = 2;i< args.length; i++){ment[i-2] = args[i]};
       
       ment.forEach(element => {message.guild.members.resolve(getUser(element)).roles.add(role)})
+          message.channel.send("done")
     }
       else {message.channel.send("thats not a Role Broski")}
     }

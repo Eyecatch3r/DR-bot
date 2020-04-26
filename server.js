@@ -104,7 +104,7 @@ function getUser(mention)
 	}
 }
 
-function getRole(mention)
+function getRole(mention,server)
 {
   if (!mention) return;
 
@@ -115,7 +115,7 @@ function getRole(mention)
 			mention = mention.slice(1);
 		}
 
-		return clientdc.roles.cache.get(mention);
+		return clientdc.guilds.cache.get(server).roles.cache.get(mention);
 	}
 }
   //clientdc.channels.cache.get("514135876909924354").send("test");
@@ -156,9 +156,9 @@ var command = process.env.Prefix;
     }
     if(message.content.includes(command+ "addRoles")){
       let args = message.content.split(" ");
-      let role = message.guild.roles.cache.findKey(role => role.name === args[1]);
+      let role = getRole(args[1],message.guild.id);
       let ment = new Array;
-      if(role.name === args[1])
+      if(role)
         {
       for(var i = 2;i< args.length; i++){ment[i-2] = args[i]};
       

@@ -143,8 +143,9 @@ var command = process.env.Prefix;
       let args = message.content.split(" ");
       let role = message.guild.roles.cache.findKey(role => role.name === args[1]);
       let ment = new Array;
-      if(role)
+      if(role != undefined)
         {
+          
       for(var i = 2;i< args.length; i++){ment[i-2] = args[i]};
       
       ment.forEach(element => {message.guild.members.resolve(getUser(element)).roles.add(role)})

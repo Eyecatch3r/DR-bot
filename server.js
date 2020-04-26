@@ -142,7 +142,7 @@ clientdc.on("message", message => {
     // Send "pong" to the same channel
     message.channel.send("Pong I guess");
   }
-  if (message.content.includes(command + "motions")) {
+  if (message.content.includes(command + "Motions")) {
     let sql2 = `SELECT * FROM Motions;`;
 
     db.all(sql2, [], (err, rows) => {
@@ -151,7 +151,8 @@ clientdc.on("message", message => {
       }
       rows.forEach(row => {
         message.channel.send(row.motion);
-        message.channel.send("<@!"+row.creator+">");
+        message.channel.send(clientdc.users.cache.get(row.creator).toString());
+        message.channel.send(row.mID);
       });
     });
   }

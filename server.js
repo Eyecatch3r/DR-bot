@@ -143,7 +143,7 @@ var command = process.env.Prefix;
       let args = message.content.split(" ");
       let role = message.guild.roles.cache.findKey(role => role.name === args[1]);
       let ment = new Array;
-      if(role)
+      if(role.name == args[1])
         {
       for(var i = 2;i< args.length; i++){ment[i-2] = args[i]};
       

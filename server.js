@@ -143,17 +143,16 @@ var command = process.env.Prefix;
       let args = message.content.split(" ");
       let role = message.guild.roles.cache.findKey(role => role.name === args[1]);
       let ment = new Array;
-      
-          
+      if(role)
+        {
       for(var i = 2;i< args.length; i++){ment[i-2] = args[i]};
       
-      ment.forEach(element => {message.guild.members.resolve(getUser(element)).roles.add(role)});
-    /**}
+      ment.forEach(element => {message.guild.members.resolve(getUser(element)).roles.add(role)})
+    }
       else {message.channel.send("thats not a Role Broski")}
-    }**/
+    }
     
-  }
-    )};
+  });
 
   clientdc.on("message", async message => {
     if (!message.author.bot && message.author.id != "241349696856129539") {

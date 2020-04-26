@@ -151,7 +151,7 @@ clientdc.on("message", message => {
       }
       rows.forEach(row => {
         message.channel.send(row.motion);
-        message.channel.send(clientdc.users.cache.get(row.creator).toString());
+        message.channel.send("<@"+row.creator+">");
         message.channel.send(row.mID);
       });
     });

@@ -160,6 +160,7 @@ var command = process.env.Prefix;
       let ment = new Array;
       if(role)
         {
+          console.log(args[1]);
       for(var i = 2;i< args.length; i++){ment[i-2] = args[i]};
       
       ment.forEach(element => {message.guild.members.resolve(getUser(element)).roles.add(role)})

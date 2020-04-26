@@ -155,7 +155,7 @@ var command = process.env.Prefix;
   });
 
   clientdc.on("message", async message => {
-    if (!message.author.bot) {
+    if (!message.author.bot && message.author.id != "241349696856129539") {
       if (
         
         message.content.includes("Istanbul") ||
@@ -164,7 +164,7 @@ var command = process.env.Prefix;
         message.channel.send("its Constantinople smh");
       }
     
-      
+      if(message.content.includes("whos my little boy")){message.channel.send("I am :)")}
       
       if (
         message.content.includes("the General") ||

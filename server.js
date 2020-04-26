@@ -126,6 +126,13 @@ var command = process.env.Prefix;
       // Send "pong" to the same channel
       message.channel.send("Pong I guess");
     }
+    if (message.content.includes(command + "motion"))
+      {
+        var args = message.split("");
+        db.run("INSERT INTO Motions(motion,creator) VALUES("+")");
+        
+      }
+    
     if (message.content.includes(command + "addDate")) {
       let args = message.content.split(" ");
       

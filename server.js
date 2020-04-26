@@ -141,8 +141,9 @@ var command = process.env.Prefix;
     }
     if (message.content.includes(command + "motion"))
       {
-        var args = message.content.split("");
-        db.run("INSERT INTO Motions(motion,creator) VALUES("+args[1]+","+message.author.id+")");
+        var args = message.content.split(" ");
+        console.log("INSERT INTO Motions(motion,creator) VALUES("+"'"+args[1]+"'"+","+message.author.id+");");
+        db.run("INSERT INTO Motions(motion,creator) VALUES("+args[1]+","+message.author.id+");");
         
       }
     

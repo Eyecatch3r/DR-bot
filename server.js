@@ -37,6 +37,19 @@ db.all(sql, [], (err, rows) => {
   });
 });
 
+let sql2 = `SELECT * FROM Motions;`;
+
+db.all(sql, [], (err, rows) => {
+  if (err) {
+    throw err;
+  }
+  rows.forEach(row => {
+    
+    console.log(row.motion);
+    console.log(row.creator);
+  });
+});
+
 //compare dates with the current date
 const dateformat = require("dateformat");
 var date = new Date();
@@ -128,9 +141,16 @@ var command = process.env.Prefix;
     }
     if (message.content.includes(command + "motion"))
       {
-        var args = message.split("");
-        db.run("INSERT INTO Motions(motion,creator) VALUES("+")");
+        var args = message.content.split("");
+        db.run("INSERT INTO Motions(motion,creator) VALUES("+args[1]+","+message.author.id+")");
         
+      }
+    
+    if (message.content.includes(command + "deleteMotion"))
+      {
+        var args = message.content.split("");
+        db.run("DELETE FROM Motions WHERE mID ="+args[1]);
+        message.channel.send("duly noted");
       }
     
     if (message.content.includes(command + "addDate")) {

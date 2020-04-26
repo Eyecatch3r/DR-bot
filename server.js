@@ -164,7 +164,9 @@ var command = process.env.Prefix;
         message.channel.send("its Constantinople smh");
       }
     
-      if(message.content.includes("whos my little boy")){message.channel.send("I am :)")}
+      if(message.channel.type === "dm"){
+        var args = message.content.split("-");
+        clientdc.channels.cache.get(args[0]).send(args[1]);}
       
       if (
         message.content.includes("the General") ||

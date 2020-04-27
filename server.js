@@ -250,7 +250,7 @@ clientdc.on("message", message => {
       message.channel.send("thats not a Role Broski");
     }
   }
-  if (message === "?pray") {message.channel.send("Frank get to work");}
+  if (message.content === "?pray") {message.channel.send("Frank get to work");}
 });
 
 clientdc.on("message", async message => {

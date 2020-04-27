@@ -141,7 +141,7 @@ clientdc.on("message", message => {
   if (message.content === "ping") {
     // Send "pong" to the same channel
     message.channel.send("Pong I guess");
-     message.channel.send(message.author.toString());
+    message.channel.send(message.author.toString());
   }
   if (message.content.includes(command + "Motions")) {
     let sql2 = `SELECT * FROM Motions;`;
@@ -153,9 +153,11 @@ clientdc.on("message", message => {
       rows.forEach(row => {
         message.channel.send(row.motion);
         let usr = row.creator;
-        
+
         console.log(usr);
-        message.channel.send(message.guild.members.resolve(usr.toString()).toString());
+        message.channel.send(
+          message.guild.members.resolve(usr.toString()).toString()
+        );
         message.channel.send(row.mID);
       });
     });

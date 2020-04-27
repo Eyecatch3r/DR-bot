@@ -152,7 +152,10 @@ clientdc.on("message", message => {
       }
       rows.forEach(row => {
         message.channel.send(row.motion);
-        message.channel.send(message.guild.members.resolve(row.mID).toString());
+        let usr = row.creator;
+        
+        console.log(usr);
+        message.channel.send(message.guild.members.resolve(usr.toString()).toString());
         message.channel.send(row.mID);
       });
     });

@@ -312,11 +312,7 @@ clientdc.on("messageUpdate", message => {
   }
 });
 
-clientdc.on("messageDelete", message => {
-  if (!message.author.bot) {
-    message.channel.send("u trying to hide something?");
-  }
-});
+
 
 // http://expressjs.com/en/starter/static-files.html
 app.use(express.static("public"));

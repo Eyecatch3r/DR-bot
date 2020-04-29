@@ -271,7 +271,7 @@ clientdc.on("message", message => {
       var output = "";
       msgs.forEach(msg => output += msg)
       embed.setDescription(output);
-      clientdc.channels.cache.get("705136080105767004").messages.cache.get("705145698688958474").edit(embed);
+      message.guild.channels.cache.get("705136080105767004").messages.cache.get("705145698688958474").edit(embed);
     });
       } 
              

@@ -24,7 +24,7 @@ clientdc.login(process.env.DISCORD_TOKEN);
 app.use(require("./guides"));
 
 var mainEmb = new Discord.MessageEmbed();
-
+var MotionListChannel;
 clientdc.on('ready', () =>{
 
     mainEmb.setTitle("Motions");
@@ -50,7 +50,7 @@ clientdc.on('ready', () =>{
       var output = "";
       msgs.forEach(msg => output += msg)
       mainEmb.setDescription(output);
-      //clientdc.channels.cache.get("705136080105767004").send(mainEmb);
+      //clientdc.channels.cache.get("705136080105767004").send(test);
       
       });
 });
@@ -161,6 +161,9 @@ function getRole(mention, server) {
 //clientdc.channels.cache.get("514135876909924354").send("test");
 var command = process.env.Prefix;
 clientdc.on("message", message => {
+  
+  
+  
   // If the message is "ping"
   if (message.content === "ping") {
     // Send "pong" to the same channel
@@ -268,7 +271,7 @@ clientdc.on("message", message => {
       var output = "";
       msgs.forEach(msg => output += msg)
       embed.setDescription(output);
-      clientdc.channels.cache.get("705136080105767004").messages.fetch("705145698688958474").edit(embed);
+      clientdc.channels.cache.get("705136080105767004").messages.cache.get("705145698688958474").edit(embed);
     });
       } 
              

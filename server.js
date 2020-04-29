@@ -155,8 +155,8 @@ clientdc.on("message", message => {
       }
       rows.forEach(row => {
         //message.channel.send(row.motion);
-        let msg = row.motion+" /n "+
-          message.guild.members.cache.get(row.creator).toString()+" /n "+row.mID;
+        let msg = row.motion+"/n"+
+          message.guild.members.cache.get(row.creator).toString()+"/n"+row.mID;
         message.channel.send(msg);
         //message.channel.send(row.mID);
       });

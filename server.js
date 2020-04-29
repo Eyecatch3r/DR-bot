@@ -156,7 +156,7 @@ clientdc.on("message", message => {
 
         
         message.channel.send(
-          message.guild.members.cache.get(row.creator).toString()
+          message.guild.members.fetch(u => u.id = row.creator).toString()
         );
         message.channel.send(row.mID);
       });

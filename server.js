@@ -173,20 +173,26 @@ clientdc.on("message", message => {
         args[1] +
         "'" +
         "," +
-        message.author.id +
+        message.member.id +
         ");"
     );
-    db.run(
-      "INSERT INTO Motions(motion,creator) VALUES(" +
+    
+    
+    db.all("INSERT INTO Motions(motion,creator) VALUES(" +
         "'" +
         args[1] +
         "'" +
         "," +
-        message.author.id +
-        ");"
-    );
+        message.member.id +
+        ");", [], (err, rows) => {
+      if (err) {
+        message.send("wrong ID bruh");
+        console.log(err);
+      }
+    
     message.channel.send("duly noted");
-  }
+  })};
+           
 
   if (message.content.includes(command + "deleteMotion")) {
     var args = message.content.split(" ");

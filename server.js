@@ -147,6 +147,8 @@ clientdc.on("message", message => {
     message.channel.send(message.author.toString());
   }
   if (message.content == command + "motions") {
+    if(message.member.roles.cache.has('543783180130320385') || message.member.roles.cache.has("550392133991923738"))
+      {
     let sql2 = `SELECT * FROM Motions;`;
   let embed = new Discord.MessageEmbed();
         
@@ -154,6 +156,7 @@ clientdc.on("message", message => {
     embed.setColor("0xcc0000");
     embed.setFooter("Senate Meeting discussions powered by our most humble Imperator");
     embed.setThumbnail("https://cdn.glitch.com/24cdd29f-170e-4ac8-9dc2-8abc1cbbaeaa%2Fimage0.png?v=1588186014686");
+    embed.setAuthor("IMPERATOR PVBLIVS");
     let msgs = new Array;
     db.all(sql2, [], (err, rows) => {
       if (err) {
@@ -179,6 +182,7 @@ clientdc.on("message", message => {
       embed.setDescription(output);
       message.channel.send(embed);
     });
+      } else message.channel.send("not a Senator/Tribune broski");
   }
 
   if (message.content.includes(command + "motion ")) {

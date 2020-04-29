@@ -45,6 +45,7 @@ db.all(sql2, [], (err, rows) => {
   rows.forEach(row => {
     console.log(row.motion);
     console.log(row.creator);
+    console.log(row.mID);
   });
 });
 
@@ -153,12 +154,11 @@ clientdc.on("message", message => {
       rows.forEach(row => {
         //message.channel.send(row.motion);
         
-        let id2 = row.creator.toString();
-        console.log(id2);
+        
         
         
         message.channel.send(row.motion+"/n"+
-          message.guild.members.cache.get(id2).toString()+"/n"+row.mID
+          message.guild.members.cache.get(row.creator).toString()+"/n"+row.mID
         );
         //message.channel.send(row.mID);
       });
@@ -186,7 +186,7 @@ clientdc.on("message", message => {
         message.member.id +
         ");", [], (err, rows) => {
       if (err) {
-        message.send("wrong ID bruh");
+        message.send("sth went wrong");
         console.log(err);
       }
     
@@ -196,8 +196,11 @@ clientdc.on("message", message => {
 
   if (message.content.includes(command + "deleteMotion")) {
     var args = message.content.split(" ");
-    db.run("DELETE FROM Motions WHERE mID =" + args[1]);
-    message.channel.send("motion deleted");
+    db.all("DELETE FROM Motions WHERE mID =" + args[1],[],(err,rows) => {
+      if (err) {message.channel.send("wrong ID");}
+      message.channel.send("motion deleted");
+    });
+    
   }
 
   if (message.content.includes(command + "addDate")) {

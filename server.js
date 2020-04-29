@@ -146,7 +146,7 @@ clientdc.on("message", message => {
     message.channel.send("Pong I guess");
     message.channel.send(message.author.toString());
   }
-  if (message.content.includes(command + "motions")) {
+  if (message.content == command + "motions") {
     let sql2 = `SELECT * FROM Motions;`;
   let embed = new Discord.MessageEmbed();
         
@@ -178,6 +178,8 @@ clientdc.on("message", message => {
   }
 
   if (message.content.includes(command + "motion ")) {
+    if(message.member.roles.cache.has('543783180130320385') || message.member.roles.cache.has("550392133991923738"))
+      {
     var args = message.content.split(" ");
     console.log(
       "INSERT INTO Motions(motion,creator) VALUES(" +
@@ -206,7 +208,10 @@ clientdc.on("message", message => {
       } else {message.channel.send("duly noted");}
     
     
-  })};
+  })
+      }
+  else {message.channel.send("you do not have any authority to propose motions, please turn to your corresponding Senator or Tribune (if you're a filthy Pleb)")}
+  };
            
 
   if (message.content.includes(command + "deleteMotion")) {

@@ -146,7 +146,7 @@ clientdc.on("message", message => {
     message.channel.send("Pong I guess");
     message.channel.send(message.author.toString());
   }
-  if (message.content.includes(command + "Motions")) {
+  if (message.content.includes(command + "motions")) {
     let sql2 = `SELECT * FROM Motions;`;
   let embed = new Discord.MessageEmbed();
         
@@ -177,7 +177,7 @@ clientdc.on("message", message => {
     });
   }
 
-  if (message.content.includes(command + "motion")) {
+  if (message.content.includes(command + "motion ")) {
     var args = message.content.split(" ");
     console.log(
       "INSERT INTO Motions(motion,creator) VALUES(" +

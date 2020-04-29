@@ -161,9 +161,13 @@ clientdc.on("message", message => {
       }
       rows.forEach(row => {
         //message.channel.send(row.motion);
+        if(message.guild.members.cache.get(row.creator) != undefined){
         let msg = row.motion+"\n"+"From:"+
           message.guild.members.cache.get(row.creator).toString()+"\n"+"motion ID:"+row.mID+"\n"+"--------------------"+"\n";
-        msgs.push(msg);
+          msgs.push(msg);
+        }
+        else {message.channel.send("im sorry but this is the wrong Server");}
+        
         //message.channel.send(row.mID);
         
         

@@ -25,7 +25,9 @@ app.use(require("./guides"));
 
 var mainEmb = new Discord.MessageEmbed();
 
-mainEmb.setTitle("Motions");
+clientdc.on('ready', () =>{
+
+    mainEmb.setTitle("Motions");
     mainEmb.setColor("0xcc0000");
     mainEmb.setFooter("Senate Meeting discussions powered by our most humble Imperator");
     mainEmb.setThumbnail("https://cdn.glitch.com/24cdd29f-170e-4ac8-9dc2-8abc1cbbaeaa%2Fimage0.png?v=1588186014686");
@@ -48,10 +50,10 @@ mainEmb.setTitle("Motions");
       var output = "";
       msgs.forEach(msg => output += msg)
       mainEmb.setDescription(output);
-      clientdc.channels.find(channel => channel.id == "705136080105767004").send(mainEmb);
+      //clientdc.channels.cache.get("705136080105767004").send(mainEmb);
       
       });
-
+});
 
 
 
@@ -233,7 +235,7 @@ clientdc.on("message", message => {
       if (err) {
         message.channel.send("sth went wrong");
         console.log(err);
-      } else {message.channel.send("duly noted");}
+      } else {message.channel.send("duly noted"); clientdc.channels.cache.get('705136080105767004').messages}
     
     
   })

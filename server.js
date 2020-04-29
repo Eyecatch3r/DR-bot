@@ -156,7 +156,7 @@ clientdc.on("message", message => {
     embed.setColor("0xcc0000");
     embed.setFooter("Senate Meeting discussions powered by our most humble Imperator");
     embed.setThumbnail("https://cdn.glitch.com/24cdd29f-170e-4ac8-9dc2-8abc1cbbaeaa%2Fimage0.png?v=1588186014686");
-    embed.setAuthor("IMPERATOR PVBLIVS");
+    embed.setAuthor("IMPERATOR PVBLIVS","https://cdn.glitch.com/24cdd29f-170e-4ac8-9dc2-8abc1cbbaeaa%2Fimageedit_1_3956664875.png?v=1588186424473");
     let msgs = new Array;
     db.all(sql2, [], (err, rows) => {
       if (err) {

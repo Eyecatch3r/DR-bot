@@ -152,6 +152,7 @@ clientdc.on("message", message => {
         
         embed.setTitle("Motions");
     embed.setColor("0xcc0000");
+    embed.setFooter("Senate Meeting discussions powered by our most humble Imperator");
     
     let msgs = new Array;
     db.all(sql2, [], (err, rows) => {
@@ -161,7 +162,7 @@ clientdc.on("message", message => {
       rows.forEach(row => {
         //message.channel.send(row.motion);
         let msg = row.motion+"\n"+"From:"+
-          message.guild.members.cache.get(row.creator).toString()+"\n"+"motion ID:"+row.mID+"\n";
+          message.guild.members.cache.get(row.creator).toString()+"\n"+"motion ID:"+row.mID+"\n"+"--------------------"+"\n";
         msgs.push(msg);
         //message.channel.send(row.mID);
         

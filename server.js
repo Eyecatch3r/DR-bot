@@ -23,6 +23,30 @@ const clientdc = new Discord.Client();
 clientdc.login(process.env.DISCORD_TOKEN);
 app.use(require("./guides"));
 
+var mainEmb = new Discord.MessageEmbed();
+
+mainEmb.setTitle("Motions");
+    mainEmb.setColor("0xcc0000");
+    mainEmb.setFooter("Senate Meeting discussions powered by our most humble Imperator");
+    mainEmb.setThumbnail("https://cdn.glitch.com/24cdd29f-170e-4ac8-9dc2-8abc1cbbaeaa%2Fimage0.png?v=1588186014686");
+    mainEmb.setAuthor("𝐈𝐌𝐏𝐄𝐑𝐀𝐓𝐎𝐑·𝐏𝐕𝐁𝐋𝐈𝐕𝐒","https://cdn.glitch.com/24cdd29f-170e-4ac8-9dc2-8abc1cbbaeaa%2Fimageedit_1_3956664875.png?v=1588186424473");
+
+  let msgs = new Array;
+        let sql2 = `SELECT * FROM Motions;`;
+    db.all(sql2, [], (err, rows) => {
+      if (err) {
+        throw err;
+      }
+      rows.forEach(row => {
+        //message.channel.send(row.motion);
+        if(clientdc.guilds.cache.get('514135876909924352').members.cache.get(row.creator) != undefined){
+        let msg = row.motion+"\n"+"From:"+
+          clientdc.guilds.cache.get('514135876909924352').members.cache.get(row.creator).toString()+"\n"+"motion ID:"+row.mID+"\n"+"--------------------"+"\n";
+          msgs.push(msg);
+        }
+      });
+      });
+
 clientdc.channels.cache.get('705136080105767004');
 
 
@@ -39,20 +63,7 @@ db.all(sql, [], (err, rows) => {
   });
 });
 
-let sql2 = `SELECT * FROM Motions;`;
 
-db.all(sql2, [], (err, rows) => {
-  if (err) {
-    throw err;
-  }
-  
-  rows.forEach(row => {
-    console.log("---------------------------");
-    console.log(row.motion);
-    console.log(row.creator);
-    console.log(row.mID);
-  });
-});
 
 //compare dates with the current date
 const dateformat = require("dateformat");
@@ -152,7 +163,7 @@ clientdc.on("message", message => {
   if (message.content == command + "motions") {
     if(message.member.roles.cache.has('543783180130320385') || message.member.roles.cache.has("550392133991923738"))
       {
-    let sql2 = `SELECT * FROM Motions;`;
+    
   let embed = new Discord.MessageEmbed();
         
         embed.setTitle("Motions");
@@ -161,6 +172,7 @@ clientdc.on("message", message => {
     embed.setThumbnail("https://cdn.glitch.com/24cdd29f-170e-4ac8-9dc2-8abc1cbbaeaa%2Fimage0.png?v=1588186014686");
     embed.setAuthor("𝐈𝐌𝐏𝐄𝐑𝐀𝐓𝐎𝐑·𝐏𝐕𝐁𝐋𝐈𝐕𝐒","https://cdn.glitch.com/24cdd29f-170e-4ac8-9dc2-8abc1cbbaeaa%2Fimageedit_1_3956664875.png?v=1588186424473");
     let msgs = new Array;
+        let sql2 = `SELECT * FROM Motions;`;
     db.all(sql2, [], (err, rows) => {
       if (err) {
         throw err;

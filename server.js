@@ -148,18 +148,28 @@ clientdc.on("message", message => {
   }
   if (message.content.includes(command + "Motions")) {
     let sql2 = `SELECT * FROM Motions;`;
-
+  let embed = new Discord.MessageEmbed();
+        
+        embed.setTitle("Motions");
+    embed.setColor("0xcc0000");
+    
+    let msgs = new Array;
     db.all(sql2, [], (err, rows) => {
       if (err) {
         throw err;
       }
       rows.forEach(row => {
         //message.channel.send(row.motion);
-        let msg = row.motion+"/n"+
-          message.guild.members.cache.get(row.creator).toString()+"/n"+row.mID;
-        message.channel.send(msg);
+        let msg = row.motion+"\n"+
+          message.guild.members.cache.get(row.creator).toString()+"\n"+row.mID;
+        msgs.push(msg[0]);
         //message.channel.send(row.mID);
+        
+        
+        
+        
       });
+      embed.setDescription(msgs);
     });
   }
 

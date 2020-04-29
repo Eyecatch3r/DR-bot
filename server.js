@@ -153,7 +153,7 @@ clientdc.on("message", message => {
         embed.setTitle("Motions");
     embed.setColor("0xcc0000");
     embed.setFooter("Senate Meeting discussions powered by our most humble Imperator");
-    
+    embed.setThumbnail("https://cdn.glitch.com/24cdd29f-170e-4ac8-9dc2-8abc1cbbaeaa%2Fimage0.png?v=1588186014686");
     let msgs = new Array;
     db.all(sql2, [], (err, rows) => {
       if (err) {

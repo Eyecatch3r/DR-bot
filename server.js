@@ -39,15 +39,20 @@ mainEmb.setTitle("Motions");
       }
       rows.forEach(row => {
         //message.channel.send(row.motion);
-        if(clientdc.guilds.cache.get('514135876909924352').members.cache.get(row.creator) != undefined){
+        if(clientdc.users.cache.get(row.creator) != undefined){
         let msg = row.motion+"\n"+"From:"+
-          clientdc.guilds.cache.get('514135876909924352').members.cache.get(row.creator).toString()+"\n"+"motion ID:"+row.mID+"\n"+"--------------------"+"\n";
+          clientdc.users.cache.get(row.creator).toString()+"\n"+"motion ID:"+row.mID+"\n"+"--------------------"+"\n";
           msgs.push(msg);
         }
       });
+      var output = "";
+      msgs.forEach(msg => output += msg)
+      mainEmb.setDescription(output);
+      clientdc.channels.find(channel => channel.id == "705136080105767004").send(mainEmb);
+      
       });
 
-clientdc.channels.cache.get('705136080105767004');
+
 
 
 //simple test query

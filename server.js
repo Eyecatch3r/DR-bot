@@ -160,16 +160,19 @@ clientdc.on("message", message => {
       }
       rows.forEach(row => {
         //message.channel.send(row.motion);
-        let msg = row.motion+"\n"+
-          message.guild.members.cache.get(row.creator).toString()+"\n"+row.mID;
-        msgs.push(msg[0]);
+        let msg = row.motion+"\n"+"From:"+
+          message.guild.members.cache.get(row.creator).toString()+"\n"+"motion ID:"+row.mID+"\n";
+        msgs.push(msg);
         //message.channel.send(row.mID);
         
         
         
         
       });
-      embed.setDescription(msgs);
+      var output = "";
+      msgs.forEach(msg => output += msg)
+      embed.setDescription(output);
+      message.channel.send(embed);
     });
   }
 
@@ -203,6 +206,8 @@ clientdc.on("message", message => {
            
 
   if (message.content.includes(command + "deleteMotion")) {
+    
+    
     var args = message.content.split(" ");
     db.all("DELETE FROM Motions WHERE mID =" + args[1],[],(err,rows) => {
       if (err) {message.channel.send("wrong ID");}

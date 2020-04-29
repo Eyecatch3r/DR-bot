@@ -235,7 +235,12 @@ clientdc.on("message", message => {
       if (err) {
         message.channel.send("sth went wrong");
         console.log(err);
-      } else {message.channel.send("duly noted"); clientdc.channels.cache.get('705136080105767004').messages}
+      } else {message.channel.send("duly noted"); 
+              
+              
+             
+             
+             }
     
     
   })

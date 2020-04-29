@@ -207,7 +207,7 @@ clientdc.on("message", message => {
            
 
   if (message.content.includes(command + "deleteMotion")) {
-    
+    if(message.member.roles.cache.has('649362430446796815') || message.member.roles.cache.has('565594839828398100') ||  message.member.roles.cache.has('514143501697679361') || message.member.roles.cache.has('546654987061821440'))
     
     var args = message.content.split(" ");
     db.all("DELETE FROM Motions WHERE mID =" + args[1],[],(err,rows) => {

@@ -271,7 +271,7 @@ clientdc.on("message", message => {
       var output = "";
       msgs.forEach(msg => output += msg)
       embed.setDescription(output);
-      message.guild.channels.cache.get("705136080105767004").messages.cache.get("705145698688958474").edit(embed);
+      message.guild.channels.cache.get("705136080105767004").messages.fetch({around: "705145698688958474", limit: 1}).then(messages => messages.first().edit(embed));
     });
       } 
              
@@ -291,6 +291,43 @@ clientdc.on("message", message => {
     db.all("DELETE FROM Motions WHERE mID =" + args[1],[],(err,rows) => {
       if (err) {message.channel.send("wrong ID");}
       message.channel.send("motion deleted");
+      
+      let embed = new Discord.MessageEmbed();
+        
+        embed.setTitle("Motions");
+    embed.setColor("0xcc0000");
+    embed.setFooter("Senate Meeting discussions powered by our most humble Imperator");
+    embed.setThumbnail("https://cdn.glitch.com/24cdd29f-170e-4ac8-9dc2-8abc1cbbaeaa%2Fimage0.png?v=1588186014686");
+    embed.setAuthor("𝐈𝐌𝐏𝐄𝐑𝐀𝐓𝐎𝐑·𝐏𝐕𝐁𝐋𝐈𝐕𝐒","https://cdn.glitch.com/24cdd29f-170e-4ac8-9dc2-8abc1cbbaeaa%2Fimageedit_1_3956664875.png?v=1588186424473");
+              
+             let msgs = new Array;
+        let sql2 = `SELECT * FROM Motions;`;
+    db.all(sql2, [], (err, rows) => {
+      if (err) {
+        throw err;
+      }
+      rows.forEach(row => {
+        //message.channel.send(row.motion);
+        if(message.guild.members.cache.get(row.creator) != undefined){
+        let msg = row.motion+"\n"+"From:"+
+          message.guild.members.cache.get(row.creator).toString()+"\n"+"motion ID:"+row.mID+"\n"+"--------------------"+"\n";
+          msgs.push(msg);
+        }
+        else {message.channel.send("im sorry but this is the wrong Server");}
+        
+        //message.channel.send(row.mID);
+        
+        
+        
+        
+      });
+      var output = "";
+      msgs.forEach(msg => output += msg)
+      embed.setDescription(output);
+      message.guild.channels.cache.get("705136080105767004").messages.fetch({around: "705145698688958474", limit: 1}).then(messages => messages.first().edit(embed));
+    });
+      
+      
     });
     }
     else {message.channel.send("you do not have the permission to delete a motion");}

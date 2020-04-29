@@ -188,11 +188,14 @@ clientdc.on("message", message => {
         message.member.id +
         ");"
     );
-    
-    
+    let inp = "";
+    for(i = 1; i<args.length; i++)
+      {
+        inp += args[i]+" ";
+      }
     db.all("INSERT INTO Motions(motion,creator) VALUES(" +
         "'" +
-        args[1] +
+        inp +
         "'" +
         "," + "'"+
         message.member.id + "'"+
@@ -208,13 +211,14 @@ clientdc.on("message", message => {
 
   if (message.content.includes(command + "deleteMotion")) {
     if(message.member.roles.cache.has('649362430446796815') || message.member.roles.cache.has('565594839828398100') ||  message.member.roles.cache.has('514143501697679361') || message.member.roles.cache.has('546654987061821440'))
-    
+    {
     var args = message.content.split(" ");
     db.all("DELETE FROM Motions WHERE mID =" + args[1],[],(err,rows) => {
       if (err) {message.channel.send("wrong ID");}
       message.channel.send("motion deleted");
     });
-    
+    }
+    else {message.channel.send("you do not have the permission to delete a motion");}
   }
 
   if (message.content.includes(command + "addDate")) {

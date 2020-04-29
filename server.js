@@ -42,7 +42,9 @@ db.all(sql2, [], (err, rows) => {
   if (err) {
     throw err;
   }
+  
   rows.forEach(row => {
+    console.log("---------------------------");
     console.log(row.motion);
     console.log(row.creator);
     console.log(row.mID);
@@ -182,15 +184,15 @@ clientdc.on("message", message => {
         "'" +
         args[1] +
         "'" +
-        "," +
-        message.member.id +
+        "," + "'"+
+        message.member.id + "'"+
         ");", [], (err, rows) => {
       if (err) {
-        message.send("sth went wrong");
+        message.channel.send("sth went wrong");
         console.log(err);
-      }
+      } else {message.channel.send("duly noted");}
     
-    message.channel.send("duly noted");
+    
   })};
            
 

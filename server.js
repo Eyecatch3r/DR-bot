@@ -23,6 +23,9 @@ const clientdc = new Discord.Client();
 clientdc.login(process.env.DISCORD_TOKEN);
 app.use(require("./guides"));
 
+clientdc.channels.cache.get('705136080105767004');
+
+
 //simple test query
 let sql = `SELECT * FROM Birthdates;`;
 
@@ -156,7 +159,7 @@ clientdc.on("message", message => {
     embed.setColor("0xcc0000");
     embed.setFooter("Senate Meeting discussions powered by our most humble Imperator");
     embed.setThumbnail("https://cdn.glitch.com/24cdd29f-170e-4ac8-9dc2-8abc1cbbaeaa%2Fimage0.png?v=1588186014686");
-    embed.setAuthor("IMPERATOR PVBLIVS","https://cdn.glitch.com/24cdd29f-170e-4ac8-9dc2-8abc1cbbaeaa%2Fimageedit_1_3956664875.png?v=1588186424473");
+    embed.setAuthor("𝐈𝐌𝐏𝐄𝐑𝐀𝐓𝐎𝐑·𝐏𝐕𝐁𝐋𝐈𝐕𝐒","https://cdn.glitch.com/24cdd29f-170e-4ac8-9dc2-8abc1cbbaeaa%2Fimageedit_1_3956664875.png?v=1588186424473");
     let msgs = new Array;
     db.all(sql2, [], (err, rows) => {
       if (err) {

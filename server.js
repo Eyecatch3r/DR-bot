@@ -194,7 +194,7 @@ clientdc.on("message", message => {
     });
   })
   .catch(console.error);
-;
+
             break;
             
           case 'praetor':

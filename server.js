@@ -189,7 +189,9 @@ clientdc.on("message", message => {
               m.react("🔴");
     const collector = m.createReactionCollector(filter, { max: 1 });
 
-    collector.on('collect', () => {
+    collector.on('collect', (reaction,user) => {
+      
+      
       m.edit('You did it!');
     });
   })

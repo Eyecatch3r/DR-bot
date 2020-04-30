@@ -185,13 +185,13 @@ clientdc.on("message", message => {
             let query = 'INSERT INTO Elections(Title,Month) VALUES('+args[1]+','+args[2]+');'
             //db.run(query);
             clientdc.channels.cache.get('548918811391295489').send(args[1]+' Elections react here with 🔴').then(m => {
-    const filter = (reaction, user) => reaction.emoji.name === '🔴';
+    const filter = (reaction, user) => reaction.emoji.name === '🔴'; 
               m.react("🔴");
     const collector = m.createReactionCollector(filter, { max: 1000 });
 
     collector.on('collect', (reaction,user) => {
-      if(!reaction.me)reaction.remove();
       
+      message.guild.members.cache.get(user.id).roles.cache.add('703401102795604079')
       
     });
   })

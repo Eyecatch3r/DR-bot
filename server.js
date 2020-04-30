@@ -161,7 +161,7 @@ function getRole(mention, server) {
 //clientdc.channels.cache.get("514135876909924354").send("test");
 var command = process.env.Prefix;
 clientdc.on("message", message => {
-  if(message.content.includes(command+"prepare"))
+  if(message.content.toLowerCase().includes(command+"prepare"))
     {
       let args = message.content.split(" ");
       switch(args[1])
@@ -206,9 +206,9 @@ clientdc.on("message", message => {
     message.channel.send("Pong I guess");
     message.channel.send(message.author.toString());
   }
-  if(message.content === command+"imperialTree"){message.channel.send("https://cdn.discordapp.com/attachments/630588104184430643/705349480559411261/unknown.png")}
+  if(message.content.toLowerCase() === command+"imperialtree"){message.channel.send("https://cdn.discordapp.com/attachments/630588104184430643/705349480559411261/unknown.png")}
   
-  if (message.content == command + "motions") {
+  if (message.content.toLowerCase() == command + "motions") {
     if(message.member.roles.cache.has('543783180130320385') || message.member.roles.cache.has("550392133991923738"))
       {
     
@@ -248,7 +248,7 @@ clientdc.on("message", message => {
       } else message.channel.send("not a Senator/Tribune broski");
   }
 
-  if (message.content.includes(command + "motion ")) {
+  if (message.content.toLowerCase().includes(command + "motion ")) {
     if(message.member.roles.cache.has('543783180130320385') || message.member.roles.cache.has("550392133991923738"))
       {
     var args = message.content.split(" ");
@@ -322,7 +322,7 @@ clientdc.on("message", message => {
   };
            
 
-  if (message.content.includes(command + "deleteMotion")) {
+  if (message.content.toLowerCase().includes(command + "deleteMotion")) {
     if(message.member.roles.cache.has('649362430446796815') || message.member.roles.cache.has('565594839828398100') ||  message.member.roles.cache.has('514143501697679361') || message.member.roles.cache.has('546654987061821440'))
     {
     var args = message.content.split(" ");
@@ -371,7 +371,7 @@ clientdc.on("message", message => {
     else {message.channel.send("you do not have the permission to delete a motion");}
   }
   
-  if (message.content.includes(command + "deleteAllMotions")) {
+  if (message.content.toLowerCase().includes(command + "deleteAllMotions")) {
     if(message.member.roles.cache.has('649362430446796815') || message.member.roles.cache.has('565594839828398100') ||  message.member.roles.cache.has('514143501697679361') || message.member.roles.cache.has('546654987061821440'))
     {
     
@@ -383,7 +383,7 @@ clientdc.on("message", message => {
     else {message.channel.send("you do not have the permission to delete a motion");}
   }
 
-  if (message.content.includes(command + "addDate")) {
+  if (message.content.toLowerCase().includes(command + "addDate")) {
     let args = message.content.split(" ");
 
     console.log(args[1]);
@@ -415,7 +415,7 @@ clientdc.on("message", message => {
       message.channel.send("Date added succesfully");
     }
   }
-  if (message.content.includes(command + "deleteDate")) {
+  if (message.content.toLowerCase().includes(command + "deleteDate")) {
     var id = message.mentions.users.first().id;
     let add = "DELETE FROM Birthdates WHERE DiscordID =" + id + ";";
     if (id != null) {
@@ -423,7 +423,7 @@ clientdc.on("message", message => {
       message.channel.send("Date removed succesfully");
     }
   }
-  if (message.content.includes(command + "addRoles")) {
+  if (message.content.toLowerCase().includes(command + "addRoles")) {
     let args = message.content.split(" ");
     let role = getRole(args[1], message.guild.id);
     let ment = new Array();
@@ -441,14 +441,14 @@ clientdc.on("message", message => {
       message.channel.send("thats not a Role Broski");
     }
   }
-  if (message.content === "?pray") {message.author.send("dont listen to Dyno Byzantium is Roman");}
+  if (message.content.toLowerCase() === "?pray") {message.author.send("dont listen to Dyno Byzantium is Roman");}
 });
 
 clientdc.on("message", async message => {
   if (!message.author.bot && message.author.id != "241349696856129539") {
     if (
-      message.content.includes("Istanbul") ||
-      message.content.includes("istanbul")
+      message.content.toLowerCase().includes("Istanbul") ||
+      message.content.toLowerCase().includes("istanbul")
     ) {
       message.channel.send("its Constantinople smh");
     }
@@ -459,35 +459,35 @@ clientdc.on("message", async message => {
     }
 
     if (
-      message.content.includes("the General") ||
-      message.content.includes("General") ||
-      message.content.includes("general") ||
-      message.content.includes("the general")
+      message.content.toLowerCase().includes("the General") ||
+      message.content.toLowerCase().includes("General") ||
+      message.content.toLowerCase().includes("general") ||
+      message.content.toLowerCase().includes("the general")
     ) {
       message.channel.send("hail Apicius");
       message.react("640270832115122196");
     }
 
     if (
-      message.content.includes("HRE") ||
-      message.content.includes("Holy Roman Empire") ||
-      message.content.includes("hre ")
+      message.content.toLowerCase().includes("HRE") ||
+      message.content.toLowerCase().includes("Holy Roman Empire") ||
+      message.content.toLowerCase().includes("hre ")
     ) {
       message.channel.send("shame on you");
     }
 
     if (
-      message.content.includes("Civil war") ||
-      message.content.includes("civil war")
+      message.content.toLowerCase().includes("Civil war") ||
+      message.content.toLowerCase().includes("civil war")
     ) {
       message.channel.send("yall know who won right :wink:");
     }
 
     if (
-      message.content.includes("Imperator") ||
-      message.content.includes("Emperor") ||
-      message.content.includes("imperator") ||
-      message.content.includes("emperor")
+      message.content.toLowerCase().includes("Imperator") ||
+      message.content.toLowerCase().includes("Emperor") ||
+      message.content.toLowerCase().includes("imperator") ||
+      message.content.toLowerCase().includes("emperor")
     ) {
       message.channel.send(
         "All hail the Imperator https://media.4teachers.de/images/thumbs/image_thumb.1146.jpg"

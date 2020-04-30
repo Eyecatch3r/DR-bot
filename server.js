@@ -184,7 +184,7 @@ clientdc.on("message", message => {
           case 'consul':
             let query = 'INSERT INTO Elections(Title,Month) VALUES('+args[1]+','+args[2]+');'
             db.run(query);
-            clientdc.channels.cache.get('548918811391295489').send('consul Elections react here with 🔴').then(m => {
+            clientdc.channels.cache.get('548918811391295489').send(args[1]+' Elections react here with 🔴').then(m => {
     const filter = (reaction, user) => reaction.emoji.name === '🔴';
               m.react("🔴");
     const collector = m.createReactionCollector(filter, { max: 1 });

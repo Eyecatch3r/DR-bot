@@ -167,7 +167,16 @@ clientdc.on("message", message => {
       switch(args[1])
         {
           case 'consul':
-            
+            clientdc.channels.cache.get('548918811391295489').send('consul Elections react here').then(m => {
+    const filter = (reaction, user) => user.id === message.author.id && reaction.emoji.name === 'generalissimo';
+    const collector = m.createReactionCollector(filter, { max: 1 });
+
+    collector.on('collect', () => {
+      m.edit('You did it!');
+    });
+  })
+  .catch(console.error);
+;
             break;
             
           case 'praetor':

@@ -183,16 +183,16 @@ clientdc.on("message", message => {
         {
           case 'consul':
             let query = 'INSERT INTO Elections(Title,Month) VALUES('+args[1]+','+args[2]+');'
-            db.run(query);
+            //db.run(query);
             clientdc.channels.cache.get('548918811391295489').send(args[1]+' Elections react here with 🔴').then(m => {
     const filter = (reaction, user) => reaction.emoji.name === '🔴';
               m.react("🔴");
-    const collector = m.createReactionCollector(filter, { max: 1 });
+    const collector = m.createReactionCollector(filter, { max: 1000 });
 
     collector.on('collect', (reaction,user) => {
+      if(!reaction.me)reaction.remove();
       
       
-      m.edit('You did it!');
     });
   })
   .catch(console.error);

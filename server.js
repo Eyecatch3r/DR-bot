@@ -161,7 +161,33 @@ function getRole(mention, server) {
 //clientdc.channels.cache.get("514135876909924354").send("test");
 var command = process.env.Prefix;
 clientdc.on("message", message => {
-  
+  if(message.content.includes(command+"prepare"))
+    {
+      let args = message.content.split(" ");
+      switch(args[1])
+        {
+          case 'consul':
+            
+            break;
+            
+          case 'praetor':
+            break;
+            
+          case 'aedile':
+            break;
+            
+          case 'quaestor':
+            break;
+            
+          case 'tribune':
+            break;
+            
+          default:
+            message.channel.send("not a valid role")
+            break;
+        }
+      
+    }
   
   
   // If the message is "ping"

@@ -25,14 +25,19 @@ app.use(require("./guides"));
 
 var mainEmb = new Discord.MessageEmbed();
 var MotionListChannel;
+
+
 clientdc.on('ready', () =>{
-  db.run('CREATE TABLE candidates (cID INT PRIMARY KEY,DiscordID VARCHAR UNIQUENOT NULL);');
-
-db.run('CREATE TABLE Elections (eID   INT     PRIMARY KEY,Title VARCHAR NOT NULL,Month VARCHAR);');
-
-db.run('CREATE TABLE CandidateElections (
-    ceID      INT PRIMARY KEY,votes     INT DEFAULT (0), candidate INT REFERENCES candidates (cID) ON DELETE CASCADE ON UPDATE CASCADE,Election  INT REFERENCES Elections (eID) ON DELETE CASCADE ON UPDATE CASCADE);');
-
+  
+db.all('SELECT * FROM candidates', [], (err, rows) => {
+  if (err) {
+    throw err;
+  }
+  rows.forEach(row => {
+    console.log(row.cID);
+    console.log(row.DiscordID)
+  });
+});
 
   
   

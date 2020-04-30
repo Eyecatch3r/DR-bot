@@ -170,6 +170,8 @@ clientdc.on("message", message => {
     message.channel.send("Pong I guess");
     message.channel.send(message.author.toString());
   }
+  if(message.content === command+"imperialTree"){message.channel.send("https://cdn.discordapp.com/attachments/630588104184430643/705349480559411261/unknown.png")}
+  
   if (message.content == command + "motions") {
     if(message.member.roles.cache.has('543783180130320385') || message.member.roles.cache.has("550392133991923738"))
       {

@@ -167,6 +167,8 @@ clientdc.on("message", message => {
       switch(args[1])
         {
           case 'consul':
+            
+            
             clientdc.channels.cache.get('548918811391295489').send('consul Elections react here with 🔴').then(m => {
     const filter = (reaction, user) => user.id === message.author.id && reaction.emoji.name === '🔴';
               m.react("🔴");

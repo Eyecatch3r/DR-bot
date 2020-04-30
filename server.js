@@ -191,7 +191,17 @@ clientdc.on("message", message => {
 
     collector.on('collect', (reaction,user) => {
       
-      message.guild.members.cache.get(user.id).roles.cache.add('703401102795604079')
+      message.guild.members.cache.get(user.id).roles.add('703401102795604079');
+      db.run('INSERT INTO candidates(DiscordID) VALUES('+user.id+')');
+      db.all('SELECT * FROM candidates WHERE DiscordID = '+user.id+';',[], (err,rows) =>{
+        if(err){m.channel.send('sorry but there was an error (probably wrong ID)')}
+        else
+          {
+            rows.forEach(row => row.)
+            
+          }
+        
+      })
       
     });
   })

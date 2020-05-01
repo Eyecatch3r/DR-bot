@@ -34,19 +34,8 @@ db.all('SELECT * FROM candidates', [], (err, rows) => {
     throw err;
   }
   rows.forEach(row => {
-    console.log(row.cID);
-    console.log(row.DiscordID)
-  });
-});
-  
-  db.all('SELECT * FROM Elections', [], (err, rows) => {
-  if (err) {
-    throw err;
-  }
-  rows.forEach(row => {
-    console.log(row.ceID);
-    console.log(row.candidate);
-    console.log(row.Election);
+    console.log("cID \n"+row.cID);
+    console.log("DiscordID \n"+row.DiscordID)
   });
 });
   
@@ -55,9 +44,20 @@ db.all('SELECT * FROM candidates', [], (err, rows) => {
     throw err;
   }
   rows.forEach(row => {
-    console.log(row.eID);
-    console.log(row.Title);
-    console.log(row.month);
+    console.log("ceID \n"+row.ceID);
+    console.log("candidate \n"+row.candidate);
+    console.log("Election \n"+row.Election);
+  });
+});
+  
+  db.all('SELECT * FROM Elections', [], (err, rows) => {
+  if (err) {
+    throw err;
+  }
+  rows.forEach(row => {
+    console.log("eID \n"+row.eID);
+    console.log("Title \n"+row.Title);
+    console.log("month \n"+row.month);
   });
 });
 
@@ -204,7 +204,7 @@ clientdc.on("message", message => {
       switch(args[1])
         {
           case 'consul':
-            let query = 'INSERT INTO Elections(Title,Month) VALUES("'+args[1]+'","'+args[2]+'");'
+            let query = 'INSERT INTO Elections(Title,month) VALUES("'+args[1]+'","'+args[2]+'");'
             db.run(query);
             clientdc.channels.cache.get('548918811391295489').send(args[1]+' Elections react here with 🔴').then(m => {
     const filter = (reaction, user) => reaction.emoji.name === '🔴'; 

@@ -28,7 +28,7 @@ var MotionListChannel;
 
 
 clientdc.on('ready', () =>{
-  db.run("DELETE FROM candidates"); db.run("DELETE FROM Elections"); db.run("DELETE FROM CandidateElections");
+  //db.run("DELETE FROM candidates"); db.run("DELETE FROM Elections"); db.run("DELETE FROM CandidateElections");
   
 db.all('SELECT * FROM candidates', [], (err, rows) => {
   if (err) {
@@ -202,10 +202,8 @@ clientdc.on("message", message => {
   if(message.content.toLowerCase().includes(command+"prepare"))
     {
       let args = message.content.split(" ");
-      switch(args[1])
-        {
-          case 'consul':
-            let query = 'INSERT INTO Elections(Title,month) VALUES("'+args[1]+'","'+args[2]+'");'
+      if(args[1] == 'consul' || 'praetor' || 'aedile' || 'quaestor' || 'tribune'){
+            let query = 'INSERT INTO Elections(Title,Month) VALUES("'+args[1]+'","'+args[2]+'");'
             db.all(query,[],(err) =>{if(err){message.channel.send("month already specified")}});
             clientdc.channels.cache.get('548918811391295489').send(args[1]+' Elections react here with 🔴').then(m => {
     const filter = (reaction, user) => reaction.emoji.name === '🔴'; 
@@ -215,7 +213,7 @@ clientdc.on("message", message => {
     collector.on('collect', (reaction,user) => {
       
       message.guild.members.cache.get(user.id).roles.add('703401102795604079');
-      db.all('INSERT INTO candidates(DiscordID) VALUES("'+user.id+'")',[],(err) =>{if(err){message.channel.send("candi already specified")}});
+      db.all('INSERT INTO candidates(DiscordID) VALUES("'+user.id+'")',[],(err) =>{if(err){}});
       db.all('SELECT * FROM candidates WHERE DiscordID = '+user.id+';',[], (err,rows) =>{
         if(err){m.channel.send('sorry but there was an error (probably wrong ID)')}
         else
@@ -229,26 +227,8 @@ clientdc.on("message", message => {
     });
   })
   .catch(console.error);
-
-            break;
-            
-          case 'praetor':
-            break;
-            
-          case 'aedile':
-            break;
-            
-          case 'quaestor':
-            break;
-            
-          case 'tribune':
-            break;
-            
-          default:
-            message.channel.send("not a valid role")
-            break;
-        }
-      
+      }
+      else {message.channel.send("invalid role")}
     }
   
   

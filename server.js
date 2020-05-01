@@ -355,22 +355,23 @@ clientdc.on("message", message => {
         //message.channel.send(row.motion);
         if(message.guild.members.cache.get(row.creator) != undefined){
         let msg = row.motion+"\n"+"From:"+
-          message.guild.members.cache.get(row.creator).toString()+"\n"+"motion ID:"+row.mID+"\n"+"--------------------"+"\n";
+          message.guild.members.cache.get(row.creator).toString()+"\n"+"motion ID:"+row.mID+"\n\n";
           msgs.push(msg);
         }
         else {message.channel.send("im sorry but this is the wrong Server");}
       });
     });
         if(msgs.length <= 25){
-      msgs.forEach(msg => embed.addField("motion",msg,false))
+      msgs.forEach(msg => embed.addField("motion","msg",false))
       message.channel.send(embed);
+          
       }else{ 
         var args2 = new Array();
-        for(var i = 0;i < msgs.length/2; i++){
+        for(var i = msgs.length;i > msgs.length/2; i--){
           args2.push(msgs[i]);
           msgs.pop();
         }
-          msgs.forEach(msg => secEmb.addField("motion",msg,false));
+          
         
         var secEmb = new Discord.MessageEmbed();
         
@@ -381,7 +382,8 @@ clientdc.on("message", message => {
     secEmb.setAuthor("𝐈𝐌𝐏𝐄𝐑𝐀𝐓𝐎𝐑·𝐏𝐕𝐁𝐋𝐈𝐕𝐒","https://cdn.glitch.com/24cdd29f-170e-4ac8-9dc2-8abc1cbbaeaa%2Fimageedit_1_3956664875.png?v=1588186424473");
     secEmb.setDescription("Motions to discuss in Senate meetings");
         
-        args2.forEach(msg => secEmb.addField(msg));
+        args2.forEach(msg => secEmb.addField("motion",msg,false));
+        msgs.forEach(msg => embed.addField("motion",msg,false))
         message.channel.send(embed);
         message.channel.send(secEmb);
       }

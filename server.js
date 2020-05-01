@@ -38,6 +38,28 @@ db.all('SELECT * FROM candidates', [], (err, rows) => {
     console.log(row.DiscordID)
   });
 });
+  
+  db.all('SELECT * FROM Elections', [], (err, rows) => {
+  if (err) {
+    throw err;
+  }
+  rows.forEach(row => {
+    console.log(row.ceID);
+    console.log(row.candidate);
+    console.log(row.Election);
+  });
+});
+  
+  db.all('SELECT * FROM CandidateElections', [], (err, rows) => {
+  if (err) {
+    throw err;
+  }
+  rows.forEach(row => {
+    console.log(row.eID);
+    console.log(row.Title);
+    console.log(row.month);
+  });
+});
 
   
   
@@ -182,8 +204,8 @@ clientdc.on("message", message => {
       switch(args[1])
         {
           case 'consul':
-            let query = 'INSERT INTO Elections(Title,Month) VALUES('+args[1]+','+args[2]+');'
-            //db.run(query);
+            let query = 'INSERT INTO Elections(Title,Month) VALUES("'+args[1]+'","'+args[2]+'");'
+            db.run(query);
             clientdc.channels.cache.get('548918811391295489').send(args[1]+' Elections react here with 🔴').then(m => {
     const filter = (reaction, user) => reaction.emoji.name === '🔴'; 
               m.react("🔴");
@@ -192,12 +214,12 @@ clientdc.on("message", message => {
     collector.on('collect', (reaction,user) => {
       
       message.guild.members.cache.get(user.id).roles.add('703401102795604079');
-      db.run('INSERT INTO candidates(DiscordID) VALUES('+user.id+')');
+      db.run('INSERT INTO candidates(DiscordID) VALUES("'+user.id+'")');
       db.all('SELECT * FROM candidates WHERE DiscordID = '+user.id+';',[], (err,rows) =>{
         if(err){m.channel.send('sorry but there was an error (probably wrong ID)')}
         else
           {
-            rows.forEach(row => row.)
+            rows.forEach(row => db.run('INSERT INTO CandidateElections(candidate,Election) VALUES("'+row.DiscordID+'","'+args[2]+'")'))
             
           }
         

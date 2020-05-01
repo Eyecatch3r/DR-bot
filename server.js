@@ -345,7 +345,7 @@ clientdc.on("message", message => {
     embed.setFooter("Senate Meeting discussions powered by our most humble Imperator");
     embed.setThumbnail("https://cdn.glitch.com/24cdd29f-170e-4ac8-9dc2-8abc1cbbaeaa%2Fimage0.png?v=1588186014686");
     embed.setAuthor("𝐈𝐌𝐏𝐄𝐑𝐀𝐓𝐎𝐑·𝐏𝐕𝐁𝐋𝐈𝐕𝐒","https://cdn.glitch.com/24cdd29f-170e-4ac8-9dc2-8abc1cbbaeaa%2Fimageedit_1_3956664875.png?v=1588186424473");
-    let msgs = new Array;
+    let msgs = new Array();
         let sql2 = `SELECT * FROM Motions;`;
     db.all(sql2, [], (err, rows) => {
       if (err) {
@@ -361,9 +361,9 @@ clientdc.on("message", message => {
         }
         else {message.channel.send("im sorry but this is the wrong Server");}
       });
-    });
-        if(msgs.length <= 25){
-      msgs.forEach(msg => message.channel.send("t"))
+      if(msgs.length <= 25){
+          message.channel.send(msgs[1]);
+      msgs.forEach(message => message.channel.send(message))
       message.channel.send(embed);
           
       }else{ 
@@ -388,6 +388,9 @@ clientdc.on("message", message => {
         message.channel.send(embed);
         message.channel.send(secEmb);
       }
+      
+    });
+        
       } else message.channel.send("not a Senator/Tribune broski");
   }
 

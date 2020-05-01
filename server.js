@@ -28,7 +28,7 @@ var MotionListChannel;
 
 
 clientdc.on('ready', () =>{
-  //db.run("DELETE FROM candidates"); db.run("DELETE FROM Elections"); db.run("DELETE FROM CandidateElections");
+  db.run("DELETE FROM candidates"); db.run("DELETE FROM Elections"); db.run("DELETE FROM CandidateElections");
   
 db.all('SELECT * FROM candidates', [], (err, rows) => {
   if (err) {
@@ -196,7 +196,7 @@ function getRole(mention, server) {
     return clientdc.guilds.cache.get(server).roles.cache.get(mention);
   }
 }
-//clientdc.channels.cache.get("514135876909924354").send("test");
+
 var command = process.env.Prefix;
 clientdc.on("message", message => {
   if(message.content.toLowerCase().includes(command+"prepare"))
@@ -211,7 +211,7 @@ clientdc.on("message", message => {
     const collector = m.createReactionCollector(filter, { max: 1000 });
 
     collector.on('collect', (reaction,user) => {
-      
+      if(!user.bot){
       message.guild.members.cache.get(user.id).roles.add('703401102795604079');
       db.all('INSERT INTO candidates(DiscordID) VALUES("'+user.id+'")',[],(err) =>{if(err){}});
       db.all('SELECT * FROM candidates WHERE DiscordID = '+user.id+';',[], (err,rows) =>{
@@ -223,7 +223,7 @@ clientdc.on("message", message => {
           }
         
       })
-      
+      }
     });
   })
   .catch(console.error);

@@ -357,12 +357,13 @@ clientdc.on("message", message => {
         let msg = row.motion+"\n"+"From:"+
           message.guild.members.cache.get(row.creator).toString()+"\n"+"motion ID:"+row.mID+"\n\n";
           msgs.push(msg);
+          
         }
         else {message.channel.send("im sorry but this is the wrong Server");}
       });
     });
         if(msgs.length <= 25){
-      msgs.forEach(msg => embed.addField("motion","msg",false))
+      msgs.forEach(msg => message.channel.send("t"))
       message.channel.send(embed);
           
       }else{ 

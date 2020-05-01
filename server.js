@@ -117,12 +117,18 @@ function updateEmbedMessage(message)
       msgs.forEach(msg => embed.addField(msg))
       message.guild.channels.cache.get("705136080105767004").messages.fetch({around: "705145698688958474", limit: 1}).then(messages => messages.first().edit(embed))
       }else{ 
+        if(msgs.length <= 25){
+          
+      msgs.forEach(msg => embed.addField("motion",msg,false))
+      message.channel.send(embed);
+          
+      }else{ 
         var args2 = new Array();
-        for(var i = 0;i < msgs.length/2; i++){
+        for(var i = msgs.length;i > msgs.length/2; i--){
           args2.push(msgs[i]);
           msgs.pop();
         }
-          msgs.forEach(msg => embed.addField(msg));
+          
         
         var secEmb = new Discord.MessageEmbed();
         
@@ -133,10 +139,12 @@ function updateEmbedMessage(message)
     secEmb.setAuthor("𝐈𝐌𝐏𝐄𝐑𝐀𝐓𝐎𝐑·𝐏𝐕𝐁𝐋𝐈𝐕𝐒","https://cdn.glitch.com/24cdd29f-170e-4ac8-9dc2-8abc1cbbaeaa%2Fimageedit_1_3956664875.png?v=1588186424473");
     secEmb.setDescription("Motions to discuss in Senate meetings");
         
-        args2.forEach(msg => secEmb.addField(msg));
-        
+        args2.forEach(msg => secEmb.addField("motion",msg,false));
+        msgs.forEach(msg => embed.addField("motion",msg,false))
+        message.channel.send(embed);
+        message.channel.send(secEmb);
       }
-      
+      }
     });
   
 }
@@ -361,10 +369,21 @@ clientdc.on("message", message => {
         }
         else {message.channel.send("im sorry but this is the wrong Server");}
       });
+      
+      var secEmb = new Discord.MessageEmbed();
+        
+        secEmb.setTitle("Motions second page");
+    secEmb.setColor("0xcc0000");
+    secEmb.setFooter("Senate Meeting discussions powered by our most humble Imperator");
+    secEmb.setThumbnail("https://cdn.glitch.com/24cdd29f-170e-4ac8-9dc2-8abc1cbbaeaa%2Fimage0.png?v=1588186014686");
+    secEmb.setAuthor("𝐈𝐌𝐏𝐄𝐑𝐀𝐓𝐎𝐑·𝐏𝐕𝐁𝐋𝐈𝐕𝐒","https://cdn.glitch.com/24cdd29f-170e-4ac8-9dc2-8abc1cbbaeaa%2Fimageedit_1_3956664875.png?v=1588186424473");
+    secEmb.setDescription("Motions to discuss in Senate meetings");
+      
       if(msgs.length <= 25){
-          message.channel.send(msgs[1]);
-      msgs.forEach(message => message.channel.send(message))
+          
+      msgs.forEach(msg => embed.addField("motion",msg,false))
       message.channel.send(embed);
+      message.channel.send(secEmb);
           
       }else{ 
         var args2 = new Array();
@@ -374,14 +393,7 @@ clientdc.on("message", message => {
         }
           
         
-        var secEmb = new Discord.MessageEmbed();
         
-        secEmb.setTitle("Motions");
-    secEmb.setColor("0xcc0000");
-    secEmb.setFooter("Senate Meeting discussions powered by our most humble Imperator");
-    secEmb.setThumbnail("https://cdn.glitch.com/24cdd29f-170e-4ac8-9dc2-8abc1cbbaeaa%2Fimage0.png?v=1588186014686");
-    secEmb.setAuthor("𝐈𝐌𝐏𝐄𝐑𝐀𝐓𝐎𝐑·𝐏𝐕𝐁𝐋𝐈𝐕𝐒","https://cdn.glitch.com/24cdd29f-170e-4ac8-9dc2-8abc1cbbaeaa%2Fimageedit_1_3956664875.png?v=1588186424473");
-    secEmb.setDescription("Motions to discuss in Senate meetings");
         
         args2.forEach(msg => secEmb.addField("motion",msg,false));
         msgs.forEach(msg => embed.addField("motion",msg,false))

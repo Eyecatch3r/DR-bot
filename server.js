@@ -28,7 +28,7 @@ var MotionListChannel;
 
 
 clientdc.on('ready', () =>{
-  //db.run("DELETE FROM candidates");
+  //db.run("DELETE FROM candidates WHERE cID = null"); db.run("DELETE FROM Elections"); db.run("DELETE FROM CandidateElections");
   
 db.all('SELECT * FROM candidates', [], (err, rows) => {
   if (err) {

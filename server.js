@@ -102,7 +102,7 @@ function updateEmbedMessage(message)
         //message.channel.send(row.motion);
         if(message.guild.members.cache.get(row.creator) != undefined){
         let msg = row.motion+"\n"+"From:"+
-          message.guild.members.cache.get(row.creator).toString()+"\n"+"motion ID:"+row.mID+"\n"+"--------------------"+"\n";
+          message.guild.members.cache.get(row.creator).toString()+"\n"+"motion ID:"+row.mID+"\n\n";
           msgs.push(msg);
         }
         else {message.channel.send("im sorry but this is the wrong Server");}
@@ -114,8 +114,8 @@ function updateEmbedMessage(message)
         
       });
       if(msgs.length <= 25){
-      msgs.forEach(msg => embed.addField(msg))
-      message.guild.channels.cache.get("705136080105767004").messages.fetch({around: "705145698688958474", limit: 1}).then(messages => messages.first().edit(embed))
+      msgs.forEach(msg => embed.addField("motions",msg))
+      message.guild.channels.cache.get("705136080105767004").messages.fetch({around: "705898782935613501", limit: 1}).then(messages => messages.first().edit(embed))
       }else{ 
         if(msgs.length <= 25){
           
@@ -141,8 +141,9 @@ function updateEmbedMessage(message)
         
         args2.forEach(msg => secEmb.addField("motion",msg,false));
         msgs.forEach(msg => embed.addField("motion",msg,false))
-        message.channel.send(embed);
-        message.channel.send(secEmb);
+        message.guild.channels.cache.get("705136080105767004").messages.fetch({around: "705898782935613501", limit: 1}).then(messages => messages.first().edit(embed));
+        message.guild.channels.cache.get("705136080105767004").messages.fetch({around: "705898783757565995", limit: 1}).then(messages => messages.first().edit(secEmb));
+        
       }
       }
     });

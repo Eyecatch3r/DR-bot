@@ -23,16 +23,19 @@ const clientdc = new Discord.Client();
 clientdc.login(process.env.DISCORD_TOKEN);
 app.use(require("./guides"));
 
-var mainEmb = new Discord.MessageEmbed();
 var MotionListChannel;
 
 function updateEmbed()
 {
-  mainEmb.setTitle("Motions");
+  var mainEmb = new Discord.MessageEmbed();
+
+  
+    mainEmb.setTitle("Motions");
     mainEmb.setColor("0xcc0000");
     mainEmb.setFooter("Senate Meeting discussions powered by our most humble Imperator");
     mainEmb.setThumbnail("https://cdn.glitch.com/24cdd29f-170e-4ac8-9dc2-8abc1cbbaeaa%2Fimage0.png?v=1588186014686");
     mainEmb.setAuthor("𝐈𝐌𝐏𝐄𝐑𝐀𝐓𝐎𝐑·𝐏𝐕𝐁𝐋𝐈𝐕𝐒","https://cdn.glitch.com/24cdd29f-170e-4ac8-9dc2-8abc1cbbaeaa%2Fimageedit_1_3956664875.png?v=1588186424473");
+    mainEmb.setDescription("Motions to discuss in Senate meetings");
 
   let msgs = new Array;
         let sql2 = `SELECT * FROM Motions;`;
@@ -49,8 +52,20 @@ function updateEmbed()
         }
       });
       var output = "";
-      msgs.forEach(msg => output += msg)
-      mainEmb.setDescription(output);
+      if(msgs.length <= 25){
+      msgs.forEach(msg => mainEmb.addField(msg))
+      
+      }else{ 
+        var args2 = new Array();
+        for(var i = 0;i < msgs.length/2; i++){
+          args2.push(msgs[i]);
+          msgs.pop();
+        }
+          msgs.forEach(msg => mainEmb.addField(msg));
+        
+        var sec
+        
+      }
       //clientdc.channels.cache.get("705136080105767004").send(test);
       
       });

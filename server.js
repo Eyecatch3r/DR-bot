@@ -28,16 +28,7 @@ var MotionListChannel;
 
 
 clientdc.on('ready', () =>{
-  db.run("PRAGMA foreign_keys = 0; CREATE TABLE sqlitestudio_temp_table AS SELECT * FROM candidates; DROP TABLE candidates; CREATE TABLE candidates ( cID INTEGER PRIMARY KEY AUTOINCREMENT, DiscordID VARCHAR UNIQUE NOT NULL ); INSERT INTO candidates ( cID, DiscordID ) SELECT cID, DiscordID FROM sqlitestudio_temp_table; DROP TABLE sqlitestudio_temp_table; PRAGMA foreign_keys = 1;";
-  
-  db.run("PRAGMA foreign_keys = 0;CREATE TABLE sqlitestudio_temp_table AS SELECT * FROM Elections;"
-DROP TABLE Elections; CREATE TABLE Elections ( eID INTEGER PRIMARY KEY AUTOINCREMENT, Title VARCHAR NOT NULL, Month VARCHAR ); INSERT INTO Elections ( eID, Title, Month ) SELECT eID, Title, Month FROM sqlitestudio_temp_table; DROP TABLE sqlitestudio_temp_table; PRAGMA foreign_keys = 1;");
-
-db.run("PRAGMA foreign_keys = 0;CREATE TABLE sqlitestudio_temp_table AS SELECT * FROM CandidateElections; DROP TABLE CandidateElections; CREATE TABLE CandidateElections ( ceID INTEGER PRIMARY KEY AUTOINCREMENT, votes INT DEFAULT (0), candidate INT REFERENCES candidates (cID) ON DELETE CASCADE ON UPDATE CASCADE, Election INT REFERENCES Elections (eID) ON DELETE CASCADE ON UPDATE CASCADE );
-INSERT INTO CandidateElections ( ceID, votes, candidate, Election ) SELECT ceID, votes, candidate, Election FROM sqlitestudio_temp_table;
-DROP TABLE sqlitestudio_temp_table;
-PRAGMA foreign_keys = 1; ")
-  
+  //db.run("DELETE candidates FROM candidates JOIN CandidateElections ON cID = candidate; JOIN Elections ON Election = eID ")
   
 db.all('SELECT * FROM candidates', [], (err, rows) => {
   if (err) {

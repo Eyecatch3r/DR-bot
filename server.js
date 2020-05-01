@@ -58,7 +58,7 @@ db.all('SELECT * FROM candidates', [], (err, rows) => {
   rows.forEach(row => {
     console.log("eID \n"+row.eID);
     console.log("Title \n"+row.Title);
-    console.log("month \n"+row.month);
+    console.log("Month \n"+row.Month);
   });
 });
 

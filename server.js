@@ -28,7 +28,7 @@ var MotionListChannel;
 
 
 clientdc.on('ready', () =>{
-  //db.run("DELETE candidates FROM candidates JOIN CandidateElections ON cID = candidate; JOIN Elections ON Election = eID ")
+  //db.run("DELETE FROM candidates");
   
 db.all('SELECT * FROM candidates', [], (err, rows) => {
   if (err) {

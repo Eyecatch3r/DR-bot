@@ -352,17 +352,20 @@ clientdc.on("message", message => {
     embed.setFooter("Senate Meeting discussions powered by our most humble Imperator");
     
     embed.setAuthor("𝐈𝐌𝐏𝐄𝐑𝐀𝐓𝐎𝐑·𝐏𝐕𝐁𝐋𝐈𝐕𝐒","https://cdn.glitch.com/24cdd29f-170e-4ac8-9dc2-8abc1cbbaeaa%2Fimageedit_1_3956664875.png?v=1588186424473");
-    
+    let available = false;
     let sql2 = `SELECT * FROM Motions WHERE mID = `+args[1];
     db.all(sql2, [], (err, rows) => {
       if (err) {
         throw err;
       }
       rows.forEach(row => {
+        available = true;
         embed.addField("Motion in question",row.motion+"\n From:"+message.guild.members.cache.get(row.creator).toString(),true);
         console.log(row.motion);
       });
+       if(!available){embed.addField("Motion in question","no motion with such ID",false);}
       message.channel.send(embed);});
+   
     
   }
   

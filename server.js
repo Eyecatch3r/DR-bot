@@ -343,11 +343,35 @@ clientdc.on("message", message => {
   }
   if(message.content.toLowerCase() === command+"imperialtree"){message.channel.send("https://cdn.discordapp.com/attachments/630588104184430643/705349480559411261/unknown.png")}
   
+  if(message.content.toLowerCase().includes(command+"smotion"))
+  {
+    let embed = new Discord.MessageEmbed();
+        var args = message.content.split(" ");
+        embed.setTitle("Motion ID:"+args[1]);
+    embed.setColor("0xcc0000");
+    embed.setFooter("Senate Meeting discussions powered by our most humble Imperator");
+    
+    embed.setAuthor("𝐈𝐌𝐏𝐄𝐑𝐀𝐓𝐎𝐑·𝐏𝐕𝐁𝐋𝐈𝐕𝐒","https://cdn.glitch.com/24cdd29f-170e-4ac8-9dc2-8abc1cbbaeaa%2Fimageedit_1_3956664875.png?v=1588186424473");
+    
+    let sql2 = `SELECT * FROM Motions WHERE mID = `+args[1];
+    db.all(sql2, [], (err, rows) => {
+      if (err) {
+        throw err;
+      }
+      rows.forEach(row => {
+        embed.addField("Motion in question",row.motion,true);
+      });
+                   });
+    message.channel.send(embed);
+  }
+  
   if (message.content.toLowerCase() == command + "motions") {
     if(message.member.roles.cache.has('543783180130320385') || message.member.roles.cache.has("550392133991923738"))
       {
     
   let embed = new Discord.MessageEmbed();
+        
+        
         
         embed.setTitle("Motions");
     embed.setColor("0xcc0000");

@@ -360,9 +360,10 @@ clientdc.on("message", message => {
       }
       rows.forEach(row => {
         embed.addField("Motion in question",row.motion,true);
+        console.log(row.motion);
       });
-                   });
-    message.channel.send(embed);
+      message.channel.send(embed);});
+    
   }
   
   if (message.content.toLowerCase() == command + "motions") {

@@ -360,7 +360,7 @@ clientdc.on("message", message => {
       }
       rows.forEach(row => {
         available = true;
-        embed.addField("Motion in question",row.motion,true);
+        embed.addField("Motion in question",row.motion+"\n From:"+message.guild.members.cache.get(row.creator).toString(),true);
         console.log(row.motion);
         embed.setAuthor("𝐈𝐌𝐏𝐄𝐑𝐀𝐓𝐎𝐑·𝐏𝐕𝐁𝐋𝐈𝐕𝐒",clientdc.users.cache.get(row.creator).avatarURL());
       });

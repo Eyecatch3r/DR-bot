@@ -500,11 +500,14 @@ clientdc.on("message", message => {
     {
     
     db.all("DELETE FROM Motions",[],(err,rows) => {
-      if (err) {message.channel.send("wrong ID");}
+      if (err) {message.channel.send("sth went wrong");}
+      console.log("hh");
       message.channel.send("motions deleted");
+      updateEmbed(message);
     });
     }
     else {message.channel.send("you do not have the permission to delete a motion");}
+    
   }
 
   if (message.content.toLowerCase().includes(command + "addDate")) {

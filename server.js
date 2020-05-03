@@ -359,7 +359,7 @@ clientdc.on("message", message => {
         throw err;
       }
       rows.forEach(row => {
-        embed.addField("Motion in question",row.motion,true);
+        embed.addField("Motion in question",row.motion+"\n From:"+message.guild.members.cache.get(row.creator).toString(),true);
         console.log(row.motion);
       });
       message.channel.send(embed);});

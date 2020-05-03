@@ -495,15 +495,15 @@ clientdc.on("message", message => {
     else {message.channel.send("you do not have the permission to delete a motion");}
   }
   
-  if (message.content.toLowerCase().includes(command + "deleteAllMotions")) {
+  if (message.content.toLowerCase().includes(command + "deleteallmotions")) {
     if(message.member.roles.cache.has('649362430446796815') || message.member.roles.cache.has('565594839828398100') ||  message.member.roles.cache.has('514143501697679361') || message.member.roles.cache.has('546654987061821440'))
     {
     
-    db.run("DELETE FROM Motions")
-      
+    db.all("DELETE FROM Motions",[],(err,rows) => {
+      if (err) {message.channel.send("sth went wrong");}else
        message.channel.send("motions deleted");
       updateEmbedMessage(message);
-  
+    });
     }
     else {message.channel.send("you do not have the permission to delete a motion");}
     

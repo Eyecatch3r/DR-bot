@@ -573,7 +573,6 @@ clientdc.on("message", message => {
 clientdc.on("message", async message => {
   if (!message.author.bot && message.author.id != "241349696856129539") {
     if (
-      message.content.toLowerCase().includes("Istanbul") ||
       message.content.toLowerCase().includes("istanbul")
     ) {
       message.channel.send("its Constantinople smh");
@@ -585,10 +584,8 @@ clientdc.on("message", async message => {
     }
 
     if (
-      message.content.toLowerCase().includes("the General") ||
-      message.content.toLowerCase().includes("General") ||
-      message.content.toLowerCase().includes("general") ||
-      message.content.toLowerCase().includes("the general")
+      message.content.toLowerCase().includes("the general") ||
+      message.content.toLowerCase().includes("general")
     ) {
       message.channel.send("hail Apicius");
       message.react("640270832115122196");
@@ -610,14 +607,17 @@ clientdc.on("message", async message => {
     }
 
     if (
-      message.content.toLowerCase().includes("Imperator") ||
-      message.content.toLowerCase().includes("Emperor") ||
       message.content.toLowerCase().includes("imperator") ||
       message.content.toLowerCase().includes("emperor")
     ) {
+      var num = Math.random();
+      if(num <= 0.2)
+        {
       message.channel.send(
         "All hail the Imperator https://media.4teachers.de/images/thumbs/image_thumb.1146.jpg"
       );
+        }
+      else message.channel.send("All hail the Imperator https://cdn.discordapp.com/attachments/543787157127561216/706809950327799848/waaw.png");
       message.react("664229248944439301");
     }
   }

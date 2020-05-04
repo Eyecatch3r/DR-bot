@@ -611,7 +611,8 @@ clientdc.on("message", async message => {
       message.content.toLowerCase().includes("emperor")
     ) {
       var num = Math.random();
-      if(num <= 0.2)
+      console.log(num);
+      if(num <= 0.8)
         {
       message.channel.send(
         "All hail the Imperator https://media.4teachers.de/images/thumbs/image_thumb.1146.jpg"

@@ -302,10 +302,27 @@ function getRole(mention, server) {
 
 var command = process.env.Prefix;
 clientdc.on("message", message => {
+  let embed = new Discord.MessageEmbed();
+        
+        
+        
+        embed.setTitle("Motions");
+    embed.setColor("0xcc0000");
+    embed.setFooter("Senate Meeting discussions powered by our most humble Imperator");
+    embed.setThumbnail("https://cdn.glitch.com/24cdd29f-170e-4ac8-9dc2-8abc1cbbaeaa%2Fimage0.png?v=1588186014686");
+    embed.setAuthor("𝐈𝐌𝐏𝐄𝐑𝐀𝐓𝐎𝐑·𝐏𝐕𝐁𝐋𝐈𝐕𝐒","https://cdn.glitch.com/24cdd29f-170e-4ac8-9dc2-8abc1cbbaeaa%2Fimageedit_1_3956664875.png?v=1588186424473");
+  
   if(command.toLowerCase().includes(command+"election"))
     {
       let args = message.split(" ");
-      let sql = 'SELECT * FROM Election JOIN Candi';
+      let sql = 'SELECT * FROM Election JOIN CandidateElection ON eID = Election JOIN Candidate ON candidate = cID WHERE Title ='+args[1]+'AND Month = '+args[2];
+      
+      db.all(sql,[],(err,rows) => {
+        
+        
+        
+        
+      });
     }
   
   if(message.content.toLowerCase().includes(command+"prepare"))

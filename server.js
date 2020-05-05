@@ -335,7 +335,7 @@ clientdc.on("message", message => {
       let sql = 'SELECT * FROM Election JOIN CandidateElection ON eID = Election JOIN Candidate ON candidate = cID WHERE Title ='+args[1]+'AND Month = '+args[2];
       
       db.all(sql,[],(err,rows) => {
-        
+        if(err){throw err; message.channel.send("sth went wrong")}
         
         
         

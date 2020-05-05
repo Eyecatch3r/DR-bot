@@ -302,7 +302,7 @@ function getRole(mention, server) {
 
 function setRoleCollector(message,reactionEmoji)
 {
-  const filter = (reaction, user) => reaction.emoji.name === '🔴'; 
+  const filter = reaction => reaction.emoji.name === '🔴'; 
               m.react("🔴");
     const collector = message.createReactionCollector(filter, { max: 1000 });
 

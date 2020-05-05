@@ -302,6 +302,12 @@ function getRole(mention, server) {
 
 var command = process.env.Prefix;
 clientdc.on("message", message => {
+  if(command.toLowerCase().includes(command+"election"))
+    {
+      let args = message.split(" ");
+      
+    }
+  
   if(message.content.toLowerCase().includes(command+"prepare"))
     {
       let args = message.content.split(" ");

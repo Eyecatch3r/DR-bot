@@ -333,11 +333,11 @@ clientdc.on("message", message => {
       
       let args = message.split(" ");
       let sql = 'SELECT * FROM Election JOIN CandidateElection ON eID = Election JOIN Candidate ON candidate = cID WHERE Title ='+args[1]+'AND Month = '+args[2];
-      let can = new Array();
+      let col = new Array();
       db.all(sql,[],(err,rows) => {
         if(err){throw err; message.channel.send("sth went wrong")}
         for(i = 0; rows.length; i++){
-            can
+             col.push
           }
         
         

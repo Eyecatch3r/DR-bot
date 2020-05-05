@@ -300,7 +300,7 @@ function getRole(mention, server) {
   }
 }
 
-function setRoleCollector(message,reactionEmoji)
+/**function setRoleCollector(message,reactionEmoji)
 {
   const filter = reaction => reaction.emoji.name === '🔴'; 
               m.react("🔴");
@@ -313,7 +313,7 @@ function setRoleCollector(message,reactionEmoji)
     }
         
       
-}
+}**/
 
 var command = process.env.Prefix;
 clientdc.on("message", message => {

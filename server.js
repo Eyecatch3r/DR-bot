@@ -300,20 +300,37 @@ function getRole(mention, server) {
   }
 }
 
+function setRoleCollector(message,reactionEmoji)
+{
+  const filter = (reaction, user) => reaction.emoji.name === '🔴'; 
+              m.react("🔴");
+    const collector = message.createReactionCollector(filter, { max: 1000 });
+
+    collector.on('collect', (reaction,user) => {
+      if(!user.bot){
+      message.guild.members.cache.get(user.id).roles.add('703401102795604079');
+      }
+    }
+        
+      
+}
+
 var command = process.env.Prefix;
 clientdc.on("message", message => {
-  let embed = new Discord.MessageEmbed();
-        
-        
-        
-        embed.setTitle("Motions");
-    embed.setColor("0xcc0000");
-    embed.setFooter("Senate Meeting discussions powered by our most humble Imperator");
-    embed.setThumbnail("https://cdn.glitch.com/24cdd29f-170e-4ac8-9dc2-8abc1cbbaeaa%2Fimage0.png?v=1588186014686");
-    embed.setAuthor("𝐈𝐌𝐏𝐄𝐑𝐀𝐓𝐎𝐑·𝐏𝐕𝐁𝐋𝐈𝐕𝐒","https://cdn.glitch.com/24cdd29f-170e-4ac8-9dc2-8abc1cbbaeaa%2Fimageedit_1_3956664875.png?v=1588186424473");
+  
   
   if(command.toLowerCase().includes(command+"election"))
     {
+      let emb = new Discord.MessageEmbed();
+        
+        
+        
+        emb.setTitle(args[1]+"elections Month:"+args[2]);
+    emb.setColor("0x66023c");
+    emb.setFooter("Elections powered by our most humble Imperator");
+    emb.setThumbnail("https://cdn.glitch.com/24cdd29f-170e-4ac8-9dc2-8abc1cbbaeaa%2Fimage0.png?v=1588186014686");
+    emb.setAuthor("𝐈𝐌𝐏𝐄𝐑𝐀𝐓𝐎𝐑·𝐏𝐕𝐁𝐋𝐈𝐕𝐒","https://cdn.glitch.com/24cdd29f-170e-4ac8-9dc2-8abc1cbbaeaa%2Fimageedit_1_3956664875.png?v=1588186424473");
+      
       let args = message.split(" ");
       let sql = 'SELECT * FROM Election JOIN CandidateElection ON eID = Election JOIN Candidate ON candidate = cID WHERE Title ='+args[1]+'AND Month = '+args[2];
       

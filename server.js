@@ -337,7 +337,7 @@ clientdc.on("message", message => {
       db.all(sql,[],(err,rows) => {
         if(err){throw err; message.channel.send("sth went wrong")}
         for(i = 0; rows.length; i++){
-             col.push(message.createReactionCollector("regional_indicator_"+lett[i]));
+             col.push(message.createReactionCollector("regional_indicator_"+lett[i],{ time:3600000}));
           }
         col.forEach(collector => {
           collector.on('collect', (reaction,user) => {

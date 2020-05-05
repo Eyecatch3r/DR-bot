@@ -322,7 +322,7 @@ clientdc.on("message", message => {
   if(command.toLowerCase().includes(command+"election"))
     {
       let emb = new Discord.MessageEmbed();
-        
+        var lett = ["a", "b", "c", "d", "e", "f", "g", "h", "i", "j", "k", "l", "m", "n", "o", "p", "q", "r", "s", "t", "u", "v", "w", "x", "y", "z"];
         
         
         emb.setTitle(args[1]+"elections Month:"+args[2]);
@@ -333,10 +333,12 @@ clientdc.on("message", message => {
       
       let args = message.split(" ");
       let sql = 'SELECT * FROM Election JOIN CandidateElection ON eID = Election JOIN Candidate ON candidate = cID WHERE Title ='+args[1]+'AND Month = '+args[2];
-      
+      let can = new Array();
       db.all(sql,[],(err,rows) => {
         if(err){throw err; message.channel.send("sth went wrong")}
-        
+        for(i = 0; rows.length; i++){
+            can
+          }
         
         
       });

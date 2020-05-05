@@ -305,7 +305,7 @@ clientdc.on("message", message => {
   if(command.toLowerCase().includes(command+"election"))
     {
       let args = message.split(" ");
-      
+      let sql = 'SELECT * FROM Election JOIN Candi';
     }
   
   if(message.content.toLowerCase().includes(command+"prepare"))

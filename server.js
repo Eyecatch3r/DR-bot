@@ -332,18 +332,18 @@ clientdc.on("message", message => {
     emb.setThumbnail("https://cdn.glitch.com/24cdd29f-170e-4ac8-9dc2-8abc1cbbaeaa%2Fimage0.png?v=1588186014686");
     emb.setAuthor("𝐈𝐌𝐏𝐄𝐑𝐀𝐓𝐎𝐑·𝐏𝐕𝐁𝐋𝐈𝐕𝐒","https://cdn.glitch.com/24cdd29f-170e-4ac8-9dc2-8abc1cbbaeaa%2Fimageedit_1_3956664875.png?v=1588186424473");
       
-     let id = message.channel.send(emb).then(m => { m.id});
+      
       let sql = 'SELECT * FROM Elections JOIN CandidateElections ON eID = Election JOIN Candidates ON candidate = cID WHERE Title = "'+args[1]+'" AND Month = "'+args[2]+'"';
       let col = new Array();
      db.all(sql,[],(err,rows) => {
         
         if(err){throw err; message.channel.send("sth went wrong")}
-        
+        message.channel.send(emb).then(m => {
+          m.react("🔴");
+        for(i = 0; i < rows.length; i++){
+             col.push(m.createReactionCollector("regional_indicator_"+lett[i],{ time:3600000}));
           
-        for(i = 0; i <= rows.length; i++){
-             col.push(message.channel.messages.cache.get(id).createReactionCollector("regional_indicator_"+lett[i],{ time:3600000}));
-          
-            message.channel.messages.cache.get(id).react("regional_indicator_"+lett[i]);
+            m.react("🔴");
           }
         col.forEach(collector => {
           collector.on('collect', (reaction,user) => {
@@ -353,7 +353,7 @@ clientdc.on("message", message => {
             
           });
       });
-       
+        });
         
         
       });

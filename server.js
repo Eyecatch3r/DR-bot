@@ -326,22 +326,23 @@ clientdc.on("message", message => {
         var lett = ["a", "b", "c", "d", "e", "f", "g", "h", "i", "j", "k", "l", "m", "n", "o", "p", "q", "r", "s", "t", "u", "v", "w", "x", "y", "z"];
         
         
-        emb.setTitle(args[1]+"elections from:"+args[2]);
+        emb.setTitle(args[1]+" elections from: "+args[2]);
     emb.setColor("0x66023c");
     emb.setFooter("Elections powered by our most humble Imperator");
     emb.setThumbnail("https://cdn.glitch.com/24cdd29f-170e-4ac8-9dc2-8abc1cbbaeaa%2Fimage0.png?v=1588186014686");
     emb.setAuthor("𝐈𝐌𝐏𝐄𝐑𝐀𝐓𝐎𝐑·𝐏𝐕𝐁𝐋𝐈𝐕𝐒","https://cdn.glitch.com/24cdd29f-170e-4ac8-9dc2-8abc1cbbaeaa%2Fimageedit_1_3956664875.png?v=1588186424473");
       
       
-      let sql = 'SELECT * FROM Elections JOIN CandidateElections ON eID = Election JOIN Candidates ON candidate = cID WHERE Title ='+args[1]+' AND Month = '+args[2];
+      let sql = 'SELECT * FROM Elections JOIN CandidateElections ON eID = Election JOIN Candidates ON candidate = cID WHERE Title = "'+args[1]+'" AND Month = "'+args[2]+'"';
       let col = new Array();
       db.all(sql,[],(err,rows) => {
         
         if(err){throw err; message.channel.send("sth went wrong")}
         message.channel.send(emb).then(m => {
+          console.log(rows[0]);
         for(i = 0; rows.length; i++){
              col.push(m.createReactionCollector("regional_indicator_"+lett[i],{ time:3600000}));
-            m.react("regional_indicator_"+lett[i]);
+            m.react("🔴");
           }
         col.forEach(collector => {
           collector.on('collect', (reaction,user) => {

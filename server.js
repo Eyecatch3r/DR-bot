@@ -688,6 +688,15 @@ clientdc.on("message", async message => {
       else message.channel.send("All hail the Imperator https://cdn.discordapp.com/attachments/543787157127561216/706809950327799848/waaw.png");
       message.react("664229248944439301");
     }
+    if (
+      message.content.toLowerCase().includes("imperatrix") ||
+      message.content.toLowerCase().includes("empress")
+    ) {
+      
+       message.channel.send("All hail the Empress https://pbs.twimg.com/profile_images/837236794387234816/megbmYw2_400x400.jpg");
+      message.react("");
+    }
+    
   }
 });
 

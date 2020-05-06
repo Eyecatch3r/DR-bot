@@ -325,7 +325,7 @@ clientdc.on("message", message => {
         var lett = ["a", "b", "c", "d", "e", "f", "g", "h", "i", "j", "k", "l", "m", "n", "o", "p", "q", "r", "s", "t", "u", "v", "w", "x", "y", "z"];
         
         
-        emb.setTitle(args[1]+"elections Month:"+args[2]);
+        emb.setTitle(args[1]+"elections from:"+args[2]);
     emb.setColor("0x66023c");
     emb.setFooter("Elections powered by our most humble Imperator");
     emb.setThumbnail("https://cdn.glitch.com/24cdd29f-170e-4ac8-9dc2-8abc1cbbaeaa%2Fimage0.png?v=1588186014686");

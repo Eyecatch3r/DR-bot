@@ -335,10 +335,11 @@ clientdc.on("message", message => {
       
       let sql = 'SELECT * FROM Elections JOIN CandidateElections ON eID = Election JOIN Candidates ON candidate = cID WHERE Title = "'+args[1]+'" AND Month = "'+args[2]+'"';
       let col = new Array();
-     db.all(sql,[],(err,rows) => {
+     db.all(sql,[], (err,rows) => {
         
         if(err){throw err; message.channel.send("sth went wrong")}
-       rows.forEach(row => {col.push(message.guild.members.cache.get(row.cID).toString()+"\n votes: "+row.votes)});
+      rows.forEach(row => {col.push(message.guild.members.cache.get(row.cID).toString()+"\n votes: "+row.votes)});
+       console.log(col[0]);
        col.forEach(r => emb.addField("Candidate",r,true));
         message.channel.send(emb).then(m => {
           

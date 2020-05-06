@@ -340,6 +340,8 @@ clientdc.on("message", message => {
         if(err){throw err; message.channel.send("sth went wrong")}
         message.channel.send(emb).then(m => {
           
+          rows.forEach(row => emb.addField("Candidate",message.guild.members.cache.get(row.cID).toString()+"\n votes: "+row.votes),true);
+          m.edit(emb);
           let filter = (reaction => lett.includes(reaction.emoji.name));
         for(i = 0; i <= rows.length; i++){
           

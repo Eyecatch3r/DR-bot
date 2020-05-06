@@ -316,7 +316,7 @@ function getRole(mention, server) {
 }**/
 
 var command = process.env.Prefix;
-clientdc.on("message", message => {
+clientdc.on("message",  message => {
   
   
   if(message.content.toLowerCase().includes(command+"election"))
@@ -348,11 +348,12 @@ clientdc.on("message", message => {
         for(i = 0; i <= rows.length; i++){
           
              
-          m.react(lett[i]);
+          ch.react(lett[i]);
             
           }
-          m.edit(emb);
-       let collector =  m.createReactionCollector(filter,{ time:3600000});
+         
+          
+       let collector =  ch.createReactionCollector(filter,{ time:3600000});
           
         
           collector.on('collect', (reaction,user) => {
@@ -363,10 +364,10 @@ clientdc.on("message", message => {
         
       });
         });
-        
+         
         
       });
-      
+     
     }
   
   if(message.content.toLowerCase().includes(command+"prepare"))

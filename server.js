@@ -336,12 +336,12 @@ clientdc.on("message", message => {
       let sql = 'SELECT * FROM Elections JOIN CandidateElections ON eID = Election JOIN Candidates ON candidate = cID WHERE Title = "'+args[1]+'" AND Month = "'+args[2]+'"';
       let col = new Array();
      db.all(sql,[],(err,rows) => {
-        
+        emb.addFields(new EmbedFieldData())
         if(err){throw err; message.channel.send("sth went wrong")}
         message.channel.send(emb).then(m => {
           
           
-         for(i = 0; i <= rows.length; i++){emb.addField("Candidate",message.guild.members.cache.get(rows[i].cID).toString()+"\n votes: "+rows[i].votes,true);}
+         for(i = 0; i <= rows.length; i++){}
           let filter = (reaction => lett.includes(reaction.emoji.name));
         for(i = 0; i <= rows.length; i++){
           

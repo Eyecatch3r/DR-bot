@@ -340,21 +340,22 @@ clientdc.on("message", message => {
         if(err){throw err; message.channel.send("sth went wrong")}
         message.channel.send(emb).then(m => {
           
-          let filter = (reaction) => {
-	return reaction.emoji.name === '👌'};
+          let filter;
         for(i = 0; i <= rows.length; i++){
-          filter = reaction => reaction.emoji.name === lett[i];
-             col.push(m.createReactionCollector(filter,{ time:3600000}));
+          filter += reaction => reaction.emoji.name === lett[i];
+             
           m.react(lett[i]);
             
           }
-        col.forEach(collector => {
+       let collector =  m.createReactionCollector(filter,{ time:3600000});
+          
+        
           collector.on('collect', (reaction,user) => {
             if(!user.bot){
               reaction.remove();              
             }
             
-          });
+        
       });
         });
         

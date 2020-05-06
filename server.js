@@ -340,9 +340,9 @@ clientdc.on("message", message => {
         if(err){throw err; message.channel.send("sth went wrong")}
         message.channel.send(emb).then(m => {
           
-          let filter;
+          let filter = (reaction => lett.includes(reaction.emoji.name));
         for(i = 0; i <= rows.length; i++){
-          filter += reaction => reaction.emoji.name === lett[i];
+          
              
           m.react(lett[i]);
             

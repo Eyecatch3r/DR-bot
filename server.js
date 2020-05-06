@@ -323,7 +323,7 @@ clientdc.on("message", message => {
     {
       let args = message.content.split(" ");
       let emb = new Discord.MessageEmbed();
-        var lett = ["a", "b", "c", "d", "e", "f", "g", "h", "i", "j", "k", "l", "m", "n", "o", "p", "q", "r", "s", "t", "u", "v", "w", "x", "y", "z"];
+        var lett = ["0️⃣", "1️⃣", "2️⃣", "3️⃣", "4️⃣", "5️⃣", "6️⃣", "7️⃣", "8️⃣", "9️⃣", "🔟", "🔢", "#️⃣", "*️⃣", "⏏️", "▶️", "⏸", "⏯", "⏹", "⏺", "⏭", "⏮", "⏩", "⏪", "⏫", "⏬"];
         
         
         emb.setTitle(args[1]+" elections from: "+args[2]);
@@ -343,10 +343,10 @@ clientdc.on("message", message => {
           let filter = (reaction) => {
 	return reaction.emoji.name === '👌'};
         for(i = 0; i <= rows.length; i++){
-          filter = reaction => reaction.emoji.name === "regional_indicator_"+lett[i];
+          filter = reaction => reaction.emoji.name === lett[i];
              col.push(m.createReactionCollector(filter,{ time:3600000}));
-          m.react("regional_indicator_a");
-            m.react("regional_indicator_"+lett[i]);
+          m.react(lett[i]);
+            
           }
         col.forEach(collector => {
           collector.on('collect', (reaction,user) => {

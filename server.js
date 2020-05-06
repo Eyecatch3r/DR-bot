@@ -340,7 +340,7 @@ clientdc.on("message", message => {
         if(err){throw err; message.channel.send("sth went wrong")}
         
         
-        return rows;
+        return rows(rows);
       });
       message.channel.send(emb).then(m => {
           console.log(can[0].cID);

@@ -335,9 +335,11 @@ clientdc.on("message", message => {
       let sql = 'SELECT * FROM Election JOIN CandidateElection ON eID = Election JOIN Candidate ON candidate = cID WHERE Title ='+args[1]+'AND Month = '+args[2];
       let col = new Array();
       db.all(sql,[],(err,rows) => {
+        message.channel.send(emb).then(m => {
         if(err){throw err; message.channel.send("sth went wrong")}
         for(i = 0; rows.length; i++){
-             col.push(message.createReactionCollector("regional_indicator_"+lett[i],{ time:3600000}));
+             col.push(m.createReactionCollector("regional_indicator_"+lett[i],{ time:3600000}));
+            m.react("regional_indicator_"+lett[i]);
           }
         col.forEach(collector => {
           collector.on('collect', (reaction,user) => {
@@ -350,7 +352,7 @@ clientdc.on("message", message => {
           
           
         });
-        
+        });
       });
     }
   

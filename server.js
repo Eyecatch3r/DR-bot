@@ -340,8 +340,8 @@ clientdc.on("message", message => {
         if(err){throw err; message.channel.send("sth went wrong")}
         message.channel.send(emb).then(m => {
           
-          rows.forEach(row => emb.addField("Candidate",message.guild.members.cache.get(row.cID).toString()+"\n votes: "+row.votes),true);
-          m.edit(emb);
+          
+         for(i = 0; i <= rows.length; i++){emb.addField("Candidate",message.guild.members.cache.get(rows[i].cID).toString()+"\n votes: "+rows[i].votes,true);}
           let filter = (reaction => lett.includes(reaction.emoji.name));
         for(i = 0; i <= rows.length; i++){
           
@@ -349,6 +349,7 @@ clientdc.on("message", message => {
           m.react(lett[i]);
             
           }
+          m.edit(emb);
        let collector =  m.createReactionCollector(filter,{ time:3600000});
           
         

@@ -478,7 +478,7 @@ clientdc.on("message", message => {
     secEmb.setThumbnail("https://cdn.glitch.com/24cdd29f-170e-4ac8-9dc2-8abc1cbbaeaa%2Fimage0.png?v=1588186014686");
     secEmb.setAuthor("𝐈𝐌𝐏𝐄𝐑𝐀𝐓𝐎𝐑·𝐏𝐕𝐁𝐋𝐈𝐕𝐒","https://cdn.glitch.com/24cdd29f-170e-4ac8-9dc2-8abc1cbbaeaa%2Fimageedit_1_3956664875.png?v=1588186424473");
     secEmb.setDescription("Motions to discuss in Senate meetings");
-      
+     
       if(msgs.length <= 25){
           
       msgs.forEach(msg => embed.addField("motion",msg,false))
@@ -547,7 +547,7 @@ clientdc.on("message", message => {
   };
            
 
-  if (message.content.includes(command + "deleteMotion")) {
+  if (message.content.includes(command + "deletemotion")) {
     if(message.member.roles.cache.has('649362430446796815') || message.member.roles.cache.has('565594839828398100') ||  message.member.roles.cache.has('514143501697679361') || message.member.roles.cache.has('546654987061821440'))
     {
     var args = message.content.split(" ");
@@ -577,7 +577,7 @@ clientdc.on("message", message => {
     
   }
 
-  if (message.content.toLowerCase().includes(command + "addDate")) {
+  if (message.content.toLowerCase().includes(command + "adddate")) {
     let args = message.content.split(" ");
 
     console.log(args[1]);
@@ -609,7 +609,7 @@ clientdc.on("message", message => {
       message.channel.send("Date added succesfully");
     }
   }
-  if (message.content.toLowerCase().includes(command + "deleteDate")) {
+  if (message.content.toLowerCase().includes(command + "deletedate")) {
     var id = message.mentions.users.first().id;
     let add = "DELETE FROM Birthdates WHERE DiscordID =" + id + ";";
     if (id != null) {
@@ -617,7 +617,7 @@ clientdc.on("message", message => {
       message.channel.send("Date removed succesfully");
     }
   }
-  if (message.content.toLowerCase().includes(command + "addRoles")) {
+  if (message.content.toLowerCase().includes(command + "addroles")) {
     let args = message.content.split(" ");
     let role = getRole(args[1], message.guild.id);
     let ment = new Array();

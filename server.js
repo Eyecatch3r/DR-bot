@@ -339,8 +339,8 @@ clientdc.on("message", message => {
         
         if(err){throw err; message.channel.send("sth went wrong")}
       rows.forEach(row => {emb.addField("Candidate",message.guild.members.cache.get(row.cID).toString()+"\n votes: "+row.votes,true)});
-      
-        message.channel.send(emb).then(m => {
+      //message.guild.members.cache.get(row.cID).toString()+"\n votes: "+row.votes
+       let ch = message.channel.send(emb).then(m => {
           
           
          for(i = 0; i <= rows.length; i++){}

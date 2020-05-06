@@ -338,8 +338,9 @@ clientdc.on("message", message => {
       db.all(sql,[],(err,rows) => {
         
         if(err){throw err; message.channel.send("sth went wrong")}
+        rows.forEach(row => console.log(row.cID))
         message.channel.send(emb).then(m => {
-          console.log(rows[0]);
+          console.log(rows[0].cID);
         for(i = 0; rows.length; i++){
              col.push(m.createReactionCollector("regional_indicator_"+lett[i],{ time:3600000}));
             m.react("🔴");

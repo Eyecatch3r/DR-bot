@@ -357,7 +357,7 @@ clientdc.on("message",  message => {
         
           collector.on('collect', (reaction,user) => {
             if(!user.bot){
-              reaction.remove();          
+              m.edit(emb);          
             }
             
         

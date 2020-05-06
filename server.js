@@ -340,7 +340,7 @@ clientdc.on("message", message => {
         if(err){throw err; message.channel.send("sth went wrong")}
         message.channel.send(emb).then(m => {
           m.react("🔴");
-        for(i = 0; i < rows.length; i++){
+        for(i = 0; i <= rows.length; i++){
              col.push(m.createReactionCollector("regional_indicator_"+lett[i],{ time:3600000}));
           
             m.react("🔴");

@@ -694,7 +694,7 @@ clientdc.on("message", async message => {
     ) {
       
        message.channel.send("All hail the Empress https://pbs.twimg.com/profile_images/837236794387234816/megbmYw2_400x400.jpg");
-      message.react("");
+      message.react("636456201273475113");
     }
     
   }

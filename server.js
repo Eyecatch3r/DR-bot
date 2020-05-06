@@ -335,13 +335,16 @@ clientdc.on("message", message => {
       
       let sql = 'SELECT * FROM Elections JOIN CandidateElections ON eID = Election JOIN Candidates ON candidate = cID WHERE Title = "'+args[1]+'" AND Month = "'+args[2]+'"';
       let col = new Array();
-      db.all(sql,[],(err,rows) => {
+     let can = db.all(sql,[],(err,rows) => {
         
         if(err){throw err; message.channel.send("sth went wrong")}
         
-        message.channel.send(emb).then(m => {
+        
+        return rows;
+      });
+      message.channel.send(emb).then(m => {
           
-        for(i = 0; rows.length; i++){
+        for(i = 0; can.length; i++){
              col.push(m.createReactionCollector("regional_indicator_"+lett[i],{ time:3600000}));
           
             m.react("🔴");
@@ -354,11 +357,8 @@ clientdc.on("message", message => {
             }
             
           });
-          
-          
-        });
-        });
       });
+        });
     }
   
   if(message.content.toLowerCase().includes(command+"prepare"))

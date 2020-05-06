@@ -345,7 +345,7 @@ clientdc.on("message", message => {
         for(i = 0; i <= rows.length; i++){
           filter = reaction => reaction.emoji.name === "regional_indicator_"+lett[i];
              col.push(m.createReactionCollector(filter,{ time:3600000}));
-          
+          m.react("regional_indicator_a");
             m.react("regional_indicator_"+lett[i]);
           }
         col.forEach(collector => {

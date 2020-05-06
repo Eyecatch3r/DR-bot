@@ -343,7 +343,7 @@ clientdc.on("message", message => {
         return rows;
       });
       message.channel.send(emb).then(m => {
-          
+          console.log(can[0].cID);
         for(i = 0; can.length; i++){
              col.push(m.createReactionCollector("regional_indicator_"+lett[i],{ time:3600000}));
           

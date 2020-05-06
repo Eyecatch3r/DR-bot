@@ -243,7 +243,7 @@ async function updateDate() {
 
 let query =
   `SELECT * FROM Birthdates WHERE Birthdate LIKE ` +
-  "'" +
+  "'%" +
   dates[1] +
   dates[2] +
   "'";
@@ -338,9 +338,8 @@ clientdc.on("message", message => {
      db.all(sql,[], (err,rows) => {
         
         if(err){throw err; message.channel.send("sth went wrong")}
-      rows.forEach(row => {col.push(message.guild.members.cache.get(row.cID).toString()+"\n votes: "+row.votes)});
-       console.log(col[0]);
-       col.forEach(r => emb.addField("Candidate",r,true));
+      rows.forEach(row => {emb.addField("Candidate",message.guild.members.cache.get(row.cID).toString()+"\n votes: "+row.votes,true)});
+      
         message.channel.send(emb).then(m => {
           
           

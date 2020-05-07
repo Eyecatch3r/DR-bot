@@ -341,6 +341,7 @@ clientdc.on("message",  message => {
         if(err){throw err; message.channel.send("sth went wrong")}
       
       //message.guild.members.cache.get(row.cID).toString()+"\n votes: "+row.votes
+       rows.forEach(row => {emb.addField("Candidate",message.guild.members.cache.get(row.cID).toString()+"\n votes: "+row.votes,true)
        message.channel.send(emb).then(m => {
           
           
@@ -358,19 +359,19 @@ clientdc.on("message",  message => {
         
           collector.on('collect', (reaction,user) => {
             if(!user.bot){
-             for(const row of rows){emb.addField("Candidate",)}
+            
                           
-                          });
-              //m.edit(emb);          
+                          
+              m.edit(emb);          
             }
             
         
       });
         });
-         
+         });
         
       });
-     
+     db.all(sql,[], (err,rows) => {rows.forEach(row => message.channel.send("t"))});
     }
   
   if(message.content.toLowerCase().includes(command+"prepare"))

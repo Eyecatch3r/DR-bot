@@ -383,13 +383,14 @@ clientdc.on("message",  message => {
       console.log(rows.length);
       //message.guild.members.cache.get(row.cID).toString()+"\n votes: "+row.votes
        rows.forEach(row => {
-         message.channel.send(row.DiscordID);
-         //emb.addField("Candidate",message.guild.members.cache.get(row.DiscordID).toString()+"\n votes: "+row.votes,true)});
+         
+         //emb.addField("Candidate",message.guild.members.cache.get(row.DiscordID).toString()+"\n votes: "+row.votes,true)
+       });
        message.channel.send(emb).then(m => {
           
           
           let filter = (reaction => lett.includes(reaction.emoji.name));
-        for(i = 0; i <= rows.length; i++){
+        for(i = 0; i < rows.length; i++){
           
              
           m.react(lett[i]);

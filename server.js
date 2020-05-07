@@ -318,7 +318,12 @@ function getRole(mention, server) {
 
 var command = process.env.Prefix;
 clientdc.on("message",  message => {
-  
+  if(message.content === command+"clearDB"){
+  db.run("DELETE FROM candidates"); 
+  db.run("DELETE FROM Elections"); 
+  db.run("DELETE FROM CandidateElections");
+    message.channel.send("all right");
+  }
   
   if(message.content.toLowerCase().includes(command+"election"))
     {

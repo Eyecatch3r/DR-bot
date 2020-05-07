@@ -474,7 +474,7 @@ for (i = 0; i < rows.length; i++) {
                 rows.forEach(row => {
                   if (can[i] == row.DiscordID) {
                     db.run(
-                      "UPDATE CandidateElections SET votes = votes+1 WHERE candidate =" +
+                      "UPDATE CandidateElections SET votes = votes+1 WHERE candidate IN (SELECT cID FROM candidates WHERE DiscordID = )" +
                         row.DiscordID
                     );
                   }
@@ -493,7 +493,7 @@ for (i = 0; i < rows.length; i++) {
                   "Candidate",
                   lett[i] +
                     message.guild.members.cache.get(result.DiscordID).toString() +
-                    "\n votest: " +
+                    "\n votes: " +
                     result.votes,
                   true
                 );

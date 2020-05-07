@@ -477,7 +477,7 @@ for (i = 0; i < rows.length; i++) {
                       "UPDATE CandidateElections SET votes = votes+1 WHERE candidate =" +
                         row.DiscordID
                     );
-                  message.channel.send("we");}
+                  }
                 });
               
               let emb2 = new Discord.MessageEmbed();
@@ -487,16 +487,18 @@ for (i = 0; i < rows.length; i++) {
     emb2.setThumbnail("https://cdn.glitch.com/24cdd29f-170e-4ac8-9dc2-8abc1cbbaeaa%2Fimage0.png?v=1588186014686");
     emb2.setAuthor("𝐈𝐌𝐏𝐄𝐑𝐀𝐓𝐎𝐑·𝐏𝐕𝐁𝐋𝐈𝐕𝐒","https://cdn.glitch.com/24cdd29f-170e-4ac8-9dc2-8abc1cbbaeaa%2Fimageedit_1_3956664875.png?v=1588186424473");
 
-              db.each('SELECT * FROM Elections JOIN CandidateElections ON eID = Election JOIN Candidates ON candidate = cID WHERE Title = "' +args[1] +'" AND Month = "' +args[2] +'"',[],result => {
-              
+              db.all('SELECT * FROM Elections JOIN CandidateElections ON eID = Election JOIN Candidates ON candidate = cID WHERE Title = "' +args[1] +'" AND Month = "' +args[2] +'"',[],(err,results) => {
+              results.forEach(result =>{
                 emb2.addField(
                   "Candidate",
                   lett[i] +
                     message.guild.members.cache.get(result.DiscordID).toString() +
-                    "\n votes: " +
+                    "\n votest: " +
                     result.votes,
                   true
                 );
+                });
+                message.channel.send("we");
                 m.edit(emb2);
               });
               

@@ -382,7 +382,9 @@ clientdc.on("message",  message => {
         if(err){throw err; message.channel.send("sth went wrong")}
       console.log(rows.length);
       //message.guild.members.cache.get(row.cID).toString()+"\n votes: "+row.votes
-       rows.forEach(row => {emb.addField("Candidate",message.guild.members.cache.get(row.cID).toString()+"\n votes: "+row.votes,true)});
+       rows.forEach(row => {
+         message.channel.send(row.DiscordID);
+         emb.addField("Candidate",message.guild.members.cache.get(row.DiscordID).toString()+"\n votes: "+row.votes,true)});
        message.channel.send(emb).then(m => {
           
           

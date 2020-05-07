@@ -25,178 +25,207 @@ app.use(require("./guides"));
 
 var MotionListChannel;
 
-function updateEmbed()
-{
+function updateEmbed() {
   var mainEmb = new Discord.MessageEmbed();
 
-  
-    mainEmb.setTitle("Motions");
-    mainEmb.setColor("0xcc0000");
-    mainEmb.setFooter("Senate Meeting discussions powered by our most humble Imperator");
-    mainEmb.setThumbnail("https://cdn.glitch.com/24cdd29f-170e-4ac8-9dc2-8abc1cbbaeaa%2Fimage0.png?v=1588186014686");
-    mainEmb.setAuthor("𝐈𝐌𝐏𝐄𝐑𝐀𝐓𝐎𝐑·𝐏𝐕𝐁𝐋𝐈𝐕𝐒","https://cdn.glitch.com/24cdd29f-170e-4ac8-9dc2-8abc1cbbaeaa%2Fimageedit_1_3956664875.png?v=1588186424473");
-    mainEmb.setDescription("Motions to discuss in Senate meetings");
+  mainEmb.setTitle("Motions");
+  mainEmb.setColor("0xcc0000");
+  mainEmb.setFooter(
+    "Senate Meeting discussions powered by our most humble Imperator"
+  );
+  mainEmb.setThumbnail(
+    "https://cdn.glitch.com/24cdd29f-170e-4ac8-9dc2-8abc1cbbaeaa%2Fimage0.png?v=1588186014686"
+  );
+  mainEmb.setAuthor(
+    "𝐈𝐌𝐏𝐄𝐑𝐀𝐓𝐎𝐑·𝐏𝐕𝐁𝐋𝐈𝐕𝐒",
+    "https://cdn.glitch.com/24cdd29f-170e-4ac8-9dc2-8abc1cbbaeaa%2Fimageedit_1_3956664875.png?v=1588186424473"
+  );
+  mainEmb.setDescription("Motions to discuss in Senate meetings");
 
-  let msgs = new Array;
-        let sql2 = `SELECT * FROM Motions;`;
-    db.all(sql2, [], (err, rows) => {
-      if (err) {
-        throw err;
-      }
-      rows.forEach(row => {
-        //message.channel.send(row.motion);
-        if(clientdc.users.cache.get(row.creator) != undefined){
-        let msg = row.motion+"\n"+"From:"+
-          clientdc.users.cache.get(row.creator).toString()+"\n"+"motion ID:"+row.mID+"\n"+"--------------------"+"\n";
-          msgs.push(msg);
-        }
-      });
-      
-      if(msgs.length <= 25){
-      msgs.forEach(msg => mainEmb.addField(msg))
-      
-      }else{ 
-        var args2 = new Array();
-        for(var i = 0;i < msgs.length/2; i++){
-          args2.push(msgs[i]);
-          msgs.pop();
-        }
-          msgs.forEach(msg => mainEmb.addField(msg));
-        
-        var secEmb = new Discord.MessageEmbed();
-        
-        secEmb.setTitle("Motions");
-    secEmb.setColor("0xcc0000");
-    secEmb.setFooter("Senate Meeting discussions powered by our most humble Imperator");
-    secEmb.setThumbnail("https://cdn.glitch.com/24cdd29f-170e-4ac8-9dc2-8abc1cbbaeaa%2Fimage0.png?v=1588186014686");
-    secEmb.setAuthor("𝐈𝐌𝐏𝐄𝐑𝐀𝐓𝐎𝐑·𝐏𝐕𝐁𝐋𝐈𝐕𝐒","https://cdn.glitch.com/24cdd29f-170e-4ac8-9dc2-8abc1cbbaeaa%2Fimageedit_1_3956664875.png?v=1588186424473");
-    secEmb.setDescription("Motions to discuss in Senate meetings");
-        
-        args2.forEach(msg => secEmb.addField(msg));
-        
-      }
-      //clientdc.channels.cache.get("705136080105767004").send(test);
-      
-      });
-  
-}
-
-
-function updateEmbedMessage(message)
-{
-  let embed = new Discord.MessageEmbed();
-        
-        embed.setTitle("Motions");
-    embed.setColor("0xcc0000");
-    embed.setFooter("Senate Meeting discussions powered by our most humble Imperator");
-    embed.setThumbnail("https://cdn.glitch.com/24cdd29f-170e-4ac8-9dc2-8abc1cbbaeaa%2Fimage0.png?v=1588186014686");
-    embed.setAuthor("𝐈𝐌𝐏𝐄𝐑𝐀𝐓𝐎𝐑·𝐏𝐕𝐁𝐋𝐈𝐕𝐒","https://cdn.glitch.com/24cdd29f-170e-4ac8-9dc2-8abc1cbbaeaa%2Fimageedit_1_3956664875.png?v=1588186424473");
-              
-             let msgs = new Array;
-        let sql2 = `SELECT * FROM Motions;`;
-    db.all(sql2, [], (err, rows) => {
-      if (err) {
-        throw err;
-      }
-      rows.forEach(row => {
-        //message.channel.send(row.motion);
-        if(message.guild.members.cache.get(row.creator) != undefined){
-        let msg = row.motion+"\n"+"From:"+
-          message.guild.members.cache.get(row.creator).toString()+"\n"+"motion ID:"+row.mID+"\n\n";
-          msgs.push(msg);
-        }
-        else {message.channel.send("im sorry but this is the wrong Server");}
-        
-        //message.channel.send(row.mID);
-        
-        
-        
-        
-      });
-      if(msgs.length <= 25){
-      msgs.forEach(msg => embed.addField("motions",msg))
-      message.guild.channels.cache.get("705136080105767004").messages.fetch({around: "705898782935613501", limit: 1}).then(messages => messages.first().edit(embed))
-      }else{ 
-        if(msgs.length <= 25){
-          
-      msgs.forEach(msg => embed.addField("motion",msg,false))
-      message.channel.send(embed);
-          
-      }else{ 
-        var args2 = new Array();
-        for(var i = msgs.length;i > msgs.length/2; i--){
-          args2.push(msgs[i]);
-          msgs.pop();
-        }
-          
-        
-        var secEmb = new Discord.MessageEmbed();
-        
-        secEmb.setTitle("Motions");
-    secEmb.setColor("0xcc0000");
-    secEmb.setFooter("Senate Meeting discussions powered by our most humble Imperator");
-    secEmb.setThumbnail("https://cdn.glitch.com/24cdd29f-170e-4ac8-9dc2-8abc1cbbaeaa%2Fimage0.png?v=1588186014686");
-    secEmb.setAuthor("𝐈𝐌𝐏𝐄𝐑𝐀𝐓𝐎𝐑·𝐏𝐕𝐁𝐋𝐈𝐕𝐒","https://cdn.glitch.com/24cdd29f-170e-4ac8-9dc2-8abc1cbbaeaa%2Fimageedit_1_3956664875.png?v=1588186424473");
-    secEmb.setDescription("Motions to discuss in Senate meetings");
-        
-        args2.forEach(msg => secEmb.addField("motion",msg,false));
-        msgs.forEach(msg => embed.addField("motion",msg,false))
-        message.guild.channels.cache.get("705136080105767004").messages.fetch({around: "705898782935613501", limit: 1}).then(messages => messages.first().edit(embed));
-        message.guild.channels.cache.get("705136080105767004").messages.fetch({around: "705898783757565995", limit: 1}).then(messages => messages.first().edit(secEmb));
-        
-      }
+  let msgs = new Array();
+  let sql2 = `SELECT * FROM Motions;`;
+  db.all(sql2, [], (err, rows) => {
+    if (err) {
+      throw err;
+    }
+    rows.forEach(row => {
+      //message.channel.send(row.motion);
+      if (clientdc.users.cache.get(row.creator) != undefined) {
+        let msg =
+          row.motion +
+          "\n" +
+          "From:" +
+          clientdc.users.cache.get(row.creator).toString() +
+          "\n" +
+          "motion ID:" +
+          row.mID +
+          "\n" +
+          "--------------------" +
+          "\n";
+        msgs.push(msg);
       }
     });
-  
+
+    if (msgs.length <= 25) {
+      msgs.forEach(msg => mainEmb.addField(msg));
+    } else {
+      var args2 = new Array();
+      for (var i = 0; i < msgs.length / 2; i++) {
+        args2.push(msgs[i]);
+        msgs.pop();
+      }
+      msgs.forEach(msg => mainEmb.addField(msg));
+
+      var secEmb = new Discord.MessageEmbed();
+
+      secEmb.setTitle("Motions");
+      secEmb.setColor("0xcc0000");
+      secEmb.setFooter(
+        "Senate Meeting discussions powered by our most humble Imperator"
+      );
+      secEmb.setThumbnail(
+        "https://cdn.glitch.com/24cdd29f-170e-4ac8-9dc2-8abc1cbbaeaa%2Fimage0.png?v=1588186014686"
+      );
+      secEmb.setAuthor(
+        "𝐈𝐌𝐏𝐄𝐑𝐀𝐓𝐎𝐑·𝐏𝐕𝐁𝐋𝐈𝐕𝐒",
+        "https://cdn.glitch.com/24cdd29f-170e-4ac8-9dc2-8abc1cbbaeaa%2Fimageedit_1_3956664875.png?v=1588186424473"
+      );
+      secEmb.setDescription("Motions to discuss in Senate meetings");
+
+      args2.forEach(msg => secEmb.addField(msg));
+    }
+    //clientdc.channels.cache.get("705136080105767004").send(test);
+  });
 }
 
+function updateEmbedMessage(message) {
+  let embed = new Discord.MessageEmbed();
 
-clientdc.on('ready', () =>{
-  //db.run("DELETE FROM candidates"); 
-  //db.run("DELETE FROM Elections"); 
+  embed.setTitle("Motions");
+  embed.setColor("0xcc0000");
+  embed.setFooter(
+    "Senate Meeting discussions powered by our most humble Imperator"
+  );
+  embed.setThumbnail(
+    "https://cdn.glitch.com/24cdd29f-170e-4ac8-9dc2-8abc1cbbaeaa%2Fimage0.png?v=1588186014686"
+  );
+  embed.setAuthor(
+    "𝐈𝐌𝐏𝐄𝐑𝐀𝐓𝐎𝐑·𝐏𝐕𝐁𝐋𝐈𝐕𝐒",
+    "https://cdn.glitch.com/24cdd29f-170e-4ac8-9dc2-8abc1cbbaeaa%2Fimageedit_1_3956664875.png?v=1588186424473"
+  );
+
+  let msgs = new Array();
+  let sql2 = `SELECT * FROM Motions;`;
+  db.all(sql2, [], (err, rows) => {
+    if (err) {
+      throw err;
+    }
+    rows.forEach(row => {
+      //message.channel.send(row.motion);
+      if (message.guild.members.cache.get(row.creator) != undefined) {
+        let msg =
+          row.motion +
+          "\n" +
+          "From:" +
+          message.guild.members.cache.get(row.creator).toString() +
+          "\n" +
+          "motion ID:" +
+          row.mID +
+          "\n\n";
+        msgs.push(msg);
+      } else {
+        message.channel.send("im sorry but this is the wrong Server");
+      }
+
+      //message.channel.send(row.mID);
+    });
+    if (msgs.length <= 25) {
+      msgs.forEach(msg => embed.addField("motions", msg));
+      message.guild.channels.cache
+        .get("705136080105767004")
+        .messages.fetch({ around: "705898782935613501", limit: 1 })
+        .then(messages => messages.first().edit(embed));
+    } else {
+      if (msgs.length <= 25) {
+        msgs.forEach(msg => embed.addField("motion", msg, false));
+        message.channel.send(embed);
+      } else {
+        var args2 = new Array();
+        for (var i = msgs.length; i > msgs.length / 2; i--) {
+          args2.push(msgs[i]);
+          msgs.pop();
+        }
+
+        var secEmb = new Discord.MessageEmbed();
+
+        secEmb.setTitle("Motions");
+        secEmb.setColor("0xcc0000");
+        secEmb.setFooter(
+          "Senate Meeting discussions powered by our most humble Imperator"
+        );
+        secEmb.setThumbnail(
+          "https://cdn.glitch.com/24cdd29f-170e-4ac8-9dc2-8abc1cbbaeaa%2Fimage0.png?v=1588186014686"
+        );
+        secEmb.setAuthor(
+          "𝐈𝐌𝐏𝐄𝐑𝐀𝐓𝐎𝐑·𝐏𝐕𝐁𝐋𝐈𝐕𝐒",
+          "https://cdn.glitch.com/24cdd29f-170e-4ac8-9dc2-8abc1cbbaeaa%2Fimageedit_1_3956664875.png?v=1588186424473"
+        );
+        secEmb.setDescription("Motions to discuss in Senate meetings");
+
+        args2.forEach(msg => secEmb.addField("motion", msg, false));
+        msgs.forEach(msg => embed.addField("motion", msg, false));
+        message.guild.channels.cache
+          .get("705136080105767004")
+          .messages.fetch({ around: "705898782935613501", limit: 1 })
+          .then(messages => messages.first().edit(embed));
+        message.guild.channels.cache
+          .get("705136080105767004")
+          .messages.fetch({ around: "705898783757565995", limit: 1 })
+          .then(messages => messages.first().edit(secEmb));
+      }
+    }
+  });
+}
+
+clientdc.on("ready", () => {
+  //db.run("DELETE FROM candidates");
+  //db.run("DELETE FROM Elections");
   //db.run("DELETE FROM CandidateElections");
-  
+
   updateEmbed();
-  
-db.all('SELECT * FROM candidates', [], (err, rows) => {
-  if (err) {
-    throw err;
-  }
-  rows.forEach(row => {
-    console.log("cID \n"+row.cID);
-    console.log("DiscordID \n"+row.DiscordID)
+
+  db.all("SELECT * FROM candidates", [], (err, rows) => {
+    if (err) {
+      throw err;
+    }
+    rows.forEach(row => {
+      console.log("cID \n" + row.cID);
+      console.log("DiscordID \n" + row.DiscordID);
+    });
+  });
+
+  db.all("SELECT * FROM CandidateElections", [], (err, rows) => {
+    if (err) {
+      throw err;
+    }
+    rows.forEach(row => {
+      console.log("ceID \n" + row.ceID);
+      console.log("candidate \n" + row.candidate);
+      console.log("Election \n" + row.Election);
+    });
+  });
+
+  db.all("SELECT * FROM Elections", [], (err, rows) => {
+    if (err) {
+      throw err;
+    }
+    rows.forEach(row => {
+      console.log("eID \n" + row.eID);
+      console.log("Title \n" + row.Title);
+      console.log("Month \n" + row.Month);
+    });
   });
 });
-  
-  db.all('SELECT * FROM CandidateElections', [], (err, rows) => {
-  if (err) {
-    throw err;
-  }
-  rows.forEach(row => {
-    console.log("ceID \n"+row.ceID);
-    console.log("candidate \n"+row.candidate);
-    console.log("Election \n"+row.Election);
-  });
-});
-  
-  db.all('SELECT * FROM Elections', [], (err, rows) => {
-  if (err) {
-    throw err;
-  }
-  rows.forEach(row => {
-    console.log("eID \n"+row.eID);
-    console.log("Title \n"+row.Title);
-    console.log("Month \n"+row.Month);
-  });
-});
-
-  
-  
-  
-    
-});
-
-
 
 //simple test query
 let sql = `SELECT * FROM Birthdates;`;
@@ -211,8 +240,6 @@ db.all(sql, [], (err, rows) => {
     console.log(row.DiscordID);
   });
 });
-
-
 
 //compare dates with the current date
 const dateformat = require("dateformat");
@@ -317,323 +344,456 @@ function getRole(mention, server) {
 }**/
 
 var command = process.env.Prefix;
-clientdc.on("message",  message => {
-  if(message.content === command+"clearDB"){
-  db.run("DELETE FROM candidates"); 
-  db.run("DELETE FROM Elections"); 
-  db.run("DELETE FROM CandidateElections");
+clientdc.on("message", message => {
+  if (message.content === command + "clearDB") {
+    db.run("DELETE FROM candidates");
+    db.run("DELETE FROM Elections");
+    db.run("DELETE FROM CandidateElections");
     message.channel.send("all right");
   }
-  if(message.content === command+"showDB"){
-    db.all('SELECT * FROM candidates', [], (err, rows) => {
-  if (err) {
-    throw err;
+  if (message.content === command + "showDB") {
+    db.all("SELECT * FROM candidates", [], (err, rows) => {
+      if (err) {
+        throw err;
+      }
+      rows.forEach(row => {
+        console.log("cID \n" + row.cID);
+        console.log("DiscordID \n" + row.DiscordID);
+      });
+    });
+
+    db.all("SELECT * FROM CandidateElections", [], (err, rows) => {
+      if (err) {
+        throw err;
+      }
+      rows.forEach(row => {
+        console.log("ceID \n" + row.ceID);
+        console.log("candidate \n" + row.candidate);
+        console.log("Election \n" + row.Election);
+      });
+    });
+
+    db.all("SELECT * FROM Elections", [], (err, rows) => {
+      if (err) {
+        throw err;
+      }
+      rows.forEach(row => {
+        console.log("eID \n" + row.eID);
+        console.log("Title \n" + row.Title);
+        console.log("Month \n" + row.Month);
+      });
+    });
   }
-  rows.forEach(row => {
-    console.log("cID \n"+row.cID);
-    console.log("DiscordID \n"+row.DiscordID)
-  });
-});
-  
-  db.all('SELECT * FROM CandidateElections', [], (err, rows) => {
-  if (err) {
-    throw err;
-  }
-  rows.forEach(row => {
-    console.log("ceID \n"+row.ceID);
-    console.log("candidate \n"+row.candidate);
-    console.log("Election \n"+row.Election);
-  });
-});
-  
-  db.all('SELECT * FROM Elections', [], (err, rows) => {
-  if (err) {
-    throw err;
-  }
-  rows.forEach(row => {
-    console.log("eID \n"+row.eID);
-    console.log("Title \n"+row.Title);
-    console.log("Month \n"+row.Month);
-  });
-});
-    
-    
-  }
-  
-  if(message.content.toLowerCase().includes(command+"election"))
-    {
-      let args = message.content.split(" ");
-      let emb = new Discord.MessageEmbed();
-        var lett = ["0️⃣", "1️⃣", "2️⃣", "3️⃣", "4️⃣", "5️⃣", "6️⃣", "7️⃣", "8️⃣", "9️⃣", "🔟", "🔢", "#️⃣", "*️⃣", "⏏️", "▶️", "⏸", "⏯", "⏹", "⏺", "⏭", "⏮", "⏩", "⏪", "⏫", "⏬"];
-        
-        
-        emb.setTitle(args[1]+" elections from: "+args[2]);
+
+  if (message.content.toLowerCase().includes(command + "election")) {
+    let args = message.content.split(" ");
+    let emb = new Discord.MessageEmbed();
+    var lett = [
+      "0️⃣",
+      "1️⃣",
+      "2️⃣",
+      "3️⃣",
+      "4️⃣",
+      "5️⃣",
+      "6️⃣",
+      "7️⃣",
+      "8️⃣",
+      "9️⃣",
+      "🔟",
+      "🔢",
+      "#️⃣",
+      "*️⃣",
+      "⏏️",
+      "▶️",
+      "⏸",
+      "⏯",
+      "⏹",
+      "⏺",
+      "⏭",
+      "⏮",
+      "⏩",
+      "⏪",
+      "⏫",
+      "⏬"
+    ];
+
+    emb.setTitle(args[1] + " elections from: " + args[2]);
     emb.setColor("0x66023c");
     emb.setFooter("Elections powered by our most humble Imperator");
-    emb.setThumbnail("https://cdn.glitch.com/24cdd29f-170e-4ac8-9dc2-8abc1cbbaeaa%2Fimage0.png?v=1588186014686");
-    emb.setAuthor("𝐈𝐌𝐏𝐄𝐑𝐀𝐓𝐎𝐑·𝐏𝐕𝐁𝐋𝐈𝐕𝐒","https://cdn.glitch.com/24cdd29f-170e-4ac8-9dc2-8abc1cbbaeaa%2Fimageedit_1_3956664875.png?v=1588186424473");
-      
-      
-      let sql4 = 'SELECT * FROM Elections JOIN CandidateElections ON eID = Election JOIN Candidates ON candidate = cID WHERE Title = "'+args[1]+'" AND Month = "'+args[2]+'"';
-       
-      let can = new Array();
-     db.all(sql4,[], (err,rows) => {
-        
-        if(err){throw err; message.channel.send("sth went wrong")}
+    emb.setThumbnail(
+      "https://cdn.glitch.com/24cdd29f-170e-4ac8-9dc2-8abc1cbbaeaa%2Fimage0.png?v=1588186014686"
+    );
+    emb.setAuthor(
+      "𝐈𝐌𝐏𝐄𝐑𝐀𝐓𝐎𝐑·𝐏𝐕𝐁𝐋𝐈𝐕𝐒",
+      "https://cdn.glitch.com/24cdd29f-170e-4ac8-9dc2-8abc1cbbaeaa%2Fimageedit_1_3956664875.png?v=1588186424473"
+    );
+
+    let sql4 =
+      'SELECT * FROM Elections JOIN CandidateElections ON eID = Election JOIN Candidates ON candidate = cID WHERE Title = "' +
+      args[1] +
+      '" AND Month = "' +
+      args[2] +
+      '"';
+
+    let can = new Array();
+    db.all(sql4, [], (err, rows) => {
+      if (err) {
+        throw err;
+        message.channel.send("sth went wrong");
+      }
       console.log(rows.length);
       //message.guild.members.cache.get(row.cID).toString()+"\n votes: "+row.votes
-       
-       message.channel.send(emb).then(m => {
-          
-          
-          let filter = (reaction => lett.includes(reaction.emoji.name));
+
+      message.channel.send(emb).then(m => {
+        let filter = reaction => lett.includes(reaction.emoji.name);
+for (i = 0; i < rows.length; i++) {
+        rows.forEach(row => {
+          emb.addField(
+            "Candidate",
+            lett[i] +
+              message.guild.members.cache.get(row.DiscordID).toString() +
+              "\n votes: " +
+              row.votes,
+            true
+          );
+        });
         
-          rows.forEach(row => {
-         emb.addField("Candidate",lett[i]+message.guild.members.cache.get(row.DiscordID).toString()+"\n votes: "+row.votes,true)
-       });
-         for(i = 0; rows.length; i++){
           m.edit(emb);
           m.react(lett[i]);
           can[i] = rows[i].DiscordID;
-         }
-          
-         
-         
-       let collector =  m.createReactionCollector(filter,{ time:3600000});
-          
-        
-          collector.on('collect', (reaction,user) => {
-            if(!user.bot){
-              
-              
-            for(i = 0; rows.length; i++){
-              if(reaction.name == lett[i]){
-                rows.forEach(row => {if(can[i] == row.DiscordID){db.run("UPDATE CandidateElections ")}})
-              }
-              let emb2 = new Discord.MessageEmbed();
-              
-              
-            }
-                          
-                          
-              m.edit(emb);          
-            }
-            
-        
-      });
-        });
-         
-        
-      });
-    
-    }
-  
-  if(message.content.toLowerCase().includes(command+"prepare"))
-    {
-      let args = message.content.split(" ");
-      if(args[1] == 'consul' || 'praetor' || 'aedile' || 'quaestor' || 'tribune'){
-            let query = 'INSERT INTO Elections(Title,Month) VALUES("'+args[1]+'","'+args[2]+'");'
-            db.all(query,[],(err) =>{if(err){message.channel.send("month already specified")}});
-            clientdc.channels.cache.get('548918811391295489').send(args[1]+' Elections react here with 🔴').then(m => {
-    const filter = (reaction, user) => reaction.emoji.name === '🔴'; 
-              m.react("🔴");
-    const collector = m.createReactionCollector(filter, { max: 1000 });
+        }
 
-    collector.on('collect', (reaction,user) => {
-      if(!user.bot){
-        message.channel.send(user.id);
-      message.guild.members.cache.get(user.id).roles.add('703401102795604079');
-      db.all('INSERT INTO candidates(DiscordID) VALUES("'+user.id+'")',[],(err) =>{if(err){}});
-      db.all("SELECT * FROM candidates JOIN CandidateElections ON cID = candidate JOIN Elections ON election = eID WHERE DiscordID = '"+user.id+"';",[], (err,rows) =>{
-        if(err){m.channel.send('sorry but there was an error (probably wrong ID)')}
-        else
-          {
-            rows.forEach(row => db.run('INSERT INTO CandidateElections(candidate,Election) VALUES("'+row.cID+'","'+row.eID+'")'))
+        let collector = m.createReactionCollector(filter, { time: 3600000 });
+
+        collector.on("collect", (reaction, user) => {
+          if (!user.bot) {
+            for (i = 0; i < rows.length; i++) {
+              if (reaction.name == lett[i]) {
+                rows.forEach(row => {
+                  if (can[i] == row.DiscordID) {
+                    db.run(
+                      "UPDATE CandidateElections SET votes = votes+1 WHERE DiscordID =" +
+                        row.DiscordID
+                    );
+                  }
+                });
+              
+              let emb2 = new Discord.MessageEmbed();
+              emb2.setTitle(args[1] + " elections from: " + args[2]);
+    emb2.setColor("0x66023c");
+    emb2.setFooter("Elections powered by our most humble Imperator");
+    emb2.setThumbnail("https://cdn.glitch.com/24cdd29f-170e-4ac8-9dc2-8abc1cbbaeaa%2Fimage0.png?v=1588186014686");
+    emb2.setAuthor("𝐈𝐌𝐏𝐄𝐑𝐀𝐓𝐎𝐑·𝐏𝐕𝐁𝐋𝐈𝐕𝐒","https://cdn.glitch.com/24cdd29f-170e-4ac8-9dc2-8abc1cbbaeaa%2Fimageedit_1_3956664875.png?v=1588186424473");
+
+              
+              rows.forEach(row => {
+                emb2.addField(
+                  "Candidate",
+                  lett[i] +
+                    message.guild.members.cache.get(row.DiscordID).toString() +
+                    "\n votes: " +
+                    row.votes,
+                  true
+                );
+              });
+              
             
+
+            m.edit(emb2);
           }
-        
-      })
-      }
+          }
+          }
+        });
+      });
     });
-  })
-  .catch(console.error);
-      }
-      else {message.channel.send("invalid role")}
+  }
+
+  if (message.content.toLowerCase().includes(command + "prepare")) {
+    let args = message.content.split(" ");
+    if (
+      args[1] == "consul" ||
+      "praetor" ||
+      "aedile" ||
+      "quaestor" ||
+      "tribune"
+    ) {
+      let query =
+        'INSERT INTO Elections(Title,Month) VALUES("' +
+        args[1] +
+        '","' +
+        args[2] +
+        '");';
+      db.all(query, [], err => {
+        if (err) {
+          message.channel.send("month already specified");
+        }
+      });
+      clientdc.channels.cache
+        .get("548918811391295489")
+        .send(args[1] + " Elections react here with 🔴")
+        .then(m => {
+          const filter = (reaction, user) => reaction.emoji.name === "🔴";
+          m.react("🔴");
+          const collector = m.createReactionCollector(filter, { max: 1000 });
+
+          collector.on("collect", (reaction, user) => {
+            if (!user.bot) {
+              message.channel.send(user.id);
+              message.guild.members.cache
+                .get(user.id)
+                .roles.add("703401102795604079");
+              db.all(
+                'INSERT INTO candidates(DiscordID) VALUES("' + user.id + '")',
+                [],
+                err => {
+                  if (err) {
+                  }
+                }
+              );
+              db.all(
+                "SELECT * FROM candidates JOIN CandidateElections ON cID = candidate JOIN Elections ON election = eID WHERE DiscordID = '" +
+                  user.id +
+                  "';",
+                [],
+                (err, rows) => {
+                  if (err) {
+                    m.channel.send(
+                      "sorry but there was an error (probably wrong ID)"
+                    );
+                  } else {
+                    rows.forEach(row =>
+                      db.run(
+                        'INSERT INTO CandidateElections(candidate,Election) VALUES("' +
+                          row.cID +
+                          '","' +
+                          row.eID +
+                          '")'
+                      )
+                    );
+                  }
+                }
+              );
+            }
+          });
+        })
+        .catch(console.error);
+    } else {
+      message.channel.send("invalid role");
     }
-  
-  
+  }
+
   // If the message is "ping"
   if (message.content === "ping") {
     // Send "pong" to the same channel
     message.channel.send("Pong I guess");
     message.channel.send(message.author.toString());
   }
-  if(message.content.toLowerCase() === command+"imperialtree"){message.channel.send("https://cdn.discordapp.com/attachments/630588104184430643/705349480559411261/unknown.png")}
-  
-  if(message.content.toLowerCase().includes(command+"smotion"))
-  {
+  if (message.content.toLowerCase() === command + "imperialtree") {
+    message.channel.send(
+      "https://cdn.discordapp.com/attachments/630588104184430643/705349480559411261/unknown.png"
+    );
+  }
+
+  if (message.content.toLowerCase().includes(command + "smotion")) {
     let embed = new Discord.MessageEmbed();
-        var args = message.content.split(" ");
-        embed.setTitle("Motion ID:"+args[1]);
+    var args = message.content.split(" ");
+    embed.setTitle("Motion ID:" + args[1]);
     embed.setColor("0xcc0000");
-    embed.setFooter("Senate Meeting discussions powered by our most humble Imperator");
-    
-    
+    embed.setFooter(
+      "Senate Meeting discussions powered by our most humble Imperator"
+    );
+
     let available = false;
-    let sql2 = `SELECT * FROM Motions WHERE mID = `+args[1];
+    let sql2 = `SELECT * FROM Motions WHERE mID = ` + args[1];
     db.all(sql2, [], (err, rows) => {
       if (err) {
         throw err;
       }
       rows.forEach(row => {
         available = true;
-        embed.addField("Motion in question",row.motion+"\n From:"+message.guild.members.cache.get(row.creator).toString(),true);
+        embed.addField(
+          "Motion in question",
+          row.motion +
+            "\n From:" +
+            message.guild.members.cache.get(row.creator).toString(),
+          true
+        );
         console.log(row.motion);
-        embed.setAuthor("𝐈𝐌𝐏𝐄𝐑𝐀𝐓𝐎𝐑·𝐏𝐕𝐁𝐋𝐈𝐕𝐒",clientdc.users.cache.get(row.creator).avatarURL());
+        embed.setAuthor(
+          "𝐈𝐌𝐏𝐄𝐑𝐀𝐓𝐎𝐑·𝐏𝐕𝐁𝐋𝐈𝐕𝐒",
+          clientdc.users.cache.get(row.creator).avatarURL()
+        );
       });
-       if(!available){embed.addField("Motion in question","no motion with such ID",false);
-                     
-                     }
-      message.channel.send(embed);});
-   
-    
-  }
-  
-  if (message.content.toLowerCase() == command + "motions") {
-    if(message.member.roles.cache.has('543783180130320385') || message.member.roles.cache.has("550392133991923738"))
-      {
-    
-  let embed = new Discord.MessageEmbed();
-        
-        
-        
-        embed.setTitle("Motions");
-    embed.setColor("0xcc0000");
-    embed.setFooter("Senate Meeting discussions powered by our most humble Imperator");
-    embed.setThumbnail("https://cdn.glitch.com/24cdd29f-170e-4ac8-9dc2-8abc1cbbaeaa%2Fimage0.png?v=1588186014686");
-    embed.setAuthor("𝐈𝐌𝐏𝐄𝐑𝐀𝐓𝐎𝐑·𝐏𝐕𝐁𝐋𝐈𝐕𝐒","https://cdn.glitch.com/24cdd29f-170e-4ac8-9dc2-8abc1cbbaeaa%2Fimageedit_1_3956664875.png?v=1588186424473");
-    let msgs = new Array();
-        let sql2 = `SELECT * FROM Motions;`;
-    db.all(sql2, [], (err, rows) => {
-      if (err) {
-        throw err;
+      if (!available) {
+        embed.addField("Motion in question", "no motion with such ID", false);
       }
-      rows.forEach(row => {
-        //message.channel.send(row.motion);
-        if(message.guild.members.cache.get(row.creator) != undefined){
-        let msg = row.motion+"\n"+"From:"+
-          message.guild.members.cache.get(row.creator).toString()+"\n"+"motion ID:"+row.mID+"\n\n";
-          msgs.push(msg);
-          
-        }
-        else {message.channel.send("im sorry but this is the wrong Server");}
-      });
-      
-      var secEmb = new Discord.MessageEmbed();
-        
-        secEmb.setTitle("Motions second page");
-    secEmb.setColor("0xcc0000");
-    secEmb.setFooter("Senate Meeting discussions powered by our most humble Imperator");
-    secEmb.setThumbnail("https://cdn.glitch.com/24cdd29f-170e-4ac8-9dc2-8abc1cbbaeaa%2Fimage0.png?v=1588186014686");
-    secEmb.setAuthor("𝐈𝐌𝐏𝐄𝐑𝐀𝐓𝐎𝐑·𝐏𝐕𝐁𝐋𝐈𝐕𝐒","https://cdn.glitch.com/24cdd29f-170e-4ac8-9dc2-8abc1cbbaeaa%2Fimageedit_1_3956664875.png?v=1588186424473");
-    secEmb.setDescription("Motions to discuss in Senate meetings");
-     
-      if(msgs.length <= 25){
-          
-      msgs.forEach(msg => embed.addField("motion",msg,false))
       message.channel.send(embed);
-      message.channel.send(secEmb);
-          
-      }else{ 
-        var args2 = new Array();
-        for(var i = msgs.length;i > msgs.length/2; i--){
-          args2.push(msgs[i]);
-          msgs.pop();
-        }
-          
-        
-        
-        
-        args2.forEach(msg => secEmb.addField("motion",msg,false));
-        msgs.forEach(msg => embed.addField("motion",msg,false))
-        message.channel.send(embed);
-        message.channel.send(secEmb);
-      }
-      
     });
-        
-      } else message.channel.send("not a Senator/Tribune broski");
+  }
+
+  if (message.content.toLowerCase() == command + "motions") {
+    if (
+      message.member.roles.cache.has("543783180130320385") ||
+      message.member.roles.cache.has("550392133991923738")
+    ) {
+      let embed = new Discord.MessageEmbed();
+
+      embed.setTitle("Motions");
+      embed.setColor("0xcc0000");
+      embed.setFooter(
+        "Senate Meeting discussions powered by our most humble Imperator"
+      );
+      embed.setThumbnail(
+        "https://cdn.glitch.com/24cdd29f-170e-4ac8-9dc2-8abc1cbbaeaa%2Fimage0.png?v=1588186014686"
+      );
+      embed.setAuthor(
+        "𝐈𝐌𝐏𝐄𝐑𝐀𝐓𝐎𝐑·𝐏𝐕𝐁𝐋𝐈𝐕𝐒",
+        "https://cdn.glitch.com/24cdd29f-170e-4ac8-9dc2-8abc1cbbaeaa%2Fimageedit_1_3956664875.png?v=1588186424473"
+      );
+      let msgs = new Array();
+      let sql2 = `SELECT * FROM Motions;`;
+      db.all(sql2, [], (err, rows) => {
+        if (err) {
+          throw err;
+        }
+        rows.forEach(row => {
+          //message.channel.send(row.motion);
+          if (message.guild.members.cache.get(row.creator) != undefined) {
+            let msg =
+              row.motion +
+              "\n" +
+              "From:" +
+              message.guild.members.cache.get(row.creator).toString() +
+              "\n" +
+              "motion ID:" +
+              row.mID +
+              "\n\n";
+            msgs.push(msg);
+          } else {
+            message.channel.send("im sorry but this is the wrong Server");
+          }
+        });
+
+        var secEmb = new Discord.MessageEmbed();
+
+        secEmb.setTitle("Motions second page");
+        secEmb.setColor("0xcc0000");
+        secEmb.setFooter(
+          "Senate Meeting discussions powered by our most humble Imperator"
+        );
+        secEmb.setThumbnail(
+          "https://cdn.glitch.com/24cdd29f-170e-4ac8-9dc2-8abc1cbbaeaa%2Fimage0.png?v=1588186014686"
+        );
+        secEmb.setAuthor(
+          "𝐈𝐌𝐏𝐄𝐑𝐀𝐓𝐎𝐑·𝐏𝐕𝐁𝐋𝐈𝐕𝐒",
+          "https://cdn.glitch.com/24cdd29f-170e-4ac8-9dc2-8abc1cbbaeaa%2Fimageedit_1_3956664875.png?v=1588186424473"
+        );
+        secEmb.setDescription("Motions to discuss in Senate meetings");
+
+        if (msgs.length <= 25) {
+          msgs.forEach(msg => embed.addField("motion", msg, false));
+          message.channel.send(embed);
+          message.channel.send(secEmb);
+        } else {
+          var args2 = new Array();
+          for (var i = msgs.length; i > msgs.length / 2; i--) {
+            args2.push(msgs[i]);
+            msgs.pop();
+          }
+
+          args2.forEach(msg => secEmb.addField("motion", msg, false));
+          msgs.forEach(msg => embed.addField("motion", msg, false));
+          message.channel.send(embed);
+          message.channel.send(secEmb);
+        }
+      });
+    } else message.channel.send("not a Senator/Tribune broski");
   }
 
   if (message.content.toLowerCase().includes(command + "motion ")) {
-    if(message.member.roles.cache.has('543783180130320385') || message.member.roles.cache.has("550392133991923738"))
-      {
-    var args = message.content.split(" ");
-    console.log(
-      "INSERT INTO Motions(motion,creator) VALUES(" +
-        "'" +
-        args[1] +
-        "'" +
-        "," +
-        message.member.id +
-        ");"
-    );
-    let inp = "";
-    for(i = 1; i<args.length; i++)
-      {
-        inp += args[i]+" ";
+    if (
+      message.member.roles.cache.has("543783180130320385") ||
+      message.member.roles.cache.has("550392133991923738")
+    ) {
+      var args = message.content.split(" ");
+      console.log(
+        "INSERT INTO Motions(motion,creator) VALUES(" +
+          "'" +
+          args[1] +
+          "'" +
+          "," +
+          message.member.id +
+          ");"
+      );
+      let inp = "";
+      for (i = 1; i < args.length; i++) {
+        inp += args[i] + " ";
       }
-    db.all("INSERT INTO Motions(motion,creator) VALUES(" +
-        "'" +
-        inp +
-        "'" +
-        "," + "'"+
-        message.member.id + "'"+
-        ");", [], (err, rows) => {
-      if (err) {
-        message.channel.send("sth went wrong");
-        console.log(err);
-      } else {message.channel.send("duly noted"); 
-              updateEmbedMessage(message);
-      } 
-             
-             });
-    
-    
-  
-      }
-  else {message.channel.send("you do not have any authority to propose motions, please turn to your corresponding Senator or Tribune (if you're a filthy Pleb)")}
-  };
-           
+      db.all(
+        "INSERT INTO Motions(motion,creator) VALUES(" +
+          "'" +
+          inp +
+          "'" +
+          "," +
+          "'" +
+          message.member.id +
+          "'" +
+          ");",
+        [],
+        (err, rows) => {
+          if (err) {
+            message.channel.send("sth went wrong");
+            console.log(err);
+          } else {
+            message.channel.send("duly noted");
+            updateEmbedMessage(message);
+          }
+        }
+      );
+    } else {
+      message.channel.send(
+        "you do not have any authority to propose motions, please turn to your corresponding Senator or Tribune (if you're a filthy Pleb)"
+      );
+    }
+  }
 
   if (message.content.includes(command + "deletemotion")) {
-    if(message.member.roles.cache.has('649362430446796815') || message.member.roles.cache.has('565594839828398100') ||  message.member.roles.cache.has('514143501697679361') || message.member.roles.cache.has('546654987061821440'))
-    {
-    var args = message.content.split(" ");
-    db.all("DELETE FROM Motions WHERE mID =" + args[1],[],(err,rows) => {
-      if (err) {message.channel.send("wrong ID");}
-      message.channel.send("motion deleted");
-      
-             updateEmbedMessage(message);
-      
-      
-    });
+    if (
+      message.member.roles.cache.has("649362430446796815") ||
+      message.member.roles.cache.has("565594839828398100") ||
+      message.member.roles.cache.has("514143501697679361") ||
+      message.member.roles.cache.has("546654987061821440")
+    ) {
+      var args = message.content.split(" ");
+      db.all("DELETE FROM Motions WHERE mID =" + args[1], [], (err, rows) => {
+        if (err) {
+          message.channel.send("wrong ID");
+        }
+        message.channel.send("motion deleted");
+
+        updateEmbedMessage(message);
+      });
+    } else {
+      message.channel.send("you do not have the permission to delete a motion");
     }
-    else {message.channel.send("you do not have the permission to delete a motion");}
   }
-  
+
   if (message.content.toLowerCase().includes(command + "deleteallmotions")) {
-    if(message.member.roles.cache.has('649362430446796815') || message.member.roles.cache.has('565594839828398100') ||  message.member.roles.cache.has('514143501697679361') || message.member.roles.cache.has('546654987061821440'))
-    {
-    
-    db.all("DELETE FROM Motions",[],(err,rows) => {
-      if (err) {message.channel.send("sth went wrong");}else
-       message.channel.send("motions deleted");
-      updateEmbedMessage(message);
-    });
+    if (
+      message.member.roles.cache.has("649362430446796815") ||
+      message.member.roles.cache.has("565594839828398100") ||
+      message.member.roles.cache.has("514143501697679361") ||
+      message.member.roles.cache.has("546654987061821440")
+    ) {
+      db.all("DELETE FROM Motions", [], (err, rows) => {
+        if (err) {
+          message.channel.send("sth went wrong");
+        } else message.channel.send("motions deleted");
+        updateEmbedMessage(message);
+      });
+    } else {
+      message.channel.send("you do not have the permission to delete a motion");
     }
-    else {message.channel.send("you do not have the permission to delete a motion");}
-    
   }
 
   if (message.content.toLowerCase().includes(command + "adddate")) {
@@ -694,14 +854,14 @@ clientdc.on("message",  message => {
       message.channel.send("thats not a Role Broski");
     }
   }
-  if (message.content.toLowerCase() === "?pray") {message.author.send("dont listen to Dyno Byzantium is Roman");}
+  if (message.content.toLowerCase() === "?pray") {
+    message.author.send("dont listen to Dyno Byzantium is Roman");
+  }
 });
 
 clientdc.on("message", async message => {
   if (!message.author.bot && message.author.id != "241349696856129539") {
-    if (
-      message.content.toLowerCase().includes("istanbul")
-    ) {
+    if (message.content.toLowerCase().includes("istanbul")) {
       message.channel.send("its Constantinople smh");
     }
 
@@ -739,24 +899,25 @@ clientdc.on("message", async message => {
     ) {
       var num = Math.random();
       console.log(num);
-      if(num <= 0.8)
-        {
-      message.channel.send(
-        "All hail the Imperator https://media.4teachers.de/images/thumbs/image_thumb.1146.jpg"
-      );
-        }
-      else message.channel.send("All hail the Imperator https://cdn.discordapp.com/attachments/543787157127561216/706809950327799848/waaw.png");
+      if (num <= 0.8) {
+        message.channel.send(
+          "All hail the Imperator https://media.4teachers.de/images/thumbs/image_thumb.1146.jpg"
+        );
+      } else
+        message.channel.send(
+          "All hail the Imperator https://cdn.discordapp.com/attachments/543787157127561216/706809950327799848/waaw.png"
+        );
       message.react("664229248944439301");
     }
     if (
       message.content.toLowerCase().includes("imperatrix") ||
       message.content.toLowerCase().includes("empress")
     ) {
-      
-       message.channel.send("All hail the Empress https://pbs.twimg.com/profile_images/837236794387234816/megbmYw2_400x400.jpg");
+      message.channel.send(
+        "All hail the Empress https://pbs.twimg.com/profile_images/837236794387234816/megbmYw2_400x400.jpg"
+      );
       message.react("636456201273475113");
     }
-    
   }
 });
 
@@ -765,8 +926,6 @@ clientdc.on("messageUpdate", message => {
     //message.channel.send("I saw that edit");
   }
 });
-
-
 
 // http://expressjs.com/en/starter/static-files.html
 app.use(express.static("public"));

@@ -468,14 +468,13 @@ for (i = 0; i < rows.length; i++) {
 
         collector.on("collect", (reaction, user) => {
           if (!user.bot) {
-            message.channel.send(reaction.emoji.name);
+            
             for (i = 0; i < rows.length; i++) {
               if (reaction.emoji.name == lett[i]) {
                 rows.forEach(row => {
                   if (can[i] == row.DiscordID) {
                     db.run(
-                      "UPDATE CandidateElections SET votes = votes+1 WHERE candidate IN (SELECT cID FROM candidates WHERE DiscordID = )" +
-                        row.DiscordID
+                      "UPDATE CandidateElections SET votes = votes+1 WHERE candidate IN (SELECT cID FROM candidates WHERE DiscordID = "+row.DiscordID+")"
                     );
                   }
                 });
@@ -498,7 +497,7 @@ for (i = 0; i < rows.length; i++) {
                   true
                 );
                 });
-                message.channel.send("we");
+               
                 m.edit(emb2);
               });
               

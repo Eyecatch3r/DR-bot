@@ -358,10 +358,7 @@ clientdc.on("message",  message => {
         
           collector.on('collect', (reaction,user) => {
             if(!user.bot){
-              rows.forEach( (row) => {emb.addField("Candidate",message.guild.members.cache.get(row.cID).toString()+"\n votes: "+row.votes,true);
-                          m.edit(emb);
-                          
-                          });
+              
               //m.edit(emb);          
             }
             

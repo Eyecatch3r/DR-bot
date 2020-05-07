@@ -394,7 +394,7 @@ clientdc.on("message",  message => {
           
              
           m.react(lett[i]);
-            votes[i] = 0;
+            vote[i] = 0;
           }
          
          
@@ -403,7 +403,10 @@ clientdc.on("message",  message => {
         
           collector.on('collect', (reaction,user) => {
             if(!user.bot){
-            
+            for(i = 0; vote.length; i++){
+              if(reaction.name == lett[i]){vote[i]++;}
+              rows.forEach(row => emb.fields[i].value = message.guild.members.cache.get(row.DiscordID).toString()+"\n votes: "+row.votes ); 
+            }
                           
                           
               m.edit(emb);          

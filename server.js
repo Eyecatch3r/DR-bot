@@ -491,6 +491,7 @@ for (i = 0; i < rows.length; i++) {
           if (!user.bot) {
             
             for (i = 0; i < rows.length; i++) {
+              reaction.remove();
               if (reaction.emoji.name == lett[i]) {
                 rows.forEach(row => {
                   if (can[i] == row.DiscordID) {
@@ -511,14 +512,14 @@ for (i = 0; i < rows.length; i++) {
               results.forEach(result =>{
                 emb2.addField(
                   "Candidate",
-                  lett[i] +
+                  lett[i--] +
                     message.guild.members.cache.get(result.DiscordID).toString() +
                     "\n votes: " +
                     result.votes,
                   true
                 );
                 });
-               
+               m.react(lett[i--]);
                 m.edit(emb2);
               });
               

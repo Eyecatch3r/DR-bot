@@ -467,6 +467,7 @@ for (i = 0; i < rows.length; i++) {
 
         collector.on("collect", (reaction, user) => {
           if (!user.bot) {
+            message.channel.send(reaction.name);
             for (i = 0; i < rows.length; i++) {
               if (reaction.name == lett[i]) {
                 rows.forEach(row => {
@@ -475,7 +476,7 @@ for (i = 0; i < rows.length; i++) {
                       "UPDATE CandidateElections SET votes = votes+1 WHERE DiscordID =" +
                         row.DiscordID
                     );
-                  }
+                  message.channel.send("we");}
                 });
               
               let emb2 = new Discord.MessageEmbed();

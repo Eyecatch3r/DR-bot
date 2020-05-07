@@ -376,7 +376,7 @@ clientdc.on("message",  message => {
       
       let sql4 = 'SELECT * FROM Elections JOIN CandidateElections ON eID = Election JOIN Candidates ON candidate = cID WHERE Title = "'+args[1]+'" AND Month = "'+args[2]+'"';
        
-      let vote = new Array();
+      let can = new Array();
      db.all(sql4,[], (err,rows) => {
         
         if(err){throw err; message.channel.send("sth went wrong")}
@@ -387,14 +387,16 @@ clientdc.on("message",  message => {
           
           
           let filter = (reaction => lett.includes(reaction.emoji.name));
-        for(i = 0; i < rows.length; i++){
+        
           rows.forEach(row => {
          emb.addField("Candidate",lett[i]+message.guild.members.cache.get(row.DiscordID).toString()+"\n votes: "+row.votes,true)
        });
-             m.edit(emb);
+         for(i = 0; rows.length; i++){
+          m.edit(emb);
           m.react(lett[i]);
-            
-          }
+          can[i] = rows[i].DiscordID;
+         }
+          
          
          
        let collector =  m.createReactionCollector(filter,{ time:3600000});
@@ -406,7 +408,7 @@ clientdc.on("message",  message => {
               
             for(i = 0; rows.length; i++){
               if(reaction.name == lett[i]){
-                rows.forEach(row => {if(row.)})
+                rows.forEach(row => {if(can[i] == row.DiscordID){db.run("UPDATE CandidateElections ")}})
               }
               let emb2 = new Discord.MessageEmbed();
               

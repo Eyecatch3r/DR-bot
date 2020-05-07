@@ -467,13 +467,13 @@ for (i = 0; i < rows.length; i++) {
 
         collector.on("collect", (reaction, user) => {
           if (!user.bot) {
-            message.channel.send(reaction.name);
+            message.channel.send(reaction.emoji.name);
             for (i = 0; i < rows.length; i++) {
-              if (reaction.name == lett[i]) {
+              if (reaction.emoji.name == lett[i]) {
                 rows.forEach(row => {
                   if (can[i] == row.DiscordID) {
                     db.run(
-                      "UPDATE CandidateElections SET votes = votes+1 WHERE DiscordID =" +
+                      "UPDATE CandidateElections SET votes = votes+1 WHERE candidate =" +
                         row.DiscordID
                     );
                   message.channel.send("we");}
@@ -486,8 +486,8 @@ for (i = 0; i < rows.length; i++) {
     emb2.setThumbnail("https://cdn.glitch.com/24cdd29f-170e-4ac8-9dc2-8abc1cbbaeaa%2Fimage0.png?v=1588186014686");
     emb2.setAuthor("𝐈𝐌𝐏𝐄𝐑𝐀𝐓𝐎𝐑·𝐏𝐕𝐁𝐋𝐈𝐕𝐒","https://cdn.glitch.com/24cdd29f-170e-4ac8-9dc2-8abc1cbbaeaa%2Fimageedit_1_3956664875.png?v=1588186424473");
 
+              db.each(sql4,[],row => {
               
-              rows.forEach(row => {
                 emb2.addField(
                   "Candidate",
                   lett[i] +
@@ -496,6 +496,7 @@ for (i = 0; i < rows.length; i++) {
                     row.votes,
                   true
                 );
+                
               });
               
             

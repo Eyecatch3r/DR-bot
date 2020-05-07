@@ -512,14 +512,14 @@ for (i = 0; i < rows.length; i++) {
               results.forEach(result =>{
                 emb2.addField(
                   "Candidate",
-                  lett[i--] +
+                  lett[i-1] +
                     message.guild.members.cache.get(result.DiscordID).toString() +
                     "\n votes: " +
                     result.votes,
                   true
                 );
                 });
-               m.react(lett[i--]);
+               m.react(lett[i-1]);
                 m.edit(emb2);
               });
               

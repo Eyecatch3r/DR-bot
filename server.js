@@ -51,7 +51,7 @@ function updateEmbed()
           msgs.push(msg);
         }
       });
-      var output = "";
+      
       if(msgs.length <= 25){
       msgs.forEach(msg => mainEmb.addField(msg))
       
@@ -208,6 +208,7 @@ db.all(sql, [], (err, rows) => {
   rows.forEach(row => {
     console.log(row.Birthdate);
     console.log(row.celebrated);
+    console.log(row.DiscordID);
   });
 });
 
@@ -588,9 +589,9 @@ clientdc.on("message",  message => {
         let add =
           "INSERT INTO Birthdates(Birthdate,DiscordID,celebrated) VALUES(" +
           bdate +
-          "," +
+          ",'" +
           id +
-          ",0)";
+          "',0)";
         db.run(add);
       }
       var userID = message.author.id;

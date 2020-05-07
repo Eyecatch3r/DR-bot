@@ -384,7 +384,7 @@ clientdc.on("message",  message => {
       //message.guild.members.cache.get(row.cID).toString()+"\n votes: "+row.votes
        rows.forEach(row => {
          
-         //emb.addField("Candidate",message.guild.members.cache.get(row.DiscordID).toString()+"\n votes: "+row.votes,true)
+         emb.addField("Candidate",clientdc.users.cache.get(row.DiscordID).toString()+"\n votes: "+row.votes,true)
        });
        message.channel.send(emb).then(m => {
           

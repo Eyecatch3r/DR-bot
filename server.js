@@ -382,19 +382,18 @@ clientdc.on("message",  message => {
         if(err){throw err; message.channel.send("sth went wrong")}
       console.log(rows.length);
       //message.guild.members.cache.get(row.cID).toString()+"\n votes: "+row.votes
-       rows.forEach(row => {
-         
-         emb.addField("Candidate",message.guild.members.cache.get(row.DiscordID).toString()+"\n votes: "+row.votes,true)
-       });
+       
        message.channel.send(emb).then(m => {
           
           
           let filter = (reaction => lett.includes(reaction.emoji.name));
         for(i = 0; i < rows.length; i++){
-          
-             
+          rows.forEach(row => {
+         emb.addField("Candidate",lett[i]+message.guild.members.cache.get(row.DiscordID).toString()+"\n votes: "+row.votes,true)
+       });
+             m.edit(emb);
           m.react(lett[i]);
-            vote[i] = 0;
+            
           }
          
          
@@ -403,9 +402,15 @@ clientdc.on("message",  message => {
         
           collector.on('collect', (reaction,user) => {
             if(!user.bot){
-            for(i = 0; vote.length; i++){
-              if(reaction.name == lett[i]){vote[i]++;}
-              rows.forEach(row => emb.fields[i].value = message.guild.members.cache.get(row.DiscordID).toString()+"\n votes: "+row.votes ); 
+              
+              
+            for(i = 0; rows.length; i++){
+              if(reaction.name == lett[i]){
+                rows.forEach(row => {if(row.)})
+              }
+              let emb2 = new Discord.MessageEmbed();
+              
+              
             }
                           
                           

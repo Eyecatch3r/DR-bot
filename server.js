@@ -340,7 +340,7 @@ clientdc.on("message",  message => {
      db.all(sql4,[], (err,rows) => {
         
         if(err){throw err; message.channel.send("sth went wrong")}
-      
+      console.log(rows.length);
       //message.guild.members.cache.get(row.cID).toString()+"\n votes: "+row.votes
        rows.forEach(row => {emb.addField("Candidate",message.guild.members.cache.get(row.cID).toString()+"\n votes: "+row.votes,true)});
        message.channel.send(emb).then(m => {
@@ -390,7 +390,7 @@ clientdc.on("message",  message => {
       if(!user.bot){
       message.guild.members.cache.get(user.id).roles.add('703401102795604079');
       db.all('INSERT INTO candidates(DiscordID) VALUES("'+user.id+'")',[],(err) =>{if(err){}});
-      db.all('SELECT * FROM candidates JOIN CandidateElections ON cID = candidate JOIN Elections ON election = eID WHERE DiscordID = '+user.id+';',[], (err,rows) =>{
+      db.all("SELECT * FROM candidates JOIN CandidateElections ON cID = candidate JOIN Elections ON election = eID WHERE DiscordID = '"+user.id+"';",[], (err,rows) =>{
         if(err){m.channel.send('sorry but there was an error (probably wrong ID)')}
         else
           {

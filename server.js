@@ -354,7 +354,7 @@ clientdc.on("message",  message => {
             
           }
          
-          
+         
        let collector =  m.createReactionCollector(filter,{ time:3600000});
           
         

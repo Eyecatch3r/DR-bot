@@ -334,14 +334,15 @@ clientdc.on("message",  message => {
     emb.setAuthor("𝐈𝐌𝐏𝐄𝐑𝐀𝐓𝐎𝐑·𝐏𝐕𝐁𝐋𝐈𝐕𝐒","https://cdn.glitch.com/24cdd29f-170e-4ac8-9dc2-8abc1cbbaeaa%2Fimageedit_1_3956664875.png?v=1588186424473");
       
       
-      let sql = 'SELECT * FROM Elections JOIN CandidateElections ON eID = Election JOIN Candidates ON candidate = cID WHERE Title = "'+args[1]+'" AND Month = "'+args[2]+'"';
+      let sql4 = 'SELECT * FROM Elections JOIN CandidateElections ON eID = Election JOIN Candidates ON candidate = cID WHERE Title = "'+args[1]+'" AND Month = "'+args[2]+'"';
+       db.each(sql4,[], (err,result) => {message.channel.send(result.cID);});
       let col = new Array();
-     db.all(sql,[], (err,rows) => {
+     db.all(sql4,[], (err,rows) => {
         
         if(err){throw err; message.channel.send("sth went wrong")}
       
       //message.guild.members.cache.get(row.cID).toString()+"\n votes: "+row.votes
-       rows.forEach(row => {emb.addField("Candidate",message.guild.members.cache.get(row.cID).toString()+"\n votes: "+row.votes,true)
+       //rows.forEach(row => {emb.addField("Candidate",message.guild.members.cache.get(row.cID).toString()+"\n votes: "+row.votes,true)});
        message.channel.send(emb).then(m => {
           
           
@@ -368,10 +369,10 @@ clientdc.on("message",  message => {
         
       });
         });
-         });
+         
         
       });
-     db.all(sql,[], (err,rows) => {rows.forEach(row => message.channel.send("t"))});
+    
     }
   
   if(message.content.toLowerCase().includes(command+"prepare"))

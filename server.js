@@ -358,7 +358,9 @@ clientdc.on("message",  message => {
         
           collector.on('collect', (reaction,user) => {
             if(!user.bot){
-              
+             for(const row of rows){emb.addField("Candidate",)}
+                          
+                          });
               //m.edit(emb);          
             }
             

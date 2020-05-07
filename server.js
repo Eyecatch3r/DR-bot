@@ -496,12 +496,12 @@ for (i = 0; i < rows.length; i++) {
                     row.votes,
                   true
                 );
-                
+                m.edit(emb2);
               });
               
             
 
-            m.edit(emb2);
+            
           }
           }
           }

@@ -324,6 +324,41 @@ clientdc.on("message",  message => {
   db.run("DELETE FROM CandidateElections");
     message.channel.send("all right");
   }
+  if(message.content === command+"showDB"){
+    db.all('SELECT * FROM candidates', [], (err, rows) => {
+  if (err) {
+    throw err;
+  }
+  rows.forEach(row => {
+    console.log("cID \n"+row.cID);
+    console.log("DiscordID \n"+row.DiscordID)
+  });
+});
+  
+  db.all('SELECT * FROM CandidateElections', [], (err, rows) => {
+  if (err) {
+    throw err;
+  }
+  rows.forEach(row => {
+    console.log("ceID \n"+row.ceID);
+    console.log("candidate \n"+row.candidate);
+    console.log("Election \n"+row.Election);
+  });
+});
+  
+  db.all('SELECT * FROM Elections', [], (err, rows) => {
+  if (err) {
+    throw err;
+  }
+  rows.forEach(row => {
+    console.log("eID \n"+row.eID);
+    console.log("Title \n"+row.Title);
+    console.log("Month \n"+row.Month);
+  });
+});
+    
+    
+  }
   
   if(message.content.toLowerCase().includes(command+"election"))
     {

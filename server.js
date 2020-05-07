@@ -387,6 +387,27 @@ clientdc.on("message", message => {
 
   if (message.content.toLowerCase().includes(command + "election")) {
     let args = message.content.split(" ");
+    let maxVote;
+    switch(args[1])
+      {
+        case "consul":
+          maxVote = 2;
+          break;
+        case "praetor":
+          maxVote = 3;
+          break;
+        case "aedile":
+          maxVote = 2;
+          break;
+        case "quaestor":
+          maxVote = 4;
+          break;
+        case "tribune":
+          maxVote = 2;
+          break;
+          
+      }
+    
     let emb = new Discord.MessageEmbed();
     var lett = [
       "0️⃣",
@@ -474,7 +495,7 @@ for (i = 0; i < rows.length; i++) {
                 rows.forEach(row => {
                   if (can[i] == row.DiscordID) {
                     db.run(
-                      "UPDATE CandidateElections SET votes = votes+1 WHERE candidate IN (SELECT cID FROM candidates WHERE DiscordID = "+row.DiscordID+")"
+                      "UPDATE CandidateElections SET votes = votes+1 WHERE candidate IN (SELECT cID FROM candidates WHERE DiscordID = "+row.DiscordID+")  AND Election IN (SELECT eID FROM Elections WHERE Month = '"+row.Month+"')"
                     );
                   }
                 });
@@ -884,7 +905,7 @@ clientdc.on("message", async message => {
     }
 
     if (
-      message.content.toLowerCase().includes("hre") ||
+      message.content.toLowerCase().includes("hre ") ||
       message.content.toLowerCase().includes("holy Roman Empire") ||
       message.content.toLowerCase().includes("hre ")
     ) {

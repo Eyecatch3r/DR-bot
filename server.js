@@ -335,14 +335,14 @@ clientdc.on("message",  message => {
       
       
       let sql4 = 'SELECT * FROM Elections JOIN CandidateElections ON eID = Election JOIN Candidates ON candidate = cID WHERE Title = "'+args[1]+'" AND Month = "'+args[2]+'"';
-       db.all(sql4,[], (err,result) => {message.channel.send(result.length);});
+       
       let col = new Array();
-     /**db.all(sql4,[], (err,rows) => {
+     db.all(sql4,[], (err,rows) => {
         
         if(err){throw err; message.channel.send("sth went wrong")}
       
       //message.guild.members.cache.get(row.cID).toString()+"\n votes: "+row.votes
-       //rows.forEach(row => {emb.addField("Candidate",message.guild.members.cache.get(row.cID).toString()+"\n votes: "+row.votes,true)});
+       rows.forEach(row => {emb.addField("Candidate",message.guild.members.cache.get(row.cID).toString()+"\n votes: "+row.votes,true)});
        message.channel.send(emb).then(m => {
           
           
@@ -371,7 +371,7 @@ clientdc.on("message",  message => {
         });
          
         
-      });**/
+      });
     
     }
   
@@ -394,7 +394,7 @@ clientdc.on("message",  message => {
         if(err){m.channel.send('sorry but there was an error (probably wrong ID)')}
         else
           {
-            rows.forEach(row => db.run('INSERT INTO CandidateElections(candidate,Election) VALUES("'+row.DiscordID+'","'+args[2]+'")'))
+            rows.forEach(row => db.run('INSERT INTO CandidateElections(candidate,Election) VALUES("'+row.cID+'","'+args[2]+'")'))
             
           }
         

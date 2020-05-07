@@ -339,14 +339,14 @@ clientdc.on("message",  message => {
      db.all(sql,[], (err,rows) => {
         
         if(err){throw err; message.channel.send("sth went wrong")}
-      rows.forEach(row => {emb.addField("Candidate",message.guild.members.cache.get(row.cID).toString()+"\n votes: "+row.votes,true)});
+      
       //message.guild.members.cache.get(row.cID).toString()+"\n votes: "+row.votes
        message.channel.send(emb).then(m => {
           
           
           let filter = (reaction => lett.includes(reaction.emoji.name));
         for(i = 0; i <= rows.length; i++){
-          emb.addField("Candidate",message.guild.members.cache.get(rows[i].cID).toString()+"\n votes: "+rows[i].votes,true);
+          
              
           m.react(lett[i]);
             
@@ -358,7 +358,11 @@ clientdc.on("message",  message => {
         
           collector.on('collect', (reaction,user) => {
             if(!user.bot){
-              m.edit(emb);          
+              rows.forEach( (row) => {emb.addField("Candidate",message.guild.members.cache.get(row.cID).toString()+"\n votes: "+row.votes,true);
+                          m.edit(emb);
+                          
+                          });
+              //m.edit(emb);          
             }
             
         
@@ -660,8 +664,8 @@ clientdc.on("message", async message => {
     }
 
     if (
-      message.content.toLowerCase().includes("HRE") ||
-      message.content.toLowerCase().includes("Holy Roman Empire") ||
+      message.content.toLowerCase().includes("hre") ||
+      message.content.toLowerCase().includes("holy Roman Empire") ||
       message.content.toLowerCase().includes("hre ")
     ) {
       message.channel.send("shame on you");

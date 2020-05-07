@@ -335,9 +335,9 @@ clientdc.on("message",  message => {
       
       
       let sql4 = 'SELECT * FROM Elections JOIN CandidateElections ON eID = Election JOIN Candidates ON candidate = cID WHERE Title = "'+args[1]+'" AND Month = "'+args[2]+'"';
-       db.each(sql4,[], (err,result) => {message.channel.send(result.cID);});
+       db.all(sql4,[], (err,result) => {message.channel.send(result.length);});
       let col = new Array();
-     db.all(sql4,[], (err,rows) => {
+     /**db.all(sql4,[], (err,rows) => {
         
         if(err){throw err; message.channel.send("sth went wrong")}
       
@@ -371,7 +371,7 @@ clientdc.on("message",  message => {
         });
          
         
-      });
+      });**/
     
     }
   

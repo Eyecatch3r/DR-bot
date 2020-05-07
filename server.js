@@ -431,7 +431,7 @@ clientdc.on("message",  message => {
         message.channel.send(user.id);
       message.guild.members.cache.get(user.id).roles.add('703401102795604079');
       db.all('INSERT INTO candidates(DiscordID) VALUES("'+user.id+'")',[],(err) =>{if(err){}});
-      db.all("SELECT * FROM candidates JOIN CandidateElections ON cID = candidate JOIN Elections ON election = eID WHERE DiscordID = '"+user.id+10+"';",[], (err,rows) =>{
+      db.all("SELECT * FROM candidates JOIN CandidateElections ON cID = candidate JOIN Elections ON election = eID WHERE DiscordID = '"+user.id+"';",[], (err,rows) =>{
         if(err){m.channel.send('sorry but there was an error (probably wrong ID)')}
         else
           {

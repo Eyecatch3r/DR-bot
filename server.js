@@ -351,6 +351,11 @@ clientdc.on("message", message => {
     db.run("DELETE FROM CandidateElections");
     message.channel.send("all right");
   }
+  if(message.content.toLowerCase().includes()"")
+    {
+     message.channel.send("https://cdn.discordapp.com/attachments/514135876909924354/708105678253981766/DeepFryer_20200507_193318.jpg");
+    }
+  
   if (message.content === command + "showDB") {
     db.all("SELECT * FROM candidates", [], (err, rows) => {
       if (err) {

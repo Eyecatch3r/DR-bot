@@ -351,9 +351,11 @@ clientdc.on("message", message => {
     db.run("DELETE FROM CandidateElections");
     message.channel.send("all right");
   }
-  if(message.content.toLowerCase().includes()"")
+  if(message.content.toLowerCase().includes(" cor ") || message.content.toLowerCase().includes(" cock ") || message.content.toLowerCase().includes("byq") || message.content.toLowerCase().includes("byqerino") || message.content.toLowerCase().includes("corey") || message.content.toLowerCase().includes("naresh"))
     {
+      if(!message.author.bot){
      message.channel.send("https://cdn.discordapp.com/attachments/514135876909924354/708105678253981766/DeepFryer_20200507_193318.jpg");
+      }
     }
   
   if (message.content === command + "showDB") {

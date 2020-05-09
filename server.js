@@ -553,11 +553,15 @@ for (i = 0; i < rows.length; i++) {
                     let cID;
                     db.get("SELECT * FROM Voters WHERE DiscordID = '"+user.id+"'",[],(err,rows) =>{
                       //if a voter is already registered insert the m-n relationship votercandidate
-                    db.each("SELECT cID FROM candidates WHERE DiscordID = '"+can[i]+"'",[],(err,row) => cID = row.cID).then(db.run("INSERT INTO votercandidate(voter,candidate) VALUES('"+rows.vID+"','"+cID+"')"));});  
+                    
                       if(rows == undefined){
                         db.run("INSERT INTO Voters(DiscordID) VALUES("+user.id+")");
-                        db.each("SELECT cID FROM candidates WHERE DiscordID = '"+can[i]+"'",[],(err,row) => cID = row.cID).then(db.run("INSERT INTO votercandidate(voter,candidate) VALUES('"+rows.vID+"','"+cID+"')"))}
-                      
+                        db.get("SELECT cID FROM candidates WHERE DiscordID = '"+can[i]+"'",[],(err,row) =>{ 
+                          cID = row.cID; 
+                          db.run("INSERT INTO votercandidate(voter,candidate) VALUES('"+user.id+"','"+cID+"')")})
+                      }
+                      else db.get("SELECT cID FROM candidates WHERE DiscordID = '"+can[i]+"'",[],(err,row) => cID = row.cID).then(db.run("INSERT INTO votercandidate(voter,candidate) VALUES('"+rows.vID+"','"+cID+"')"));  });
+                    
                     
                       }
                       else message.channel.send("you already voted");

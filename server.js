@@ -634,7 +634,7 @@ for (i = 0; i < rows.length; i++) {
         if (err) {
           message.channel.send("month already specified");
         }
-      
+      else{
       clientdc.channels.cache
         .get("548918811391295489")
         .send(args[1] + " Elections react here with 🔴")
@@ -656,27 +656,29 @@ for (i = 0; i < rows.length; i++) {
                   if (err) {
                   }
                 
-              db.all(
+              db.get(
                 "SELECT cID FROM candidates WHERE DiscordID = '" +
                   user.id +
                   "';",
                 [],
-                (err, rows) => {
+                (err, rowss) => {
                   if (err) {
                     m.channel.send(
                       "sorry but there was an error (probably wrong ID)"
                     );
                   } else {
+                    let eID,cID;
+                    cID = rowss.cID;
                     db.get("SELECT eID FROM Elections WHERE Month = '"+args[2]+"'",[],(err,row => {
-                    rows.forEach(rowt =>
+                    eID = row.eID;
                       db.run(
                         'INSERT INTO CandidateElections(candidate,Election) VALUES("' +
-                          rowt.cID +
+                          cID +
                           '","' +
-                          row.eID +
+                          eID +
                           '")'
                       )
-                    );
+                    
                     }));
                   }
                 });
@@ -685,10 +687,13 @@ for (i = 0; i < rows.length; i++) {
                 
           });
         
-        })
         });
-        
-    } else {
+      }
+        });
+      
+    } 
+             
+             else {
       message.channel.send("invalid role");
     }
   }

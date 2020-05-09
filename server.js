@@ -542,13 +542,13 @@ for (i = 0; i < rows.length; i++) {
               reaction.remove();
               //check the reaction, then find the user based by its ID in the database and update the vote count
               if (reaction.emoji.name == lett[i]) {
-                rows.forEach(row => {
-                  if (can[i] == row.DiscordID) {
+                rows.forEach(candidate => {
+                  if (can[i] == candidate.DiscordID && !user.bot) {
                     db.get("SELECT COUNT() AS count FROM Voters JOIN votercandidate ON vID = voter JOIN CandidateElections ON votercandidate.candidate = candidateElections.candidate JOIN Elections ON Election = eID WHERE voter IN (SELECT vID FROM Voters WHERE DiscordID = '"+user.id+"') AND Election IN (SELECT eID WHERE Month = '"+args[2]+"')",[],(err,rowt) => {
                       if(rowt.count <= maxVote || rowt.count == undefined){
                    
                     db.run(
-                      "UPDATE CandidateElections SET votes = votes+1 WHERE candidate IN (SELECT cID FROM candidates WHERE DiscordID = "+row.DiscordID+")  AND Election IN (SELECT eID FROM Elections WHERE Month = '"+row.Month+"')"
+                      "UPDATE CandidateElections SET votes = votes+1 WHERE candidate IN (SELECT cID FROM candidates WHERE DiscordID = "+candidate.DiscordID+")  AND Election IN (SELECT eID FROM Elections WHERE Month = '"+candidate.Month+"')"
                     );
                     let cID;
                     db.get("SELECT * FROM Voters WHERE DiscordID = '"+user.id+"'",[],(err,rows) =>{
@@ -556,11 +556,14 @@ for (i = 0; i < rows.length; i++) {
                     
                       if(rows == undefined){
                         db.run("INSERT INTO Voters(DiscordID) VALUES("+user.id+")");
-                        db.get("SELECT cID FROM candidates WHERE DiscordID = '"+can[i]+"'",[],(err,row) =>{ 
+                        db.get("SELECT cID FROM candidates WHERE DiscordID = '"+candidate.DiscordID+"'",[],(err,row) =>{ 
                           cID = row.cID; 
-                          db.run("INSERT INTO votercandidate(voter,candidate) VALUES('"+user.id+"','"+cID+"')")})
+                          db.run("INSERT INTO votercandidate(voter,candidate) VALUES('"+user.id+"','"+cID+"')")});
                       }
-                      else db.get("SELECT cID FROM candidates WHERE DiscordID = '"+can[i]+"'",[],(err,row) => cID = row.cID).then(db.run("INSERT INTO votercandidate(voter,candidate) VALUES('"+rows.vID+"','"+cID+"')"));  });
+                      else db.get("SELECT cID FROM candidates WHERE DiscordID = '"+candidate.DiscordID+"'",[],(err,row) => {cID = row.cID; 
+          
+                          db.run("INSERT INTO votercandidate(voter,candidate) VALUES('"+user.id+"','"+cID+"')")});
+                                                                                                              }); 
                     
                     
                       }
@@ -569,7 +572,7 @@ for (i = 0; i < rows.length; i++) {
                   }
                 });
              
-              
+              //updates the embed with the new votes 
               let emb2 = new Discord.MessageEmbed();
               emb2.setTitle(args[1] + " elections from: " + args[2]);
     emb2.setColor("0x66023c");

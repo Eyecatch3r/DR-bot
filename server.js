@@ -364,6 +364,7 @@ clientdc.on("message", message => {
   
   if (message.content === command + "showDB") {
     if(message.author.id === '325296044739133450'){
+    
     db.all("SELECT * FROM candidates", [], (err, rows) => {
       if (err) {
         throw err;

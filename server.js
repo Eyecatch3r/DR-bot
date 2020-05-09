@@ -396,6 +396,28 @@ clientdc.on("message", message => {
         console.log("Month \n" + row.Month);
       });
     });
+      
+      db.all("SELECT * FROM Voters", [], (err, rows) => {
+      if (err) {
+        throw err;
+      }
+      rows.forEach(row => {
+        console.log("vID \n" + row.vID);
+        console.log("discordID \n" + row.DiscordID);
+        
+      });
+    });
+      
+      db.all("SELECT * FROM votercandidate", [], (err, rows) => {
+      if (err) {
+        throw err;
+      }
+      rows.forEach(row => {
+        console.log("vcID \n" + row.vcID);
+        console.log("candidate \n" + row.candidate);
+        console.log("voter \n" + row.voter);
+      });
+    });
   }
     else {message.channel.send("sorry but you're not the Imperator "+"<@325296044739133450>")}
   }
@@ -511,8 +533,8 @@ for (i = 0; i < rows.length; i++) {
               if (reaction.emoji.name == lett[i]) {
                 rows.forEach(row => {
                   if (can[i] == row.DiscordID) {
-                    db.get("SELECT COUNT() AS c FROM Voters JOIN votercandidate ON vID = voter JOIN candidateElections ON votercandidate.candidate = candidateElections.candidate JOIN Elections ON Election = eID WHERE voter IN (SELECT vID FROM Voters WHERE DiscordID = "+user.id+") AND Election IN (SELECT eID WHERE Month = "+args[2]+")",(err,row) => {
-                      if(row.c <= maxVote || row.c == undefined){
+                    db.get("SELECT COUNT() AS count FROM Voters JOIN votercandidate ON vID = voter JOIN candidateElections ON votercandidate.candidate = candidateElections.candidate JOIN Elections ON Election = eID WHERE voter IN (SELECT vID FROM Voters WHERE DiscordID = "+user.id+") AND Election IN (SELECT eID WHERE Month = "+args[2]+")",(err,row) => {
+                      if(row.count <= maxVote || row.count == undefined){
                    
                     db.run(
                       "UPDATE CandidateElections SET votes = votes+1 WHERE candidate IN (SELECT cID FROM candidates WHERE DiscordID = "+row.DiscordID+")  AND Election IN (SELECT eID FROM Elections WHERE Month = '"+row.Month+"')"
@@ -527,6 +549,7 @@ for (i = 0; i < rows.length; i++) {
                       
                     });
                       }
+                      else message.channel.send("you already voted");
                    }); 
                   }
                 });

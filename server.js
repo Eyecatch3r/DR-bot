@@ -350,6 +350,8 @@ clientdc.on("message", message => {
     db.run("DELETE FROM candidates");
     db.run("DELETE FROM Elections");
     db.run("DELETE FROM CandidateElections");
+    db.run("DELETE FROM Voters");
+    db.run("DELETE FROM votercandidate");
     message.channel.send("all right");
   }
   else {message.channel.send("sorry but you're not the Imperator "+"<@325296044739133450>")}
@@ -510,7 +512,7 @@ clientdc.on("message", message => {
         throw err;
         message.channel.send("sth went wrong");
       }
-      console.log(rows.length);
+      
       //message.guild.members.cache.get(row.cID).toString()+"\n votes: "+row.votes
       
       message.channel.send(emb).then(m => {
@@ -558,12 +560,17 @@ for (i = 0; i < rows.length; i++) {
                         db.run("INSERT INTO Voters(DiscordID) VALUES("+user.id+")");
                         db.get("SELECT cID FROM candidates WHERE DiscordID = '"+candidate.DiscordID+"'",[],(err,row) =>{ 
                           cID = row.cID; 
-                          db.get()
-                          db.run("INSERT INTO votercandidate(voter,candidate) VALUES('"+user.id+"','"+cID+"')")});
+                          db.get("SELECT vID FROM VOTERS WHERE DiscordID = '"+user.id+"'",[],(err,r) => {
+                            vID = r;
+                          db.run("INSERT INTO votercandidate(voter,candidate) VALUES('"+vID+"','"+cID+"')")});
+                        });
                       }
                       else db.get("SELECT cID FROM candidates WHERE DiscordID = '"+candidate.DiscordID+"'",[],(err,row) => {cID = row.cID; 
-          
-                          db.run("INSERT INTO votercandidate(voter,candidate) VALUES('"+user.id+"','"+cID+"')")});
+                          db.get("SELECT vID FROM VOTERS WHERE DiscordID = '"+user.id+"'",[],(err,r) => {
+                            vID = r;
+                          db.run("INSERT INTO votercandidate(voter,candidate) VALUES('"+vID+"','"+cID+"')")});
+                          });
+                      
                                                                                                               }); 
                     
                     

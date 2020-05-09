@@ -479,7 +479,7 @@ clientdc.on("message", message => {
       }
       console.log(rows.length);
       //message.guild.members.cache.get(row.cID).toString()+"\n votes: "+row.votes
-
+      
       message.channel.send(emb).then(m => {
         let filter = reaction => lett.includes(reaction.emoji.name);
 for (i = 0; i < rows.length; i++) {
@@ -492,6 +492,7 @@ for (i = 0; i < rows.length; i++) {
               row.votes,
             true
           );
+          let eID = row.eID;
         });
         
           m.edit(emb);
@@ -512,15 +513,16 @@ for (i = 0; i < rows.length; i++) {
                     db.run(
                       "UPDATE CandidateElections SET votes = votes+1 WHERE candidate IN (SELECT cID FROM candidates WHERE DiscordID = "+row.DiscordID+")  AND Election IN (SELECT eID FROM Elections WHERE Month = '"+row.Month+"')"
                     );
-                    db.all("SELECT * FROM Voters WHERE DiscordID ="+user.id,[],(err,rows) =>{
-                      let eID;
+                    db.get("SELECT * FROM Voters WHERE DiscordID ="+user.id,[],(err,rows) =>{
+                      
                     rows.forEach(row => {db.each("SELECT eID FROM Election WHERE Month ="+args[2],[],(err,row) => eID = row.eID)
                                          
-                                //db.run("INSERT INTO votercandidate(voter,candidate) VALUES("+row.vID+","+)
+                                db.run("INSERT INTO votercandidate(voter,candidate) VALUES("+row.vID+","+eID+")")
                                         }
                                 );  
                       
                     });
+                    
                     
                   }
                 });

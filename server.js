@@ -550,6 +550,7 @@ for (i = 0; i < rows.length; i++) {
                         
                       db.run("UPDATE CandidateElections SET votes = votes+1 WHERE candidate IN (SELECT cID FROM candidates WHERE DiscordID = "+candidate.DiscordID+")  AND Election IN (SELECT eID FROM Elections WHERE Month ='"+candidate.Month+"')");
                     let cID;
+                    let vID;
                     db.get("SELECT * FROM Voters WHERE DiscordID = '"+user.id+"'",[],(err,rows) =>{
                       //if a voter is already registered insert the m-n relationship votercandidate
                     
@@ -557,6 +558,7 @@ for (i = 0; i < rows.length; i++) {
                         db.run("INSERT INTO Voters(DiscordID) VALUES("+user.id+")");
                         db.get("SELECT cID FROM candidates WHERE DiscordID = '"+candidate.DiscordID+"'",[],(err,row) =>{ 
                           cID = row.cID; 
+                          db.get()
                           db.run("INSERT INTO votercandidate(voter,candidate) VALUES('"+user.id+"','"+cID+"')")});
                       }
                       else db.get("SELECT cID FROM candidates WHERE DiscordID = '"+candidate.DiscordID+"'",[],(err,row) => {cID = row.cID; 

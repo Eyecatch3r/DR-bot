@@ -492,7 +492,7 @@ for (i = 0; i < rows.length; i++) {
               row.votes,
             true
           );
-          let eID = row.eID;
+          
         });
         
           m.edit(emb);
@@ -507,19 +507,22 @@ for (i = 0; i < rows.length; i++) {
             
             for (i = 0; i < rows.length; i++) {
               reaction.remove();
+              //check the reaction, then find the user based by its ID in the database and update the vote count
               if (reaction.emoji.name == lett[i]) {
                 rows.forEach(row => {
                   if (can[i] == row.DiscordID) {
                     db.run(
                       "UPDATE CandidateElections SET votes = votes+1 WHERE candidate IN (SELECT cID FROM candidates WHERE DiscordID = "+row.DiscordID+")  AND Election IN (SELECT eID FROM Elections WHERE Month = '"+row.Month+"')"
                     );
+                    let eID;
                     db.get("SELECT * FROM Voters WHERE DiscordID ="+user.id,[],(err,rows) =>{
-                      
-                    rows.forEach(row => {db.each("SELECT eID FROM Election WHERE Month ="+args[2],[],(err,row) => eID = row.eID)
+                      //if a voter is already registered insert the m-n relationship votercandidate
+                    rows.forEach(row => {db.each("SELECT eID FROM Election WHERE Month ="+args[2],[],(err,row) => eID = row.eID).then(db.run("INSERT INTO votercandidate(voter,candidate) VALUES("+row.vID+","+eID+")"));
                                          
-                                db.run("INSERT INTO votercandidate(voter,candidate) VALUES("+row.vID+","+eID+")")
+                                
                                         }
                                 );  
+                      if(rows == undefined){db.each("SELECT eID FROM Election WHERE Month ="+args[2],[],(err,row) => eID = row.eID).then(db.run("INSERT INTO votercandidate(voter,candidate) VALUES("+row.vID+","+eID+")"))}
                       
                     });
                     

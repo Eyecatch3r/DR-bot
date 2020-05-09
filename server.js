@@ -512,7 +512,7 @@ for (i = 0; i < rows.length; i++) {
                 rows.forEach(row => {
                   if (can[i] == row.DiscordID) {
                     db.get("SELECT COUNT() FROM Voters JOIN votercandidate ON vID = voter JOIN candidateElections ON votercandidate.candidate = candidateElections.candidate JOIN Elections ON Election = eID WHERE voter IN (SELECT vID FROM Voters WHERE DiscordID = "+user.id+") AND Election IN (SELECT eID WHERE Month = "+args[2]+")",(err,row) => {
-                      
+                      if(row.COUNT)
                     });
                     db.run(
                       "UPDATE CandidateElections SET votes = votes+1 WHERE candidate IN (SELECT cID FROM candidates WHERE DiscordID = "+row.DiscordID+")  AND Election IN (SELECT eID FROM Elections WHERE Month = '"+row.Month+"')"

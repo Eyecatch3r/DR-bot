@@ -516,7 +516,8 @@ for (i = 0; i < rows.length; i++) {
                       let eID;
                     rows.forEach(row => {db.each("SELECT eID FROM Election WHERE Month ="+args[2],[],(err,row) => eID = row.eID)
                                          
-                                db.run("INSERT INTO votercandidate(voter,candidate) VALUES("+row.vID+","+)}
+                                //db.run("INSERT INTO votercandidate(voter,candidate) VALUES("+row.vID+","+)
+                                        }
                                 );  
                       
                     });

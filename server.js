@@ -397,13 +397,13 @@ clientdc.on("message", message => {
       });
     });
       
-      db.all("SELECT * FROM Voters", [], (err, rows) => {
+      db.all("SELECT COUNT() AS d FROM Voters", [], (err, rows) => {
       if (err) {
         throw err;
       }
       rows.forEach(row => {
-        console.log("vID \n" + row.vID);
-        console.log("discordID \n" + row.DiscordID);
+        //console.log("vID \n" + row.vID);
+        console.log("discordID \n" + row.d);
         
       });
     });

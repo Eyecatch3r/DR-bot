@@ -533,7 +533,7 @@ for (i = 0; i < rows.length; i++) {
               if (reaction.emoji.name == lett[i]) {
                 rows.forEach(row => {
                   if (can[i] == row.DiscordID) {
-                    db.get("SELECT COUNT() count FROM Voters JOIN votercandidate ON vID = voter JOIN candidateElections ON votercandidate.candidate = candidateElections.candidate JOIN Elections ON Election = eID WHERE voter IN (SELECT vID FROM Voters WHERE DiscordID = "+user.id+") AND Election IN (SELECT eID WHERE Month = "+args[2]+")",(err,row) => {
+                    db.get("SELECT COUNT() as count FROM Voters JOIN votercandidate ON vID = voter JOIN candidateElections ON votercandidate.candidate = candidateElections.candidate JOIN Elections ON Election = eID WHERE voter IN (SELECT vID FROM Voters WHERE DiscordID = "+user.id+") AND Election IN (SELECT eID WHERE Month = "+args[2]+")",(err,row) => {
                       if(row.count <= maxVote || row.count == undefined){
                    
                     db.run(

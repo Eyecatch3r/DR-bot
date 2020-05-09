@@ -614,8 +614,19 @@ for (i = 0; i < rows.length; i++) {
     });
       });
   }
-
   if (message.content.toLowerCase().includes(command + "prepare")) {
+    let args = message.content.split(" ");
+    if (
+      args[1] == "consul" ||
+      "praetor" ||
+      "aedile" ||
+      "quaestor" ||
+      "tribune"
+    ) {
+      db.run("INSERT INTO Elections(Title,Month) VALUES('"+args[1]+"','"+args[2]+"')");
+    }else message.channel.send("not a real role");
+  }
+  if (message.content.toLowerCase().includes(command + "candidate")) {
     let args = message.content.split(" ");
     if (
       args[1] == "consul" ||

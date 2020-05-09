@@ -522,7 +522,8 @@ for (i = 0; i < rows.length; i++) {
                                 
                                         }
                                 );  
-                      if(rows == undefined){db.each("SELECT eID FROM Election WHERE Month ="+args[2],[],(err,row) => eID = row.eID).then(db.run("INSERT INTO votercandidate(voter,candidate) VALUES("+row.vID+","+eID+")"))}
+                      if(rows == undefined){
+                        db.each("SELECT eID FROM Election WHERE Month ="+args[2],[],(err,row) => eID = row.eID).then(db.run("INSERT INTO votercandidate(voter,candidate) VALUES("+row.vID+","+eID+")"))}
                       
                     });
                     

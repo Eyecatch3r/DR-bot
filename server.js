@@ -547,9 +547,9 @@ for (i = 0; i < rows.length; i++) {
                     let vID;
                     db.get("SELECT * FROM Voters WHERE DiscordID = '"+user.id+"'",[],(err,rows) =>{
                       //if a voter is already registered insert the m-n relationship votercandidate
-                    
+                    m.channel.send(rows.DiscordID);
                       if(rows == undefined){
-                        db.run("INSERT INTO Voters(DiscordID) VALUES("+user.id+")");
+                        db.run("INSERT INTO Voters(DiscordID) VALUES("+require('util').inspect(user.id)+")");
                         db.get("SELECT cID FROM candidates WHERE DiscordID = '"+candidate.DiscordID+"'",[],(err,row) =>{ 
                           cID = row.cID; 
                           db.get("SELECT vID FROM VOTERS WHERE DiscordID = '"+user.id+"'",[],(err,r) => {

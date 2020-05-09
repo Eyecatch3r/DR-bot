@@ -346,11 +346,15 @@ function getRole(mention, server) {
 var command = process.env.Prefix;
 clientdc.on("message", message => {
   if (message.content === command + "clearDB") {
+    if(message.author.id === '325296044739133450'){
     db.run("DELETE FROM candidates");
     db.run("DELETE FROM Elections");
     db.run("DELETE FROM CandidateElections");
     message.channel.send("all right");
   }
+  else {message.channel.send("sorry but you're not the Imperator "+"<@325296044739133450>")}
+  }
+  
   if(message.content.toLowerCase().includes(" cor ") || message.content.toLowerCase().includes(" cock ") || message.content.toLowerCase().includes("byq") || message.content.toLowerCase().includes("byqerino") || message.content.toLowerCase().includes("corey") || message.content.toLowerCase().includes("naresh"))
     {
       if(!message.author.bot){
@@ -359,6 +363,7 @@ clientdc.on("message", message => {
     }
   
   if (message.content === command + "showDB") {
+    if(message.author.id === '325296044739133450'){
     db.all("SELECT * FROM candidates", [], (err, rows) => {
       if (err) {
         throw err;
@@ -391,7 +396,8 @@ clientdc.on("message", message => {
       });
     });
   }
-
+    else {message.channel.send("sorry but you're not the Imperator "+"<@325296044739133450>")}
+  }
   if (message.content.toLowerCase().includes(command + "election")) {
     let args = message.content.split(" ");
     let maxVote;

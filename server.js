@@ -634,7 +634,7 @@ for (i = 0; i < rows.length; i++) {
         if (err) {
           message.channel.send("month already specified");
         }
-      });
+      
       clientdc.channels.cache
         .get("548918811391295489")
         .send(args[1] + " Elections react here with 🔴")
@@ -655,10 +655,9 @@ for (i = 0; i < rows.length; i++) {
                 err => {
                   if (err) {
                   }
-                }
-              );
+                
               db.all(
-                "SELECT * FROM candidates WHERE DiscordID = '" +
+                "SELECT cID FROM candidates WHERE DiscordID = '" +
                   user.id +
                   "';",
                 [],
@@ -668,23 +667,27 @@ for (i = 0; i < rows.length; i++) {
                       "sorry but there was an error (probably wrong ID)"
                     );
                   } else {
-                    db.get("SELECT * FROM Elections WHERE Month = '"+args[2]+"'",[]);
-                    rows.forEach(row =>
+                    db.get("SELECT eID FROM Elections WHERE Month = '"+args[2]+"'",[],(err,row => {
+                    rows.forEach(rowt =>
                       db.run(
                         'INSERT INTO CandidateElections(candidate,Election) VALUES("' +
-                          row.cID +
+                          rowt.cID +
                           '","' +
                           row.eID +
                           '")'
                       )
                     );
+                    }));
                   }
-                }
-              );
+                });
+                  });
             }
+                
           });
+        
         })
-        .catch(console.error);
+        });
+        
     } else {
       message.channel.send("invalid role");
     }

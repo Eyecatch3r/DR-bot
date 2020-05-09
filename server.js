@@ -421,16 +421,8 @@ clientdc.on("message", message => {
       });
     });
       
-      db.all("SELECT COUNT() AS a FROM Voters WHERE DiscordID = 2", [], (err, rows) => {
-      if (err) {
-        throw err;
-      }
-      rows.forEach(row => {
-        
-        console.log("TESTMAO \n" + row.a);
-        
-      });
-    });
+      
+  
   }
     else {message.channel.send("sorry but you're not the Imperator "+"<@325296044739133450>")}
   }
@@ -680,7 +672,7 @@ for (i = 0; i < rows.length; i++) {
                   } else {
                     let eID,cID;
                     cID = rowss.cID;
-                    db.get("SELECT eID FROM Elections WHERE Month = '"+args[2]+"'",[],(err,row => {
+                    db.get("SELECT eID FROM Elections WHERE Month = '"+args[2]+"'",[],(err, row)=> {
                     eID = row.eID;
                       db.run(
                         'INSERT INTO CandidateElections(candidate,Election) VALUES("' +
@@ -690,7 +682,7 @@ for (i = 0; i < rows.length; i++) {
                           '")'
                       )
                     
-                    }));
+                    });
                   }
                 });
                   });

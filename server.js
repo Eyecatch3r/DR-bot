@@ -511,29 +511,26 @@ for (i = 0; i < rows.length; i++) {
               if (reaction.emoji.name == lett[i]) {
                 rows.forEach(row => {
                   if (can[i] == row.DiscordID) {
-                    db.get("SELECT COUNT() FROM Voters JOIN votercandidate ON vID = voter JOIN candidateElections ON votercandidate.candidate = candidateElections.candidate JOIN Elections ON Election = eID WHERE voter IN (SELECT vID FROM Voters WHERE DiscordID = "+user.id+") AND Election IN (SELECT eID WHERE Month = "+args[2]+")",(err,row) => {
-                      if(row.COUNT)
-                    });
+                    db.get("SELECT COUNT() AS c FROM Voters JOIN votercandidate ON vID = voter JOIN candidateElections ON votercandidate.candidate = candidateElections.candidate JOIN Elections ON Election = eID WHERE voter IN (SELECT vID FROM Voters WHERE DiscordID = "+user.id+") AND Election IN (SELECT eID WHERE Month = "+args[2]+")",(err,row) => {
+                      if(row.c <= maxVote || row.c == undefined){
+                   
                     db.run(
                       "UPDATE CandidateElections SET votes = votes+1 WHERE candidate IN (SELECT cID FROM candidates WHERE DiscordID = "+row.DiscordID+")  AND Election IN (SELECT eID FROM Elections WHERE Month = '"+row.Month+"')"
                     );
                     let eID;
                     db.get("SELECT * FROM Voters WHERE DiscordID ="+user.id,[],(err,rows) =>{
                       //if a voter is already registered insert the m-n relationship votercandidate
-                    rows.forEach(row => {db.each("SELECT eID FROM Election WHERE Month ="+args[2],[],(err,row) => eID = row.eID).then(db.run("INSERT INTO votercandidate(voter,candidate) VALUES("+row.vID+","+eID+")"));
-                                         
-                                
-                                        }
-                                );  
+                    rows.forEach(row => {db.each("SELECT eID FROM Election WHERE Month ="+args[2],[],(err,row) => eID = row.eID).then(db.run("INSERT INTO votercandidate(voter,candidate) VALUES("+row.vID+","+eID+")"));});  
                       if(rows == undefined){
                         db.run("INSERT INTO Voters(DiscordID) VALUES("+user.id+")");
                         db.each("SELECT eID FROM Election WHERE Month ="+args[2],[],(err,row) => eID = row.eID).then(db.run("INSERT INTO votercandidate(voter,candidate) VALUES("+row.vID+","+eID+")"))}
                       
                     });
-                    
-                    
+                      }
+                   }); 
                   }
                 });
+             
               
               let emb2 = new Discord.MessageEmbed();
               emb2.setTitle(args[1] + " elections from: " + args[2]);

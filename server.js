@@ -513,7 +513,12 @@ for (i = 0; i < rows.length; i++) {
                       "UPDATE CandidateElections SET votes = votes+1 WHERE candidate IN (SELECT cID FROM candidates WHERE DiscordID = "+row.DiscordID+")  AND Election IN (SELECT eID FROM Elections WHERE Month = '"+row.Month+"')"
                     );
                     db.all("SELECT * FROM Voters WHERE DiscordID ="+user.id,[],(err,rows) =>{
-                    rows.forEach(row => db.get("SELECT eID FROM Election WHERE Month ="+args[2]));  
+                      let eID;
+                    rows.forEach(row => {db.each("SELECT eID FROM Election WHERE Month ="+args[2],[],(err,row) => eID = row.eID)
+                                         
+                                db.run("INSERT INTO votercandidate(voter,candidate) VALUES("+row.vID+","+)}
+                                );  
+                      
                     });
                     
                   }

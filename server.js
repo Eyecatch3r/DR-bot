@@ -512,7 +512,7 @@ clientdc.on("message", message => {
         throw err;
         message.channel.send("sth went wrong");
       }
-      
+      message.channel.send(rows.length);
       //message.guild.members.cache.get(row.cID).toString()+"\n votes: "+row.votes
       
       message.channel.send(emb).then(m => {
@@ -645,7 +645,7 @@ for (i = 0; i < rows.length; i++) {
 
           collector.on("collect", (reaction, user) => {
             if (!user.bot) {
-              message.channel.send(user.id);
+              
               message.guild.members.cache
                 .get(user.id)
                 .roles.add("703401102795604079");
@@ -658,7 +658,7 @@ for (i = 0; i < rows.length; i++) {
                 }
               );
               db.all(
-                "SELECT * FROM candidates JOIN CandidateElections ON cID = candidate JOIN Elections ON election = eID WHERE DiscordID = '" +
+                "SELECT * FROM candidates WHERE DiscordID = '" +
                   user.id +
                   "';",
                 [],
@@ -668,6 +668,7 @@ for (i = 0; i < rows.length; i++) {
                       "sorry but there was an error (probably wrong ID)"
                     );
                   } else {
+                    db.get("SELECT * FROM Elections WHERE Month = '"+args[2]+"'",[]);
                     rows.forEach(row =>
                       db.run(
                         'INSERT INTO CandidateElections(candidate,Election) VALUES("' +

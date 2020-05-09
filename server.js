@@ -397,13 +397,13 @@ clientdc.on("message", message => {
       });
     });
       
-      db.all("SELECT COUNT() AS d FROM Voters", [], (err, rows) => {
+      db.all("SELECT * FROM Voters", [], (err, rows) => {
       if (err) {
         throw err;
       }
       rows.forEach(row => {
-        //console.log("vID \n" + row.vID);
-        console.log("discordID \n" + row.d);
+        console.log("vID \n" + row.vID);
+        console.log("discordID \n" + row.DiscordID);
         
       });
     });
@@ -416,6 +416,17 @@ clientdc.on("message", message => {
         console.log("vcID \n" + row.vcID);
         console.log("candidate \n" + row.candidate);
         console.log("voter \n" + row.voter);
+      });
+    });
+      
+      db.all("SELECT COUNT() AS a FROM Voters WHERE DiscordID = 2", [], (err, rows) => {
+      if (err) {
+        throw err;
+      }
+      rows.forEach(row => {
+        
+        console.log("TESTMAO \n" + row.a);
+        
       });
     });
   }
@@ -533,8 +544,8 @@ for (i = 0; i < rows.length; i++) {
               if (reaction.emoji.name == lett[i]) {
                 rows.forEach(row => {
                   if (can[i] == row.DiscordID) {
-                    db.get("SELECT COUNT() as count FROM Voters JOIN votercandidate ON vID = voter JOIN candidateElections ON votercandidate.candidate = candidateElections.candidate JOIN Elections ON Election = eID WHERE voter IN (SELECT vID FROM Voters WHERE DiscordID = "+user.id+") AND Election IN (SELECT eID WHERE Month = "+args[2]+")",(err,row) => {
-                      if(row.count <= maxVote || row.count == undefined){
+                    db.get("SELECT COUNT() AS count FROM Voters JOIN votercandidate ON vID = voter JOIN candidateElections ON votercandidate.candidate = candidateElections.candidate JOIN Elections ON Election = eID WHERE voter IN (SELECT vID FROM Voters WHERE DiscordID = "+user.id+") AND Election IN (SELECT eID WHERE Month = "+args[2]+")",[],(err,rowt) => {
+                      if(rowt.count <= maxVote || rowt.count == undefined){
                    
                     db.run(
                       "UPDATE CandidateElections SET votes = votes+1 WHERE candidate IN (SELECT cID FROM candidates WHERE DiscordID = "+row.DiscordID+")  AND Election IN (SELECT eID FROM Elections WHERE Month = '"+row.Month+"')"

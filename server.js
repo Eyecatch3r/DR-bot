@@ -346,11 +346,15 @@ function getRole(mention, server) {
 var command = process.env.Prefix;
 clientdc.on("message", message => {
   if (message.content === command + "clearDB") {
+    if(message.author.id === '325296044739133450'){
     db.run("DELETE FROM candidates");
     db.run("DELETE FROM Elections");
     db.run("DELETE FROM CandidateElections");
     message.channel.send("all right");
   }
+  else {message.channel.send("sorry but you're not the Imperator "+"<@325296044739133450>")}
+  }
+  
   if(message.content.toLowerCase().includes(" cor ") || message.content.toLowerCase().includes(" cock ") || message.content.toLowerCase().includes("byq") || message.content.toLowerCase().includes("byqerino") || message.content.toLowerCase().includes("corey") || message.content.toLowerCase().includes("naresh"))
     {
       if(!message.author.bot){
@@ -359,6 +363,8 @@ clientdc.on("message", message => {
     }
   
   if (message.content === command + "showDB") {
+    if(message.author.id === '325296044739133450'){
+    
     db.all("SELECT * FROM candidates", [], (err, rows) => {
       if (err) {
         throw err;
@@ -390,8 +396,42 @@ clientdc.on("message", message => {
         console.log("Month \n" + row.Month);
       });
     });
+      
+      db.all("SELECT * FROM Voters", [], (err, rows) => {
+      if (err) {
+        throw err;
+      }
+      rows.forEach(row => {
+        console.log("vID \n" + row.vID);
+        console.log("discordID \n" + row.DiscordID);
+        
+      });
+    });
+      
+      db.all("SELECT * FROM votercandidate", [], (err, rows) => {
+      if (err) {
+        throw err;
+      }
+      rows.forEach(row => {
+        console.log("vcID \n" + row.vcID);
+        console.log("candidate \n" + row.candidate);
+        console.log("voter \n" + row.voter);
+      });
+    });
+      
+      db.all("SELECT COUNT() AS a FROM Voters WHERE DiscordID = 2", [], (err, rows) => {
+      if (err) {
+        throw err;
+      }
+      rows.forEach(row => {
+        
+        console.log("TESTMAO \n" + row.a);
+        
+      });
+    });
   }
-
+    else {message.channel.send("sorry but you're not the Imperator "+"<@325296044739133450>")}
+  }
   if (message.content.toLowerCase().includes(command + "election")) {
     let args = message.content.split(" ");
     let maxVote;
@@ -472,7 +512,7 @@ clientdc.on("message", message => {
       }
       console.log(rows.length);
       //message.guild.members.cache.get(row.cID).toString()+"\n votes: "+row.votes
-
+      
       message.channel.send(emb).then(m => {
         let filter = reaction => lett.includes(reaction.emoji.name);
 for (i = 0; i < rows.length; i++) {
@@ -485,6 +525,7 @@ for (i = 0; i < rows.length; i++) {
               row.votes,
             true
           );
+          
         });
         
           m.edit(emb);
@@ -499,15 +540,38 @@ for (i = 0; i < rows.length; i++) {
             
             for (i = 0; i < rows.length; i++) {
               reaction.remove();
+              //check the reaction, then find the user based by its ID in the database and update the vote count
               if (reaction.emoji.name == lett[i]) {
-                rows.forEach(row => {
-                  if (can[i] == row.DiscordID) {
-                    db.run(
-                      "UPDATE CandidateElections SET votes = votes+1 WHERE candidate IN (SELECT cID FROM candidates WHERE DiscordID = "+row.DiscordID+")  AND Election IN (SELECT eID FROM Elections WHERE Month = '"+row.Month+"')"
-                    );
+                rows.forEach(candidate => {
+                  if (can[i] == candidate.DiscordID && !user.bot) {
+                    db.get("SELECT COUNT() AS count FROM Voters JOIN votercandidate ON vID = voter JOIN CandidateElections ON votercandidate.candidate = candidateElections.candidate JOIN Elections ON Election = eID WHERE voter IN (SELECT vID FROM Voters WHERE DiscordID = '"+user.id+"') AND Election IN (SELECT eID WHERE Month = '"+args[2]+"')",[],(err,rowt) => {
+                      if(rowt.count <= maxVote || rowt.count == undefined){
+                   message.channel.send(rowt.count);
+                        
+                      db.run("UPDATE CandidateElections SET votes = votes+1 WHERE candidate IN (SELECT cID FROM candidates WHERE DiscordID = "+candidate.DiscordID+")  AND Election IN (SELECT eID FROM Elections WHERE Month ='"+candidate.Month+"')");
+                    let cID;
+                    db.get("SELECT * FROM Voters WHERE DiscordID = '"+user.id+"'",[],(err,rows) =>{
+                      //if a voter is already registered insert the m-n relationship votercandidate
+                    
+                      if(rows == undefined){
+                        db.run("INSERT INTO Voters(DiscordID) VALUES("+user.id+")");
+                        db.get("SELECT cID FROM candidates WHERE DiscordID = '"+candidate.DiscordID+"'",[],(err,row) =>{ 
+                          cID = row.cID; 
+                          db.run("INSERT INTO votercandidate(voter,candidate) VALUES('"+user.id+"','"+cID+"')")});
+                      }
+                      else db.get("SELECT cID FROM candidates WHERE DiscordID = '"+candidate.DiscordID+"'",[],(err,row) => {cID = row.cID; 
+          
+                          db.run("INSERT INTO votercandidate(voter,candidate) VALUES('"+user.id+"','"+cID+"')")});
+                                                                                                              }); 
+                    
+                    
+                      }
+                      else message.channel.send("you already voted");
+                   }); 
                   }
                 });
-              
+             
+              //updates the embed with the new votes 
               let emb2 = new Discord.MessageEmbed();
               emb2.setTitle(args[1] + " elections from: " + args[2]);
     emb2.setColor("0x66023c");

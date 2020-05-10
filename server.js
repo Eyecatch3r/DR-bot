@@ -6,7 +6,7 @@ const express = require("express");
 const fs = require("fs");
 const discordBotkit = require("botkit-discord");
 var Client = require("uptime-robot");
-
+const bible = require("bibleverses");
 const app = express();
 
 const http = require("http");
@@ -427,6 +427,10 @@ clientdc.on("message", message => {
   }
     else {message.channel.send("sorry but you're not the Imperator "+"<@325296044739133450>")}
   }
+  if(message.content.includes(command+"bible")){
+    var args = message.content.split(" ");
+  }
+  
   if (message.content.toLowerCase().includes(command + "election")) {
     let args = message.content.split(" ");
     let maxVote;

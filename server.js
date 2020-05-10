@@ -511,17 +511,17 @@ clientdc.on("message", message => {
       message.channel.send(emb).then(m => {
         let filter = reaction => lett.includes(reaction.emoji.name);
 for (i = 0; i < rows.length; i++) {
-        rows.forEach(row => {
+        
           emb.addField(
             "Candidate",
             lett[i] +
-              message.guild.members.cache.get(row.DiscordID).toString() +
+              message.guild.members.cache.get(rows[i].DiscordID).toString() +
               "\n votes: " +
-              row.votes,
+              rows[i].votes,
             true
           );
           
-        });
+        
         
           m.edit(emb);
           m.react(lett[i]);
@@ -593,16 +593,16 @@ for (i = 0; i < rows.length; i++) {
     emb2.setAuthor("𝐈𝐌𝐏𝐄𝐑𝐀𝐓𝐎𝐑·𝐏𝐕𝐁𝐋𝐈𝐕𝐒","https://cdn.glitch.com/24cdd29f-170e-4ac8-9dc2-8abc1cbbaeaa%2Fimageedit_1_3956664875.png?v=1588186424473");
 
               db.all('SELECT * FROM Elections JOIN CandidateElections ON eID = Election JOIN Candidates ON candidate = cID WHERE Title = "' +args[1] +'" AND Month = "' +args[2] +'"',[],(err,results) => {
-              results.forEach(result =>{
+              
                 emb2.addField(
                   "Candidate",
                   lett[i-1] +
-                    message.guild.members.cache.get(result.DiscordID).toString() +
+                    message.guild.members.cache.get(can[i].DiscordID).toString() +
                     "\n votes: " +
-                    result.votes,
+                    results[i].votes,
                   true
                 );
-                });
+                
                m.react(lett[i]);
                 m.edit(emb2);
               });

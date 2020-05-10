@@ -538,6 +538,7 @@ for (i = 0; i < rows.length; i++) {
               if (reaction.emoji.name == lett[i]) {
                 rows.forEach(candidate => {
                   if (can[i] == candidate.DiscordID && !user.bot) {
+                    db
                     db.get("SELECT COUNT() AS count FROM Voters JOIN votercandidate ON vID = voter JOIN CandidateElections ON votercandidate.candidate = candidateElections.candidate JOIN Elections ON Election = eID WHERE voter IN (SELECT vID FROM Voters WHERE DiscordID = '"+user.id+"') AND Election IN (SELECT eID WHERE Month = '"+args[2]+"')",[],(err,rowt) => {
                       if(rowt.count <= maxVote || rowt.count == undefined){
                    message.channel.send(rowt.count);
@@ -567,7 +568,7 @@ for (i = 0; i < rows.length; i++) {
                     
                     
                       }
-                      else {
+                      else { db.run("UPDATE CandidateElections SET votes = votes-1 WHERE candidate IN (SELECT cID From candidates WHERE DiscordID = '"+candidate.DiscordID+"')");
                         
                       }
                    }); 

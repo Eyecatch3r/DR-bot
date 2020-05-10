@@ -538,8 +538,8 @@ for (i = 0; i < rows.length; i++) {
               if (reaction.emoji.name == lett[i]) {
                 rows.forEach(candidate => {
                   if (can[i] == candidate.DiscordID && !user.bot) {
-                    db
-                    db.get("SELECT COUNT() AS count FROM Voters JOIN votercandidate ON vID = voter JOIN CandidateElections ON votercandidate.candidate = candidateElections.candidate JOIN Elections ON Election = eID WHERE voter IN (SELECT vID FROM Voters WHERE DiscordID = '"+user.id+"') AND Election IN (SELECT eID WHERE Month = '"+args[2]+"')",[],(err,rowt) => {
+                    db.get("SELECT * FROM Voters JOIN votercandidate ON vID = voter JOIN candidates ON cID = votercandidate.candidate JOIN CandidateElections ON cID = CandidateElections.candidate JOIN Elections ON election = eID WHERE Voters.DiscordID = 325296044739133450 AND candidates.DiscordID = 325296044739133450 AND Month = 'test' AND title = 'consul' ")
+                    db.get("SELECT COUNT() AS count FROM Voters JOIN votercandidate ON vID = voter JOIN CandidateElections ON votercandidate.candidate = candidateElections.candidate JOIN Elections ON Election = eID WHERE voter IN (SELECT vID FROM Voters WHERE DiscordID = '"+user.id+"') AND Election IN (SELECT eID WHERE Month = '"+args[2]+"' AND title = '"+args[1]+"')",[],(err,rowt) => {
                       if(rowt.count <= maxVote || rowt.count == undefined){
                    message.channel.send(rowt.count);
                         

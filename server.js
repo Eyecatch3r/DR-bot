@@ -603,7 +603,7 @@ for (i = 0; i < rows.length; i++) {
                   true
                 );
                 });
-               m.react(lett[i-1]);
+               m.react(lett[i]);
                 m.edit(emb2);
               });
               

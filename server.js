@@ -429,15 +429,17 @@ clientdc.on("message", message => {
   }
   if(message.content.includes(command+"bible")){
     var args = message.content.split(" ");
+    message.channel.send(args[1]+" "+args[2]);
     bible.retrievePassage(args[1]+" "+args[2]).then(res => {
       let emb = new Discord.MessageEmbed();
       emb.setTitle("SCRIPTVTA SACRA");
       emb.setColor("0xe2b007");
       emb.setAuthor("𝐈𝐌𝐏𝐄𝐑𝐀𝐓𝐎𝐑·𝐏𝐕𝐁𝐋𝐈𝐕𝐒","https://cdn.glitch.com/24cdd29f-170e-4ac8-9dc2-8abc1cbbaeaa%2Fimageedit_1_3956664875.png?v=1588186424473");
-      emb.setFooter("Elections powered by our most humble Imperator");
+      emb.setFooter("bible quotes powered by our most humble Imperator");
       emb.setThumbnail("https://i.imgur.com/xGz7rVU.png");
       
-      emb.addField("Bible *")
+      emb.addField(args[1]+" "+args[,res,true);
+      message.channel.send(emb);
     });
     
   }

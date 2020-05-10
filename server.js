@@ -567,7 +567,9 @@ for (i = 0; i < rows.length; i++) {
                     
                     
                       }
-                      else message.channel.send("you already voted");
+                      else {
+                        
+                      }
                    }); 
                   }
                 });
@@ -605,7 +607,11 @@ for (i = 0; i < rows.length; i++) {
         
         collector.on("dispose",(reaction,user) =>{
           if(!user.bot){
-            
+             for (i = 0; i < rows.length; i++) {
+            if (reaction.emoji.name == lett[i]) {
+            db.run("UPDATE CandidateElection JOIN candidates ON candidate = cID SET votes = votes-1 WHERE DiscordID = '"+can[i]+"'");
+            }
+             }
           }
         });
       });

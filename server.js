@@ -593,17 +593,18 @@ for (i = 0; i < rows.length; i++) {
     emb2.setAuthor("𝐈𝐌𝐏𝐄𝐑𝐀𝐓𝐎𝐑·𝐏𝐕𝐁𝐋𝐈𝐕𝐒","https://cdn.glitch.com/24cdd29f-170e-4ac8-9dc2-8abc1cbbaeaa%2Fimageedit_1_3956664875.png?v=1588186424473");
 
               db.all('SELECT * FROM Elections JOIN CandidateElections ON eID = Election JOIN Candidates ON candidate = cID WHERE Title = "' +args[1] +'" AND Month = "' +args[2] +'"',[],(err,results) => {
-              
+              for(var j = 0; j < results.length; j++){
                 emb2.addField(
                   "Candidate",
-                  lett[i-1] +
-                    message.guild.members.cache.get(can[i].DiscordID).toString() +
+                  lett[j-1] +
+                    message.guild.members.cache.get(can[j].DiscordID).toString() +
                     "\n votes: " +
-                    results[i].votes,
+                    results[j].votes,
                   true
                 );
                 
-               m.react(lett[i]);
+               m.react(lett[j]);
+              }
                 m.edit(emb2);
               });
               

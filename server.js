@@ -534,7 +534,7 @@ for (i = 0; i < rows.length; i++) {
           if (!user.bot) {
             
             for (i = 0; i < rows.length; i++) {
-              reaction.remove();
+              reaction.users.remove();
               //check the reaction, then find the user based by its ID in the database and update the vote count
               if (reaction.emoji.name == lett[i]) {
                 rows.forEach(candidate => {
@@ -604,7 +604,7 @@ for (i = 0; i < rows.length; i++) {
                   true
                 );
                 
-               m.react(lett[j]);
+               
               }
                 m.edit(emb2);
               });

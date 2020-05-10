@@ -527,7 +527,7 @@ for (i = 0; i < rows.length; i++) {
           can[i] = rows[i].DiscordID;
         }
 
-        let collector = m.createReactionCollector(filter, { time: 3600000 });
+        let collector = m.createReactionCollector(filter, { time: 86400000 });
 
         collector.on("collect", (reaction, user) => {
           if (!user.bot) {
@@ -600,6 +600,12 @@ for (i = 0; i < rows.length; i++) {
             
           }
           }
+          }
+        });
+        
+        collector.on("dispose",(reaction,user) =>{
+          if(!user.bot){
+            
           }
         });
       });

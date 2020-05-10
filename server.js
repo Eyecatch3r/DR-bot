@@ -428,9 +428,17 @@ clientdc.on("message", message => {
     else {message.channel.send("sorry but you're not the Imperator "+"<@325296044739133450>")}
   }
   if(message.content.includes(command+"bible")){
-    var args = message.content.split(" ");
+    var args = message.content.split("+");
     
-    bible.getVerse(args[1]+" "+args[2],(err,data) => {
+    bible.getVerse(args[1],(err,data) => {
+      
+      var title = data[0].title
+      if(title == undefined){
+        var newargs = args[1].split(":");
+        bible.getVerse(newargs[1]+"1",(err,data) => {
+          title = data[0].title;
+        });
+      }
       let emb = new Discord.MessageEmbed();
       emb.setTitle("SCRIPTVRA SACRA");
       emb.setColor("0xe2b007");
@@ -438,7 +446,7 @@ clientdc.on("message", message => {
       emb.setFooter("bible quotes powered by our most humble Imperator");
       emb.setThumbnail("https://i.imgur.com/xGz7rVU.png");
       
-      emb.addField(args[1]+" "+args[2],data[0].text,true);
+      emb.addField(title+":"+args[1],data[0].text,true);
       message.channel.send(emb);
     });
     

@@ -540,7 +540,7 @@ for (i = 0; i < rows.length; i++) {
                   if (can[i] == candidate.DiscordID && !user.bot) {
                     db.get("SELECT * FROM Voters JOIN votercandidate ON vID = voter JOIN candidates ON cID = votercandidate.candidate JOIN CandidateElections ON cID = CandidateElections.candidate JOIN Elections ON election = eID WHERE Voters.DiscordID = '"+user.id+"AND candidates.DiscordID = '"+candidate.DiscordID+"' AND Month = '"+args[2]+"' AND title = '"+args[1]+"'",[],(err,alreadyVoted) => {
                       if(alreadyVoted =! undefined){db.run("UPDATE CandidateElections SET votes = votes-1 WHERE candidate IN (SELECT cID From candidates WHERE DiscordID = '"+candidate.DiscordID+"')");
-                                                   db.run("DELETE FROM votercandidate WHERE vcID = '"+alreadyVoted.vcID+"'")
+                                                   db.run("DELETE FROM votercandidate WHERE vcID = '"+alreadyVoted.vcID+"' Month ='"+candidate.Month+"'")
                                                    }
                     db.get("SELECT COUNT() AS count FROM Voters JOIN votercandidate ON vID = voter JOIN CandidateElections ON votercandidate.candidate = candidateElections.candidate JOIN Elections ON Election = eID WHERE voter IN (SELECT vID FROM Voters WHERE DiscordID = '"+user.id+"') AND Election IN (SELECT eID WHERE Month = '"+args[2]+"' AND title = '"+args[1]+"')",[],(err,rowt) => {
                       if(rowt.count <= maxVote || rowt.count == undefined){

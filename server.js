@@ -596,7 +596,7 @@ for (i = 0; i < rows.length; i++) {
               for(var j = 0; j < results.length; j++){
                 emb2.addField(
                   "Candidate",
-                  lett[j-1] +
+                  lett[j] +
                     message.guild.members.cache.get(can[j].DiscordID).toString() +
                     "\n votes: " +
                     results[j].votes,

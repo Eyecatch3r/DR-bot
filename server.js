@@ -594,10 +594,11 @@ for (i = 0; i < rows.length; i++) {
 
               db.all('SELECT * FROM Elections JOIN CandidateElections ON eID = Election JOIN Candidates ON candidate = cID WHERE Title = "' +args[1] +'" AND Month = "' +args[2] +'"',[],(err,results) => {
               for(var j = 0; j < results.length; j++){
+                message.channel.send(can[j]+lett[j]);
                 emb2.addField(
                   "Candidate",
                   lett[j] +
-                    message.guild.members.cache.get(can[j].DiscordID).toString() +
+                    message.guild.members.cache.get(can[j]).toString() +
                     "\n votes: " +
                     results[j].votes,
                   true

@@ -537,6 +537,7 @@ for (i = 0; i < rows.length; i++) {
               reaction.users.remove(user);
               //check the reaction, then find the user based by its ID in the database and update the vote count
               if (reaction.emoji.name == lett[i]) {
+                
                 rows.forEach(candidate => {
                   if (can[i] == candidate.DiscordID && !user.bot) {
                     db.get("SELECT COUNT() AS c FROM Voters JOIN votercandidate ON vID = voter JOIN candidates ON cID = votercandidate.candidate JOIN CandidateElections ON cID = CandidateElections.candidate JOIN Elections ON election = eID WHERE Voters.DiscordID = '"+user.id+"' AND candidates.DiscordID = '"+candidate.DiscordID+"' AND Month = '"+args[2]+"' AND title = '"+args[1]+"'",[],(err,count) => {
@@ -597,7 +598,7 @@ for (i = 0; i < rows.length; i++) {
                 
                 emb2.addField(
                   "Candidate",
-                  lett[j] +
+                  lett[j]+": "+
                     message.guild.members.cache.get(can[j]).toString() +
                     "\n votes: " +
                     results[j].votes,

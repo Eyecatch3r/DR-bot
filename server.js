@@ -429,7 +429,7 @@ clientdc.on("message", message => {
   }
   if(message.content.includes(command+"bible")){
     var args = message.content.split(" ");
-    message.channel.send(args[1]+" "+args[2]);
+    
     bible.retrievePassage(args[1]+" "+args[2]).then(res => {
       let emb = new Discord.MessageEmbed();
       emb.setTitle("SCRIPTVTA SACRA");
@@ -438,7 +438,7 @@ clientdc.on("message", message => {
       emb.setFooter("bible quotes powered by our most humble Imperator");
       emb.setThumbnail("https://i.imgur.com/xGz7rVU.png");
       
-      emb.addField(args[1]+" "+args[,res,true);
+      emb.addField(args[1]+" "+args[2],res,true);
       message.channel.send(emb);
     });
     

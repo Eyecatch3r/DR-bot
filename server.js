@@ -505,7 +505,7 @@ clientdc.on("message", message => {
         throw err;
         message.channel.send("sth went wrong");
       }
-      message.channel.send(rows.length);
+      
       //message.guild.members.cache.get(row.cID).toString()+"\n votes: "+row.votes
       
       message.channel.send(emb).then(m => {
@@ -514,7 +514,7 @@ for (i = 0; i < rows.length; i++) {
         
           emb.addField(
             "Candidate",
-            lett[i] +
+            lett[i]+":"+
               message.guild.members.cache.get(rows[i].DiscordID).toString() +
               "\n votes: " +
               rows[i].votes,
@@ -534,7 +534,7 @@ for (i = 0; i < rows.length; i++) {
           if (!user.bot) {
             
             for (i = 0; i < rows.length; i++) {
-              reaction.users.remove();
+              reaction.users.remove(user);
               //check the reaction, then find the user based by its ID in the database and update the vote count
               if (reaction.emoji.name == lett[i]) {
                 rows.forEach(candidate => {
@@ -547,14 +547,14 @@ for (i = 0; i < rows.length; i++) {
                       else {
                     db.get("SELECT COUNT() AS count FROM Voters JOIN votercandidate ON vID = voter JOIN CandidateElections ON votercandidate.candidate = candidateElections.candidate JOIN Elections ON Election = eID WHERE voter IN (SELECT vID FROM Voters WHERE DiscordID = '"+user.id+"') AND Election IN (SELECT eID WHERE Month = '"+args[2]+"' AND title = '"+args[1]+"')",[],(err,rowt) => {
                       if(rowt.count <= maxVote || rowt.count == undefined){
-                   message.channel.send(rowt.count);
+                   
                         
                       db.run("UPDATE CandidateElections SET votes = votes+1 WHERE candidate IN (SELECT cID FROM candidates WHERE DiscordID = "+candidate.DiscordID+")  AND Election IN (SELECT eID FROM Elections WHERE Month ='"+args[2]+"' AND title = '"+args[1]+"')");
                     let cID;
                     let vID;
                     db.get("SELECT * FROM Voters WHERE DiscordID = '"+user.id+"'",[],(err,rows) =>{
                       //if a voter is already registered insert the m-n relationship votercandidate
-                    m.channel.send(user.id);
+                    
                       if(rows == undefined){
                         db.run("INSERT INTO Voters(DiscordID) VALUES("+user.id+")");
                         db.get("SELECT cID FROM candidates WHERE DiscordID = '"+candidate.DiscordID+"'",[],(err,row) =>{ 
@@ -594,7 +594,7 @@ for (i = 0; i < rows.length; i++) {
 
               db.all('SELECT * FROM Elections JOIN CandidateElections ON eID = Election JOIN Candidates ON candidate = cID WHERE Title = "' +args[1] +'" AND Month = "' +args[2] +'"',[],(err,results) => {
               for(var j = 0; j < results.length; j++){
-                message.channel.send(can[j]+lett[j]);
+                
                 emb2.addField(
                   "Candidate",
                   lett[j] +
@@ -621,7 +621,7 @@ for (i = 0; i < rows.length; i++) {
           if(!user.bot){
              for (i = 0; i < rows.length; i++) {
             if (reaction.emoji.name == lett[i]) {
-            db.run("UPDATE CandidateElection JOIN candidates ON candidate = cID SET votes = votes-1 WHERE DiscordID = '"+can[i]+"'");
+            //db.run("UPDATE CandidateElection JOIN candidates ON candidate = cID SET votes = votes-1 WHERE DiscordID = '"+can[i]+"'");
             }
              }
           }

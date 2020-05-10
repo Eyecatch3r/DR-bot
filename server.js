@@ -6,7 +6,7 @@ const express = require("express");
 const fs = require("fs");
 const discordBotkit = require("botkit-discord");
 var Client = require("uptime-robot");
-const bible = require("bibleverses");
+const bible = require("bible-english");
 const app = express();
 
 const http = require("http");
@@ -430,7 +430,7 @@ clientdc.on("message", message => {
   if(message.content.includes(command+"bible")){
     var args = message.content.split(" ");
     
-    bible.retrievePassage(args[1]+" "+args[2]).then(res => {
+    bible.getVerse(args[1]+" "+args[2],(err,data) => {
       let emb = new Discord.MessageEmbed();
       emb.setTitle("SCRIPTVTA SACRA");
       emb.setColor("0xe2b007");
@@ -438,9 +438,10 @@ clientdc.on("message", message => {
       emb.setFooter("bible quotes powered by our most humble Imperator");
       emb.setThumbnail("https://i.imgur.com/xGz7rVU.png");
       
-      emb.addField(args[1]+" "+args[2],res,true);
+      emb.addField(args[1]+" "+args[2],data.text,true);
       message.channel.send(emb);
     });
+    
     
   }
   

@@ -432,13 +432,13 @@ clientdc.on("message", message => {
     
     bible.getVerse(args[1]+" "+args[2],(err,data) => {
       let emb = new Discord.MessageEmbed();
-      emb.setTitle("SCRIPTVTA SACRA");
+      emb.setTitle("SCRIPTVRA SACRA");
       emb.setColor("0xe2b007");
       emb.setAuthor("𝐈𝐌𝐏𝐄𝐑𝐀𝐓𝐎𝐑·𝐏𝐕𝐁𝐋𝐈𝐕𝐒","https://cdn.glitch.com/24cdd29f-170e-4ac8-9dc2-8abc1cbbaeaa%2Fimageedit_1_3956664875.png?v=1588186424473");
       emb.setFooter("bible quotes powered by our most humble Imperator");
       emb.setThumbnail("https://i.imgur.com/xGz7rVU.png");
       
-      emb.addField(args[1]+" "+args[2],data.text,true);
+      emb.addField(args[1]+" "+args[2],data[0].text,true);
       message.channel.send(emb);
     });
     

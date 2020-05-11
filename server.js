@@ -464,7 +464,7 @@ clientdc.on("message", message => {
       emb.setFooter("bible quotes powered by our most humble Imperator");
       emb.setThumbnail("https://i.imgur.com/xGz7rVU.png");
       
-      emb.addField(title+": \n"+args[1],data[0].text,true);
+      emb.addField(title+": \n"+args[1],datas[0].text,true);
       message.channel.send(emb);
           }else{
       
@@ -475,7 +475,7 @@ clientdc.on("message", message => {
       emb.setFooter("bible quotes powered by our most humble Imperator");
       emb.setThumbnail("https://i.imgur.com/xGz7rVU.png");
       
-      emb.addField(title+": \n"+args[1],data[0].text,true);
+      emb.addField(title+": \n"+args[1],datas[0].text,true);
       message.channel.send(emb);
           }
     });

@@ -432,12 +432,13 @@ clientdc.on("message", message => {
     var newargs = args[1].split(":");
     bible.getVerse(newargs[1]+":1",(err,data) => {
       
-      var title = data[0].title
-      if(title == undefined){
+      var title = data[0].title;
+      
         
         bible.getVerse(args[1],(err,data) => {
+          if(data[0].title != undefined){
           title = data[0].title;
-        
+          }else{
       
       var emb = new Discord.MessageEmbed();
       emb.setTitle("SCRIPTVRA SACRA");
@@ -446,10 +447,11 @@ clientdc.on("message", message => {
       emb.setFooter("bible quotes powered by our most humble Imperator");
       emb.setThumbnail("https://i.imgur.com/xGz7rVU.png");
       
-      emb.addField(title+":"+args[1],data[0].text,true);
+      emb.addField(title+": \n"+args[1],data[0].text,true);
       message.channel.send(emb);
+          }
     });
-      }
+        
       });
     
     

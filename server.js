@@ -8,7 +8,7 @@ const discordBotkit = require("botkit-discord");
 var Client = require("uptime-robot");
 const bible = require("bible-english");
 const app = express();
-const por = require("portunus");
+let portunus = require('roman-numeral-converter-mmxvi');
 const http = require("http");
 
 //init sqlite API
@@ -430,11 +430,12 @@ clientdc.on("message", message => {
   if(message.content.includes(command+"number"))
     {
       var args = message.content.split(" ");
-      const n = por(args[1]);
+      const n = portunus(args[1]);
       
       let emb = new Discord.MessageEmbed();
-      emb.setColor("0xcc0000");
-      
+      emb.setColor(message.member.displayHexColor);
+      emb.setDescription(n);
+      message.channel.send(emb);
     }
   
   if(message.content.includes(command+"bible")){

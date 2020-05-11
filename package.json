@@ -25,7 +25,7 @@
     "node-cmd": "^3.0.0",
     "bibleverses": "^3.1.1",
     "bible-english": "^1.0.0",
-    "portunus": "^1.0.0"
+    "roman-numeral-converter-MMXVI": "^1.0.5"
   },
   "devDependencies": {
     "minimist": ">=1.2.2"

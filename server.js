@@ -429,17 +429,17 @@ clientdc.on("message", message => {
   }
   if(message.content.includes(command+"bible")){
     var args = message.content.split("+");
-    
-    bible.getVerse(args[1],(err,data) => {
+    var newargs = args[1].split(":");
+    bible.getVerse(newargs[1]+":1",(err,data) => {
       
       var title = data[0].title
       if(title == undefined){
-        var newargs = args[1].split(":");
-        bible.getVerse(newargs[1]+"1",(err,data) => {
+        
+        bible.getVerse(args[1],(err,data) => {
           title = data[0].title;
-        });
-      }
-      let emb = new Discord.MessageEmbed();
+        
+      
+      var emb = new Discord.MessageEmbed();
       emb.setTitle("SCRIPTVRA SACRA");
       emb.setColor("0xe2b007");
       emb.setAuthor("𝐈𝐌𝐏𝐄𝐑𝐀𝐓𝐎𝐑·𝐏𝐕𝐁𝐋𝐈𝐕𝐒","https://cdn.glitch.com/24cdd29f-170e-4ac8-9dc2-8abc1cbbaeaa%2Fimageedit_1_3956664875.png?v=1588186424473");
@@ -449,6 +449,8 @@ clientdc.on("message", message => {
       emb.addField(title+":"+args[1],data[0].text,true);
       message.channel.send(emb);
     });
+      }
+      });
     
     
   }

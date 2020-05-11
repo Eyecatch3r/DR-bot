@@ -933,9 +933,9 @@ for (i = 0; i < rows.length; i++) {
       }
       db.all(
         "INSERT INTO Motions(motion,creator) VALUES(" +
-          "'" +
+          '"' +
           inp +
-          "'" +
+          '"' +
           "," +
           "'" +
           message.member.id +

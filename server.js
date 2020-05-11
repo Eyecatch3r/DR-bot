@@ -8,7 +8,7 @@ const discordBotkit = require("botkit-discord");
 var Client = require("uptime-robot");
 const bible = require("bible-english");
 const app = express();
-let portunus = require('roman-numeral-converter-mmxvi');
+let portunus = require('romans');
 const http = require("http");
 
 //init sqlite API
@@ -430,11 +430,18 @@ clientdc.on("message", message => {
   if(message.content.includes(command+"number"))
     {
       var args = message.content.split(" ");
-      const n = portunus(args[1]);
+      
+      var n = 0;
+      if(isNaN(args[1]))
+        {
+          n = portunus.deromanize(args[1]);
+        }else n = portunus.romanize(parseInt(args[1]));
       
       let emb = new Discord.MessageEmbed();
       emb.setColor(message.member.displayHexColor);
       emb.setDescription(n);
+      emb.setTitle("𝐈𝐌𝐏𝐄𝐑𝐀𝐓𝐎𝐑·𝐏𝐕𝐁𝐋𝐈𝐕𝐒","https://cdn.glitch.com/24cdd29f-170e-4ac8-9dc2-8abc1cbbaeaa%2Fimageedit_1_3956664875.png?v=1588186424473");
+      emb.setFooter("Roman numeral conversion powered by our most humble Imperator");
       message.channel.send(emb);
     }
   

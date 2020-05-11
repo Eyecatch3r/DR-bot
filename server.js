@@ -8,7 +8,7 @@ const discordBotkit = require("botkit-discord");
 var Client = require("uptime-robot");
 const bible = require("bible-english");
 const app = express();
-
+const por = require("portunus");
 const http = require("http");
 
 //init sqlite API
@@ -360,7 +360,7 @@ clientdc.on("message", message => {
   if(message.content.toLowerCase().includes(" cor ") || message.content.toLowerCase().includes(" cock ") || message.content.toLowerCase().includes("byq") || message.content.toLowerCase().includes("byqerino") || message.content.toLowerCase().includes("corey") || message.content.toLowerCase().includes("naresh"))
     {
       if(!message.author.bot){
-     message.channel.send("https://cdn.discordapp.com/attachments/514135876909924354/708105678253981766/DeepFryer_20200507_193318.jpg");
+     message.channel.send("I love cor feet (sorry for the spam)");
       }
     }
   
@@ -427,6 +427,16 @@ clientdc.on("message", message => {
   }
     else {message.channel.send("sorry but you're not the Imperator "+"<@325296044739133450>")}
   }
+  if(message.content.includes(command+"number"))
+    {
+      var args = message.content.split(" ");
+      const n = por(args[1]);
+      
+      let emb = new Discord.MessageEmbed();
+      emb.setColor("0xcc0000");
+      
+    }
+  
   if(message.content.includes(command+"bible")){
     var args = message.content.split("+");
     var newargs = args[1].split(":");

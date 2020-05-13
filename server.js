@@ -3,6 +3,7 @@
 
 // init project
 const express = require("express");
+var assets = require("./assets");
 const fs = require("fs");
 const discordBotkit = require("botkit-discord");
 var Client = require("uptime-robot");
@@ -16,6 +17,9 @@ const dbFile = "./DR.db";
 const exists = fs.existsSync(dbFile);
 const sqlite3 = require("sqlite3").verbose();
 const db = new sqlite3.Database(dbFile);
+
+
+app.use("/assets", assets);
 
 const discordBot = require("./bot");
 const Discord = require("discord.js");
@@ -489,7 +493,7 @@ clientdc.on("message", message => {
       const canvas = can.createCanvas(700, 250);
 	const ctx = canvas.getContext('2d');
 
-	const background =  can.loadImage('./wallpaper.jpg');
+	const background =  can.loadImage('/assets/Rome.jpg');
 	ctx.drawImage(background, 0, 0, canvas.width, canvas.height);
 
 	ctx.strokeStyle = '#74037b';

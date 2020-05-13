@@ -813,6 +813,8 @@ for (i = 0; i < rows.length; i++) {
       }
       rows.forEach(row => {
         available = true;
+        if(row.motion.includes(".png") || row.motion.includes(".jpg") || row.motion.includes(".jpeg"))
+        
         embed.addField(
           "Motion in question",
           row.motion +

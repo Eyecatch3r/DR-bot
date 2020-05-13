@@ -493,10 +493,10 @@ clientdc.on("message", message => {
       const canvas = can.createCanvas(425, 284);
 	const ctx = canvas.getContext('2d');
 
-	const background =  new Image();
-      background.src = ''
+	const background =  new can.Image();
+      background.src = './Rome.jpg';
       if(background != undefined){
-	ctx.drawImage(canvas, 0, 0, canvas.width, canvas.height);
+	ctx.drawImage(background, 0, 0, canvas.width, canvas.height);
       }
 
 	ctx.strokeStyle = '#74037b';
@@ -511,13 +511,15 @@ clientdc.on("message", message => {
 	// Clip off the region you drew on
 	ctx.clip();
 
-	const avatar = can.loadImage('./Augustus.png');
-	//tx.drawImage(avatar, 25, 25, 200, 200);
+	const avatar = new can.Image();
+      avatar.src = message.author.displayAvatarURL({ format: 'png' });
+      avatar.onload = () => {ctx.drawImage(avatar, 25, 25, 200, 200);
+	
 
 	const attachment = new Discord.MessageAttachment(canvas.toBuffer(), 'welcome-image.png');
 
 	message.channel.send(attachment);
-
+    }
     }
   if (message.content.toLowerCase().includes(command + "election")) {
     let args = message.content.split(" ");

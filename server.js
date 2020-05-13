@@ -506,22 +506,26 @@ clientdc.on("message", message => {
   if(message.content.toLowerCase().includes(command+"quote"))
     {
       var args = message.content.split(" ");
+      var arg = "";
+      for(var i = 1; i<args.length; i++){arg += " "+args[i];}
+      
       const canvas = can.createCanvas(700, 250);
 	const ctx = canvas.getContext('2d');
 
 	const background =  new can.Image();
       background.src = './Rome.jpg';
       if(background != undefined){
-	ctx.drawImage(background, 0, 0, canvas.width, canvas.height);
+	//ctx.drawImage(background, 0, 0, canvas.width, canvas.height);
       }
 
-	ctx.strokeStyle = '#74037b';
-	ctx.strokeRect(0, 0, canvas.width, canvas.height);
+	ctx.strokeStyle = '#ffffff';
+  ctx.strokeRect(0,0,canvas.width,canvas.height)
+	ctx.fillRect(0, 0, canvas.width, canvas.height);
 
       // Assign the decided font to the canvas
-	ctx.font = applyText(canvas, args[1]);
+	ctx.font = applyText(canvas, arg);
 	ctx.fillStyle = '#ffffff';
-	ctx.fillText(args[1], canvas.width / 2.5, canvas.height / 1.8);
+	ctx.fillText(arg, canvas.width / 2.5, canvas.height / 1.8);
       
 	// Pick up the pen
 	ctx.beginPath();

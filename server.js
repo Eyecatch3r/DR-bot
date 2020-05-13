@@ -814,6 +814,10 @@ for (i = 0; i < rows.length; i++) {
       rows.forEach(row => {
         available = true;
         if(row.motion.includes(".png") || row.motion.includes(".jpg") || row.motion.includes(".jpeg"))
+          {
+            embed.addField("Motion in question","Picture in question",true);
+            embed.setImage(row.motion);
+          }else {
         
         embed.addField(
           "Motion in question",
@@ -827,6 +831,7 @@ for (i = 0; i < rows.length; i++) {
           "𝐈𝐌𝐏𝐄𝐑𝐀𝐓𝐎𝐑·𝐏𝐕𝐁𝐋𝐈𝐕𝐒",
           clientdc.users.cache.get(row.creator).avatarURL()
         );
+          }
       });
       if (!available) {
         embed.addField("Motion in question", "no motion with such ID", false);
@@ -961,7 +966,7 @@ for (i = 0; i < rows.length; i++) {
     }
   }
 
-  if (message.content.includes(command + "deletemotion")) {
+  if (message.content.toLowerCase().includes(command + "deletemotion")) {
     if (
       message.member.roles.cache.has("649362430446796815") ||
       message.member.roles.cache.has("565594839828398100") ||

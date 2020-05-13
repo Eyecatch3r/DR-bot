@@ -493,8 +493,11 @@ clientdc.on("message", message => {
       const canvas = can.createCanvas(425, 284);
 	const ctx = canvas.getContext('2d');
 
-	const background =  can.loadImage('./Rome.png');
-	ctx.drawImage(background, 0, 0, canvas.width, canvas.height);
+	const background =  new Image();
+      background.src = ''
+      if(background != undefined){
+	ctx.drawImage(canvas, 0, 0, canvas.width, canvas.height);
+      }
 
 	ctx.strokeStyle = '#74037b';
 	ctx.strokeRect(0, 0, canvas.width, canvas.height);
@@ -509,7 +512,7 @@ clientdc.on("message", message => {
 	ctx.clip();
 
 	const avatar = can.loadImage('./Augustus.png');
-	ctx.drawImage(avatar, 25, 25, 200, 200);
+	//tx.drawImage(avatar, 25, 25, 200, 200);
 
 	const attachment = new Discord.MessageAttachment(canvas.toBuffer(), 'welcome-image.png');
 

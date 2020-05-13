@@ -490,7 +490,7 @@ clientdc.on("message", message => {
   }
   if(message.content.toLowerCase().includes(command+"banner"))
     {
-      const canvas = can.createCanvas(700, 250);
+      const canvas = can.createCanvas(425, 284);
 	const ctx = canvas.getContext('2d');
 
 	const background =  can.loadImage('./Rome.jpg');

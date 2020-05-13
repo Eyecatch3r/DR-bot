@@ -519,8 +519,9 @@ clientdc.on("message", message => {
       }
 
 	ctx.strokeStyle = '#ffffff';
-  ctx.strokeRect(0,0,canvas.width,canvas.height)
+  
 	ctx.fillRect(0, 0, canvas.width, canvas.height);
+  ctx.strokeRect(0,0,canvas.width,canvas.height);
 
       // Assign the decided font to the canvas
 	ctx.font = applyText(canvas, arg);

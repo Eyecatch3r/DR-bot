@@ -10,7 +10,7 @@ const bible = require("bible-english");
 const app = express();
 let portunus = require('romans');
 const http = require("http");
-
+const can = require("canvas");
 //init sqlite API
 const dbFile = "./DR.db";
 const exists = fs.existsSync(dbFile);
@@ -484,7 +484,34 @@ clientdc.on("message", message => {
     
     
   }
-  
+  if(message.content.toLowerCase().includes(command+"banner"))
+    {
+      const canvas = can.createCanvas(700, 250);
+	const ctx = canvas.getContext('2d');
+
+	const background =  can.loadImage('./wallpaper.jpg');
+	ctx.drawImage(background, 0, 0, canvas.width, canvas.height);
+
+	ctx.strokeStyle = '#74037b';
+	ctx.strokeRect(0, 0, canvas.width, canvas.height);
+
+	// Pick up the pen
+	ctx.beginPath();
+	// Start the arc to form a circle
+	ctx.arc(125, 125, 100, 0, Math.PI * 2, true);
+	// Put the pen down
+	ctx.closePath();
+	// Clip off the region you drew on
+	ctx.clip();
+
+	const avatar = can.loadImage();
+	ctx.drawImage(avatar, 25, 25, 200, 200);
+
+	const attachment = new Discord.MessageAttachment(canvas.toBuffer(), 'welcome-image.png');
+
+	message.channel.send(attachment);
+
+    }
   if (message.content.toLowerCase().includes(command + "election")) {
     let args = message.content.split(" ");
     let maxVote;

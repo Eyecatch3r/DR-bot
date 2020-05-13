@@ -346,6 +346,21 @@ function getRole(mention, server) {
         
       
 }**/
+const applyText = (canvas, text) => {
+	const ctx = canvas.getContext('2d');
+
+	// Declare a base size of the font
+	let fontSize = 70;
+
+	do {
+		// Assign the font to the context and decrement it so it can be measured again
+		ctx.font = `${fontSize -= 10}px sans-serif`;
+		// Compare pixel width of the text to the canvas minus the approximate avatar size
+	} while (ctx.measureText(text).width > canvas.width - 300);
+
+	// Return the result to use in the actual canvas
+	return ctx.font;
+};
 
 var command = process.env.Prefix;
 clientdc.on("message", message => {
@@ -488,9 +503,10 @@ clientdc.on("message", message => {
     
     
   }
-  if(message.content.toLowerCase().includes(command+"banner"))
+  if(message.content.toLowerCase().includes(command+"quote"))
     {
-      const canvas = can.createCanvas(425, 284);
+      var args = message.content.split(" ");
+      const canvas = can.createCanvas(700, 250);
 	const ctx = canvas.getContext('2d');
 
 	const background =  new can.Image();
@@ -502,6 +518,11 @@ clientdc.on("message", message => {
 	ctx.strokeStyle = '#74037b';
 	ctx.strokeRect(0, 0, canvas.width, canvas.height);
 
+      // Assign the decided font to the canvas
+	ctx.font = applyText(canvas, args[1]);
+	ctx.fillStyle = '#ffffff';
+	ctx.fillText(args[1], canvas.width / 2.5, canvas.height / 1.8);
+      
 	// Pick up the pen
 	ctx.beginPath();
 	// Start the arc to form a circle

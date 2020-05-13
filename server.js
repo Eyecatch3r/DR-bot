@@ -354,7 +354,7 @@ const applyText = (canvas, text) => {
 
 	do {
 		// Assign the font to the context and decrement it so it can be measured again
-		ctx.font = `${fontSize -= 10}px sans-serif`;
+		ctx.font = `${fontSize -= 10}px impact`;
 		// Compare pixel width of the text to the canvas minus the approximate avatar size
 	} while (ctx.measureText(text).width > canvas.width - 300);
 
@@ -528,6 +528,9 @@ clientdc.on("message", message => {
 	ctx.fillStyle = '#ffffff';
 	ctx.fillText(arg, canvas.width / 2.5, canvas.height / 1.8);
       
+      var author = message.author.username;
+      ctx.font = '40 impact';
+      ctx.fillText("-"+author, canvas.width / 3.5, canvas.height / 1.2);
 	// Pick up the pen
 	ctx.beginPath();
 	// Start the arc to form a circle

@@ -815,8 +815,23 @@ for (i = 0; i < rows.length; i++) {
         available = true;
         if(row.motion.includes(".png") || row.motion.includes(".jpg") || row.motion.includes(".jpeg"))
           {
+            if(!row.motion.startsWith("http"))
+              {
+                if(row.motion.includes("\n"))
+                  {
+                    ar args = row.motion.split(" ");
+                embed.addField("Motion in question",args[0],true);
+                embed.setImage(args[1]);
+                  }else if(row.motion.includes(" "))
+                    {
+                var args = row.motion.split(" ");
+                embed.addField("Motion in question",args[0],true);
+                embed.setImage(args[1]);
+                    }
+              }else{
             embed.addField("Motion in question","Picture in question",true);
             embed.setImage(row.motion);
+              }
           }else {
         
         embed.addField(

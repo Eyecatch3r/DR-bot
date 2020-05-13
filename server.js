@@ -493,7 +493,7 @@ clientdc.on("message", message => {
       const canvas = can.createCanvas(700, 250);
 	const ctx = canvas.getContext('2d');
 
-	const background =  can.loadImage('/assets/Rome.jpg');
+	const background =  can.loadImage('./Rome.jpg');
 	ctx.drawImage(background, 0, 0, canvas.width, canvas.height);
 
 	ctx.strokeStyle = '#74037b';
@@ -508,7 +508,7 @@ clientdc.on("message", message => {
 	// Clip off the region you drew on
 	ctx.clip();
 
-	const avatar = can.loadImage();
+	const avatar = can.loadImage('./Augustus.png');
 	ctx.drawImage(avatar, 25, 25, 200, 200);
 
 	const attachment = new Discord.MessageAttachment(canvas.toBuffer(), 'welcome-image.png');

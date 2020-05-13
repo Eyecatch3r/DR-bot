@@ -493,7 +493,7 @@ clientdc.on("message", message => {
       const canvas = can.createCanvas(425, 284);
 	const ctx = canvas.getContext('2d');
 
-	const background =  can.loadImage('./Rome.jpg');
+	const background =  can.loadImage('./Rome.png');
 	ctx.drawImage(background, 0, 0, canvas.width, canvas.height);
 
 	ctx.strokeStyle = '#74037b';

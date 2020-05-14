@@ -556,13 +556,13 @@ emb.setColor(message.member.displayHexColor);
       // Assign the decided font to the canvas
 	ctx.font = applyText(canvas, arg,60);
 	ctx.fillStyle = '#ffffff';
-	ctx.fillText(arg, canvas.width / 2.5, canvas.height / 2);
+	ctx.fillText(arg, canvas.width / 3, canvas.height / 2);
       
       var author = message.guild.members.cache.get(message.author.id).displayName;
       ctx.font = applyText(canvas,author,30);
       
      
-      ctx.fillText("- "+author+"\n  "+dateformat("longDate")+"\n                in: #"+message.channel.name, canvas.width / 2, canvas.height / 1.4);
+      ctx.fillText("- "+author+"\n  "+dateformat("longDate")+"\n          in: #"+message.channel.name, canvas.width / 2, canvas.height / 1.4);
 	  
       // Pick up the pen
 	ctx.beginPath();

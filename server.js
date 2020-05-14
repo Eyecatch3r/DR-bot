@@ -18,7 +18,7 @@ const exists = fs.existsSync(dbFile);
 const sqlite3 = require("sqlite3").verbose();
 const db = new sqlite3.Database(dbFile);
 const randomfacts = require('@dpmcmlxxvi/randomfacts');
-const wikiFacts = require('wikifact');
+const wikiFacts = require('wikifakt');
 app.use("/assets", assets);
 
 const discordBot = require("./bot");
@@ -459,7 +459,7 @@ clientdc.on("message", message => {
       
     }
     
-  if(message.content.includes(command+"randomWiki"))
+  if(message.content.toLowerCase().includes(command+"wiki"))
     {
      
       let emb = new Discord.MessageEmbed();

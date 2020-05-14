@@ -27,7 +27,8 @@
     "bible-english": "^1.0.0",
     "romans": "^1.0.2",
     "canvas": "^2.6.1",
-    "@dpmcmlxxvi/randomfacts": "^0.2.0"
+    "@dpmcmlxxvi/randomfacts": "^0.2.0",
+    "wikifact": "^1.0.1"
   },
   "devDependencies": {
     "minimist": ">=1.2.2"

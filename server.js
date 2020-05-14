@@ -18,7 +18,7 @@ const exists = fs.existsSync(dbFile);
 const sqlite3 = require("sqlite3").verbose();
 const db = new sqlite3.Database(dbFile);
 const randomfacts = require('@dpmcmlxxvi/randomfacts');
-
+const wikiFacts = require('wikifact');
 app.use("/assets", assets);
 
 const discordBot = require("./bot");
@@ -450,7 +450,29 @@ clientdc.on("message", message => {
   if(message.content.includes(command+"random"))
     {
      let args = message.content.split(" ");
-      message.channel.send(randomfacts.make(args[1]));
+      let emb = new Discord.MessageEmbed();
+      emb.setColor(message.member.displayHexColor);
+      emb.setDescription(randomfacts.make(args[1]));
+      emb.setTitle("𝐈𝐌𝐏𝐄𝐑𝐀𝐓𝐎𝐑·𝐏𝐕𝐁𝐋𝐈𝐕𝐒","https://cdn.glitch.com/24cdd29f-170e-4ac8-9dc2-8abc1cbbaeaa%2Fimageedit_1_3956664875.png?v=1588186424473");
+      emb.setFooter("random facts powered by our most humble Imperator");
+      message.channel.send(emb);
+      
+    }
+    
+  if(message.content.includes(command+"randomWiki"))
+    {
+     
+      let emb = new Discord.MessageEmbed();
+      wikiFacts.getRandomFact().then(function(fact) {
+   emb.setDescription(fact);
+emb.setColor(message.member.displayHexColor);
+     
+      emb.setTitle("𝐈𝐌𝐏𝐄𝐑𝐀𝐓𝐎𝐑·𝐏𝐕𝐁𝐋𝐈𝐕𝐒","https://cdn.glitch.com/24cdd29f-170e-4ac8-9dc2-8abc1cbbaeaa%2Fimageedit_1_3956664875.png?v=1588186424473");
+      emb.setFooter("random facts powered by our most humble Imperator");
+      message.channel.send(emb);
+      
+      
+      });
       
     }
   

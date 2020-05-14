@@ -26,7 +26,8 @@
     "bibleverses": "^3.1.1",
     "bible-english": "^1.0.0",
     "romans": "^1.0.2",
-    "canvas": "^2.6.1"
+    "canvas": "^2.6.1",
+    "@dpmcmlxxvi/randomfacts": "^0.2.0"
   },
   "devDependencies": {
     "minimist": ">=1.2.2"

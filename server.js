@@ -17,7 +17,7 @@ const dbFile = "./DR.db";
 const exists = fs.existsSync(dbFile);
 const sqlite3 = require("sqlite3").verbose();
 const db = new sqlite3.Database(dbFile);
-
+const randomfacts = require('@dpmcmlxxvi/randomfacts');
 
 app.use("/assets", assets);
 
@@ -354,7 +354,7 @@ const applyText = (canvas, text,fontsize) => {
 
 	do {
 		// Assign the font to the context and decrement it so it can be measured again
-		ctx.font = `${fontSize -= 10}px font-family: 'Pacifico', cursive;`;
+		ctx.font = `${fontSize -= 5}px font-family: 'Pacifico', cursive;`;
 		// Compare pixel width of the text to the canvas minus the approximate avatar size
 	} while (ctx.measureText(text).width > canvas.width - 300);
 
@@ -446,6 +446,14 @@ clientdc.on("message", message => {
   }
     else {message.channel.send("sorry but you're not the Imperator "+"<@325296044739133450>")}
   }
+  
+  if(message.content.includes(command+"random"))
+    {
+     let args = message.content.split(" ");
+      message.channel.send(randomfacts.make(args[1]));
+      
+    }
+  
   if(message.content.includes(command+"number"))
     {
       var args = message.content.split(" ");
@@ -524,7 +532,7 @@ clientdc.on("message", message => {
   ctx.strokeRect(0,0,canvas.width,canvas.height);
 
       // Assign the decided font to the canvas
-	ctx.font = applyText(canvas, arg,50);
+	ctx.font = applyText(canvas, arg,60);
 	ctx.fillStyle = '#ffffff';
 	ctx.fillText(arg, canvas.width / 2.5, canvas.height / 2);
       

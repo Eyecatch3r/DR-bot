@@ -528,9 +528,9 @@ clientdc.on("message", message => {
 	ctx.fillStyle = '#ffffff';
 	ctx.fillText(arg, canvas.width / 2.5, canvas.height / 1.8);
       
-      var author = message.author.username;
-      ctx.font = '40 impact';
-      ctx.fillText("-"+author, canvas.width / 3.5, canvas.height / 1.2);
+      var author = message.guild.members.cache.get(message.author.id).displayName;
+      ctx.font = '30px Impact';
+      ctx.fillText("-"+author, canvas.width / 2, canvas.height / 1.2);
 	// Pick up the pen
 	ctx.beginPath();
 	// Start the arc to form a circle

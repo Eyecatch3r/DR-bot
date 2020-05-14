@@ -195,7 +195,7 @@ clientdc.on("ready", () => {
   //db.run("DELETE FROM candidates");
   //db.run("DELETE FROM Elections");
   //db.run("DELETE FROM CandidateElections");
-
+  
   updateEmbed();
 
   db.all("SELECT * FROM candidates", [], (err, rows) => {

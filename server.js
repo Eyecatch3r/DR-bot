@@ -530,8 +530,9 @@ clientdc.on("message", message => {
       
       var author = message.guild.members.cache.get(message.author.id).displayName;
       ctx.font = applyText(canvas,author,30);
-      var date = new dateformat(new Date(), "fullDate");
-      ctx.fillText("- "+author+" "+date, canvas.width / 2, canvas.height / 1.4);
+      
+     
+      ctx.fillText("- "+author+"\n"+dateformat("longDate")+"\n in: #"+message.channel.name, canvas.width / 2, canvas.height / 1.4);
 	  
       // Pick up the pen
 	ctx.beginPath();

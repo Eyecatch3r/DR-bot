@@ -346,11 +346,11 @@ function getRole(mention, server) {
         
       
 }**/
-const applyText = (canvas, text) => {
+const applyText = (canvas, text,fontsize) => {
 	const ctx = canvas.getContext('2d');
 
 	// Declare a base size of the font
-	let fontSize = 70;
+	let fontSize = fontsize;
 
 	do {
 		// Assign the font to the context and decrement it so it can be measured again
@@ -524,20 +524,20 @@ clientdc.on("message", message => {
   ctx.strokeRect(0,0,canvas.width,canvas.height);
 
       // Assign the decided font to the canvas
-	ctx.font = applyText(canvas, arg);
+	ctx.font = applyText(canvas, arg,70);
 	ctx.fillStyle = '#ffffff';
 	ctx.fillText(arg, canvas.width / 2.5, canvas.height / 1.8);
       
       var author = message.guild.members.cache.get(message.author.id).displayName;
-      ctx.font = '30px Impact';
-      ctx.fillText("-"+author, canvas.width / 2, canvas.height / 1.2);
+      ctx.font = applyText(canvas,author,30);
+      ctx.fillText("- "+author, canvas.width / 2, canvas.height / 1.2);
 	// Pick up the pen
 	ctx.beginPath();
-      var gradient = ctx.createRadialGradient(100, 100, 0,
-                                            100, 100, 100);
+      var gradient = ctx.createRadialGradient(125, 125, 100,
+                                            225, 225,0);
 
     // Opaque white in the middle
-    //gradient.addColorStop(0, 'rgba(255,255,255,0)');
+    gradient.addColorStop(0, 'rgba(255,255,255,0)');
 
     // Transparent white at the borders
     gradient.addColorStop(1, 'rgba(255,255,255,1)');

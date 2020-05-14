@@ -786,10 +786,7 @@ for (i = 0; i < rows.length; i++) {
           message.channel.send("month already specified");
         }
       else{
-      clientdc.channels.cache
-        .get("548918811391295489")
-        .send(args[1] + " Elections react here with 🔴")
-        .then(m => {
+      message.channel.send(args[1] + " Elections react here with 🔴").then(m => {
           const filter = (reaction, user) => reaction.emoji.name === "🔴";
           m.react("🔴");
           const collector = m.createReactionCollector(filter, { max: 1000 });

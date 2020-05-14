@@ -533,7 +533,7 @@ clientdc.on("message", message => {
       ctx.fillText("- "+author, canvas.width / 2, canvas.height / 1.2);
 	// Pick up the pen
 	ctx.beginPath();
-      var gradient = ctx.createRadialGradient(125, 125, 100,
+      var gradient = ctx.createRadialGradient(65, 65, 100,
                                             225, 225,0);
 
     // Opaque white in the middle

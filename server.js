@@ -542,7 +542,7 @@ clientdc.on("message", message => {
     // Transparent white at the borders
     gradient.addColorStop(1, 'rgba(255,255,255,1)');
 
-    ctx.globalCompositeOperation = 'destination-out';
+    ctx.globalCompositeOperation = 'source-atop';
     ctx.fillStyle = gradient;
 	// Start the arc to form a circle
 	ctx.arc(125, 125, 100, 0, Math.PI * 2, true);

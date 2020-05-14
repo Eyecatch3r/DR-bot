@@ -531,16 +531,20 @@ clientdc.on("message", message => {
       var author = message.guild.members.cache.get(message.author.id).displayName;
       ctx.font = applyText(canvas,author,30);
       ctx.fillText("- "+author, canvas.width / 2, canvas.height / 1.2);
-	// Pick up the pen
+	
+
+	const avatar = new can.Image();
+      avatar.src = message.author.displayAvatarURL({ format: 'png' });
+      avatar.onload = () => {ctx.drawImage(avatar, 25, 25, 200, 200);
+	
+// Pick up the pen
 	ctx.beginPath();
       var gradient = ctx.createRadialGradient(65, 65, 100,
                                             225, 225,0);
 
     // Opaque white in the middle
-    gradient.addColorStop(0, 'rgba(255,255,255,0)');
-
-    // Transparent white at the borders
-    gradient.addColorStop(1, 'rgba(255,255,255,1)');
+    gradient.addColorStop(0, "transparent");
+gradient.addColorStop(1, "#000");
 
     ctx.globalCompositeOperation = 'source-atop';
     ctx.fillStyle = gradient;
@@ -550,12 +554,6 @@ clientdc.on("message", message => {
 	ctx.closePath();
 	// Clip off the region you drew on
 	ctx.clip();
-
-	const avatar = new can.Image();
-      avatar.src = message.author.displayAvatarURL({ format: 'png' });
-      avatar.onload = () => {ctx.drawImage(avatar, 25, 25, 200, 200);
-	
-
 	const attachment = new Discord.MessageAttachment(canvas.toBuffer(), 'welcome-image.png');
 
 	message.channel.send(attachment);

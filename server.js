@@ -532,7 +532,7 @@ clientdc.on("message", message => {
       ctx.font = applyText(canvas,author,30);
       
      
-      ctx.fillText("- "+author+"\n"+dateformat("longDate")+"\n in: #"+message.channel.name, canvas.width / 2, canvas.height / 1.4);
+      ctx.fillText("- "+author+"\n                       "+dateformat("longDate")+"\n                in: #"+message.channel.name, canvas.width / 2, canvas.height / 1.4);
 	  
       // Pick up the pen
 	ctx.beginPath();

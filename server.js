@@ -74,7 +74,7 @@ function updateEmbed() {
       msgs.forEach(msg => mainEmb.addField(msg));
     } else {
       var args2 = new Array();
-      for (var i = 0; i < msgs.length / 2; i++) {
+      for (var i = msgs.length; i > msgs.length / 2; i--) {
         args2.push(msgs[i]);
         msgs.pop();
       }

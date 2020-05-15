@@ -1013,7 +1013,7 @@ for (i = 0; i < rows.length; i++) {
         );
         secEmb.setDescription("Motions to discuss in Senate meetings");
 
-        if (msgs.length <= 25) {
+        if (msgs.length <= 250) {
       msgs.forEach(msg => embed.addField("motions", msg));
       message.guild.channels.cache
         .get("705136080105767004")

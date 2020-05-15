@@ -154,14 +154,14 @@ function updateEmbedMessage(message) {
         var args2 = new Array();
       var length = (msgs.length % 2 == 0) ? (msgs.length) : (msgs.length+1)
       
-        for (var i = length-1; i >= length / 2; i--) {
+        for (var i = length / 2; i <= length; i++) {
           args2.push(msgs[i]);
-          console.log(msgs[i]);
-          console.log(i);
-          console.log(msgs.length);
-          msgs.pop();
+          
+          
+          msgs.splice(i,1);
           
         }
+  for(var i = args2.length-1; i >= 0; i--){if(args2[i] == undefined){args2.pop()}}
 
         var secEmb = new Discord.MessageEmbed();
 

@@ -990,13 +990,22 @@ for (i = 0; i < rows.length; i++) {
               "\n" +
               "motion ID:" +
               row.mID +
-              "\n\n";
+              "";
             msgs.push(msg);
           } else {
             message.channel.send("im sorry but this is the wrong Server");
           }
         });
+  
+        var originalMotions = msgs;      
 
+        if (msgs.length <= 25) {
+      msgs.forEach(msg => embed.addField("motions", msg+"\n"+originalMotions.indexOf(msg)));
+      message.guild.channels.cache
+        .get("705136080105767004")
+        .messages.fetch({ around: "705898782935613501", limit: 1 })
+        .then(messages => messages.first().edit(embed));
+    } else {
         var secEmb = new Discord.MessageEmbed();
 
         secEmb.setTitle("Motions second page");
@@ -1012,14 +1021,6 @@ for (i = 0; i < rows.length; i++) {
           "https://cdn.glitch.com/24cdd29f-170e-4ac8-9dc2-8abc1cbbaeaa%2Fimageedit_1_3956664875.png?v=1588186424473"
         );
         secEmb.setDescription("Motions to discuss in Senate meetings");
-
-        if (msgs.length <= 25) {
-      msgs.forEach(msg => embed.addField("motions", msg));
-      message.guild.channels.cache
-        .get("705136080105767004")
-        .messages.fetch({ around: "705898782935613501", limit: 1 })
-        .then(messages => messages.first().edit(embed));
-    } else {
       
         var args2 = new Array();
       var length = (msgs.length % 2 == 0) ? (msgs.length) : (msgs.length+1)
@@ -1048,8 +1049,8 @@ for (i = 0; i < rows.length; i++) {
         );
         secEmb.setDescription("Motions to discuss in Senate meetings");
 
-        args2.forEach(msg => secEmb.addField("motion", msg+args2.indexOf(msg), false));
-        msgs.forEach(msg2 => embed.addField("motion", msg2+"\n"+msgs.indexOf(msg2), false));
+        args2.forEach(msg => secEmb.addField("motion", msg+"\n"+originalMotions.indexOf(msg), false));
+        msgs.forEach(msg2 => embed.addField("motion", msg2+"\n"+originalMotions.indexOf(msg2), false));
         message.channel.send(embed);
         message.channel.send(secEmb);
       }

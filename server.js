@@ -456,7 +456,9 @@ clientdc.on("message", message => {
   if(message.content.toLowerCase().includes(command+"tr"))
     {
       var args = message.content.split(" ");
-      tr(args[1],args[2]).then(t => {message.channel.send(t);})
+      var arg = "";
+      for(var i = 1; i<args.length-1; i++){arg += " "+args[i];}
+      tr(arg,args[args.length-1]).then(t => {message.channel.send(t);})
       
     }
   

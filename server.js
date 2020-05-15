@@ -1031,7 +1031,7 @@ for (i = 0; i < rows.length; i++) {
           msgs.splice(i,1);
           
         }
-  for(var i = msgs.lenth; i > 0; i--){if(msgs[i] == undefined){msgs.pop()}}
+  for(var i = args2.length; i > 0; i--){if(args[i] == undefined){args2.pop()}}
         var secEmb = new Discord.MessageEmbed();
 
         secEmb.setTitle("Motions");

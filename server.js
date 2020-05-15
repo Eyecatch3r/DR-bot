@@ -135,7 +135,7 @@ function updateEmbedMessage(message) {
           "\n" +
           "motion ID:" +
           row.mID +
-          "\n\n";
+          "";
         msgs.push(msg);
       } else {
         message.channel.send("im sorry but this is the wrong Server");
@@ -179,8 +179,8 @@ function updateEmbedMessage(message) {
         );
         secEmb.setDescription("Motions to discuss in Senate meetings");
 
-        args2.forEach(msg => secEmb.addField("motion", msg+"\n"+args2.indexOf(msg), false));
-        msgs.forEach(msg2 => embed.addField("motion", msg2+"\n"+msgs.indexOf(msg2), false));
+        args2.forEach(msg => secEmb.addField("motion", msg+"/"+parseInt(args2.indexOf(msg)+msgs.length,10), false));
+        msgs.forEach(msg2 => embed.addField("motion", msg2+"/"+msgs.indexOf(msg2), false));
         message.guild.channels.cache
           .get("705136080105767004")
           .messages.fetch({ around: "705898782935613501", limit: 1 })
@@ -997,10 +997,10 @@ for (i = 0; i < rows.length; i++) {
           }
         });
   
-        var originalMotions = msgs;      
-
+         
+        
         if (msgs.length <= 25) {
-      msgs.forEach(msg => embed.addField("motions", msg+"\n"+originalMotions.indexOf(msg)));
+      msgs.forEach(msg => embed.addField("motions", msg+"\n"+msgs.indexOf(msg)));
       message.guild.channels.cache
         .get("705136080105767004")
         .messages.fetch({ around: "705898782935613501", limit: 1 })
@@ -1049,8 +1049,8 @@ for (i = 0; i < rows.length; i++) {
         );
         secEmb.setDescription("Motions to discuss in Senate meetings");
 
-        args2.forEach(msg => secEmb.addField("motion", msg+"\ "+originalMotions.indexOf(msg), false));
-        msgs.forEach(msg2 => embed.addField("motion", msg2+"\ "+originalMotions.indexOf(msg2), false));
+        args2.forEach(msg => secEmb.addField("motion", msg+"/"+parseInt(args2.indexOf(msg)+msgs.length,10), false));
+        msgs.forEach(msg2 => embed.addField("motion", msg2+"/"+msgs.indexOf(msg2), false));
         message.channel.send(embed);
         message.channel.send(secEmb);
       }

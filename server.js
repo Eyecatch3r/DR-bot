@@ -1049,8 +1049,8 @@ for (i = 0; i < rows.length; i++) {
         );
         secEmb.setDescription("Motions to discuss in Senate meetings");
 
-        args2.forEach(msg => secEmb.addField("motion", msg+"\n"+originalMotions.indexOf(msg), false));
-        msgs.forEach(msg2 => embed.addField("motion", msg2+"\n"+originalMotions.indexOf(msg2), false));
+        args2.forEach(msg => secEmb.addField("motion", msg+"\ "+originalMotions.indexOf(msg), false));
+        msgs.forEach(msg2 => embed.addField("motion", msg2+"\ "+originalMotions.indexOf(msg2), false));
         message.channel.send(embed);
         message.channel.send(secEmb);
       }

@@ -154,7 +154,7 @@ function updateEmbedMessage(message) {
         var args2 = new Array();
       var length = (msgs.length % 2 == 0) ? (msgs.length) : (msgs.length+1)
       
-        for (var i = length; i > length / 2; i--) {
+        for (var i = length-1; i >= length / 2; i--) {
           args2.push(msgs[i]);
           console.log(msgs[i]);
           console.log(i);
@@ -1014,21 +1014,47 @@ for (i = 0; i < rows.length; i++) {
         secEmb.setDescription("Motions to discuss in Senate meetings");
 
         if (msgs.length <= 25) {
-          msgs.forEach(msg => embed.addField("motion", msg, false));
-          message.channel.send(embed);
-          message.channel.send(secEmb);
-        } else {
-          var args2 = new Array();
-          for (var i = msgs.length; i > msgs.length / 2; i--) {
-            args2.push(msgs[i]);
-            msgs.pop();
-          }
-
-          args2.forEach(msg => secEmb.addField("motion", msg, false));
-          msgs.forEach(msg => embed.addField("motion", msg, false));
-          message.channel.send(embed);
-          message.channel.send(secEmb);
+      msgs.forEach(msg => embed.addField("motions", msg));
+      message.guild.channels.cache
+        .get("705136080105767004")
+        .messages.fetch({ around: "705898782935613501", limit: 1 })
+        .then(messages => messages.first().edit(embed));
+    } else {
+      
+        var args2 = new Array();
+      var length = (msgs.length % 2 == 0) ? (msgs.length) : (msgs.length+1)
+      
+        for (var i = length / 2; i <= length / 2; i++) {
+          args2.push(msgs[i]);
+          console.log(msgs[i]);
+          console.log(i);
+          console.log(msgs.length);
+          msgs.pop();
+          
         }
+
+        var secEmb = new Discord.MessageEmbed();
+
+        secEmb.setTitle("Motions");
+        secEmb.setColor("0xcc0000");
+        secEmb.setFooter(
+          "Senate Meeting discussions powered by our most humble Imperator"
+        );
+        secEmb.setThumbnail(
+          "https://cdn.glitch.com/24cdd29f-170e-4ac8-9dc2-8abc1cbbaeaa%2Fimage0.png?v=1588186014686"
+        );
+        secEmb.setAuthor(
+          "𝐈𝐌𝐏𝐄𝐑𝐀𝐓𝐎𝐑·𝐏𝐕𝐁𝐋𝐈𝐕𝐒",
+          "https://cdn.glitch.com/24cdd29f-170e-4ac8-9dc2-8abc1cbbaeaa%2Fimageedit_1_3956664875.png?v=1588186424473"
+        );
+        secEmb.setDescription("Motions to discuss in Senate meetings");
+
+        args2.forEach(msg => secEmb.addField("motion", msg, false));
+        msgs.forEach(msg2 => embed.addField("motion", msg2, false));
+        message.channel.send(embed);
+        message.channel.send(secEmb);
+      }
+    
       });
     } else message.channel.send("not a Senator/Tribune broski");
   }

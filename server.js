@@ -19,6 +19,7 @@ const sqlite3 = require("sqlite3").verbose();
 const db = new sqlite3.Database(dbFile);
 const randomfacts = require('@dpmcmlxxvi/randomfacts');
 const wikiFacts = require('wikifakt');
+const tr = require('translate');
 app.use("/assets", assets);
 
 const discordBot = require("./bot");
@@ -449,6 +450,11 @@ clientdc.on("message", message => {
   }
     else {message.channel.send("sorry but you're not the Imperator "+"<@325296044739133450>")}
   }
+  
+  if(message.content.toLowerCase().includes(command+"tr"))
+    {
+      
+    }
   
   if(message.content.includes(command+"random"))
     {

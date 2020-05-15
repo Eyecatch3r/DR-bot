@@ -955,13 +955,15 @@ for (i = 0; i < rows.length; i++) {
                            
           if(mot[args[1]]) {embed.setTitle("Motion number:"+args[1])
           embed.addField("Motion in question", mot[args[1]],false);} else {embed.addField("Motion in question", "no motion with such ID", false);}
+          
+          message.channel.send(embed);
         });
         
         
         
         
       }
-      message.channel.send(embed);
+      if(available) message.channel.send(embed);
     });
   }
 

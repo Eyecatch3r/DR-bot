@@ -950,11 +950,14 @@ for (i = 0; i < rows.length; i++) {
       if (!available) {
         let availablenumber = false;
         var mot = new Array();
-        db.each('SELECT * FROM MOTIONS',[],(err,row) => {
-          mot.push(row.motion +"\n From:" +message.guild.members.cache.get(row.creator).toString());
+        db.each('SELECT * FROM Motions',[],(err,row) => {
+          mot.push(row.motion +"\n From:" +message.guild.members.cache.get(row.creator).toString());                              
         });
-        if(mot[args[1]] != undefined){embed.addField("Motion in question", mot[args[1]],false);}
-        embed.addField("Motion in question", "no motion with such ID", false);
+        
+        if(mot[args[1]]) {embed.setTitle("Motion number:"+args[1])
+          embed.addField("Motion in question", mot[args[1]],false);} else {embed.addField("Motion in question", "no motion with such ID", false);}
+        
+        
       }
       message.channel.send(embed);
     });

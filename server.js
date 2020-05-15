@@ -1137,7 +1137,7 @@ for (i = 0; i < rows.length; i++) {
       db.all("DELETE FROM Motions", [], (err, rows) => {
         if (err) {
           message.channel.send("sth went wrong");
-          db.run("UPDATE SQLITE_SEQUENCE SET SEQ=0 WHERE NAME='Motions';");
+          
         } else message.channel.send("motions deleted");
         updateEmbedMessage(message);
       });

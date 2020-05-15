@@ -152,6 +152,8 @@ function updateEmbedMessage(message) {
     } else {
       
         var args2 = new Array();
+      var length = ()
+      
         for (var i = msgs.length; i > msgs.length / 2; i--) {
           args2.push(msgs[i]);
           console.log(msgs[i]);

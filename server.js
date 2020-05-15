@@ -179,8 +179,8 @@ function updateEmbedMessage(message) {
         );
         secEmb.setDescription("Motions to discuss in Senate meetings");
 
-        args2.forEach(msg => secEmb.addField("motion", msg, false));
-        msgs.forEach(msg2 => embed.addField("motion", msg2, false));
+        args2.forEach(msg => secEmb.addField("motion", msg+"\n"+args2.indexOf(msg), false));
+        msgs.forEach(msg2 => embed.addField("motion", msg2+"\n"+msgs.indexOf(msg2), false));
         message.guild.channels.cache
           .get("705136080105767004")
           .messages.fetch({ around: "705898782935613501", limit: 1 })
@@ -1048,8 +1048,8 @@ for (i = 0; i < rows.length; i++) {
         );
         secEmb.setDescription("Motions to discuss in Senate meetings");
 
-        args2.forEach(msg => secEmb.addField("motion", msg, false));
-        msgs.forEach(msg2 => embed.addField("motion", msg2, false));
+        args2.forEach(msg => secEmb.addField("motion", msg+args2.indexOf(msg), false));
+        msgs.forEach(msg2 => embed.addField("motion", msg2+"\n"+msgs.indexOf(msg2), false));
         message.channel.send(embed);
         message.channel.send(secEmb);
       }

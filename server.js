@@ -20,6 +20,7 @@ const db = new sqlite3.Database(dbFile);
 const randomfacts = require('@dpmcmlxxvi/randomfacts');
 const wikiFacts = require('wikifakt');
 const tr = require('translate');
+tr.key = 'AIzaSyAWWgZEJ1eoZp-kyt6iM08D3NCUwAQ2CkQ';
 app.use("/assets", assets);
 
 const discordBot = require("./bot");
@@ -453,7 +454,8 @@ clientdc.on("message", message => {
   
   if(message.content.toLowerCase().includes(command+"tr"))
     {
-      
+      var args = message.content.split(" ");
+      tr(args[1],args[2]);
     }
   
   if(message.content.includes(command+"random"))

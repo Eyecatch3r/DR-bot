@@ -1013,7 +1013,7 @@ for (i = 0; i < rows.length; i++) {
         );
         secEmb.setDescription("Motions to discuss in Senate meetings");
 
-        if (msgs.length <= 250) {
+        if (msgs.length <= 25) {
       msgs.forEach(msg => embed.addField("motions", msg));
       message.guild.channels.cache
         .get("705136080105767004")
@@ -1024,7 +1024,7 @@ for (i = 0; i < rows.length; i++) {
         var args2 = new Array();
       var length = (msgs.length % 2 == 0) ? (msgs.length) : (msgs.length+1)
       
-        for (var i = length / 2; i <= length / 2; i++) {
+        for (var i = length / 2; i <= length; i++) {
           args2.push(msgs[i]);
           console.log(msgs[i]);
           console.log(i);

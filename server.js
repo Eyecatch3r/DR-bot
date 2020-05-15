@@ -152,11 +152,12 @@ function updateEmbedMessage(message) {
     } else {
       
         var args2 = new Array();
-      var length = ()
+      var length = (msgs.length % 2 == 0) ? (msgs.length) : (msgs.length+1)
       
-        for (var i = msgs.length; i > msgs.length / 2; i--) {
+        for (var i = length; i > length / 2; i--) {
           args2.push(msgs[i]);
           console.log(msgs[i]);
+          console.log(i);
           console.log(msgs.length);
           msgs.pop();
           
@@ -179,7 +180,7 @@ function updateEmbedMessage(message) {
         secEmb.setDescription("Motions to discuss in Senate meetings");
 
         args2.forEach(msg => secEmb.addField("motion", msg, false));
-        msgs.forEach(msg => embed.addField("motion", msg, false));
+        msgs.forEach(msg2 => embed.addField("motion", msg2, false));
         message.guild.channels.cache
           .get("705136080105767004")
           .messages.fetch({ around: "705898782935613501", limit: 1 })

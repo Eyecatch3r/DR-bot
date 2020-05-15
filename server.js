@@ -150,14 +150,14 @@ function updateEmbedMessage(message) {
         .messages.fetch({ around: "705898782935613501", limit: 1 })
         .then(messages => messages.first().edit(embed));
     } else {
-      if (msgs.length <= 25) {
-        msgs.forEach(msg => embed.addField("motion", msg, false));
-        message.channel.send(embed);
-      } else {
+      
         var args2 = new Array();
         for (var i = msgs.length; i > msgs.length / 2; i--) {
           args2.push(msgs[i]);
+          console.log(msgs[i]);
+          console.log(msgs.length);
           msgs.pop();
+          
         }
 
         var secEmb = new Discord.MessageEmbed();
@@ -187,7 +187,7 @@ function updateEmbedMessage(message) {
           .messages.fetch({ around: "705898783757565995", limit: 1 })
           .then(messages => messages.first().edit(secEmb));
       }
-    }
+    
   });
 }
 

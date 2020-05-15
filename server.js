@@ -1026,13 +1026,12 @@ for (i = 0; i < rows.length; i++) {
       
         for (var i = length / 2; i <= length; i++) {
           args2.push(msgs[i]);
-          console.log(msgs[i]);
-          console.log(i);
-          console.log(msgs.length);
-          msgs.pop();
+          
+          
+          msgs.splice(i,1);
           
         }
-
+  for(var i = msgs.lenth; i > 0; i--){if(msgs[i] == undefined){msgs.pop()}}
         var secEmb = new Discord.MessageEmbed();
 
         secEmb.setTitle("Motions");

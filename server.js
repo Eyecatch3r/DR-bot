@@ -961,10 +961,25 @@ for (i = 0; i < rows.length; i++) {
         );
           }
       });
+      
       if (!available) {
         let availablenumber = false;
         var mot = new Array();
         db.all('SELECT * FROM Motions',[],(err,rows) => {
+          rows.forEach(row => {
+          if(row.motion.includes(".png") || row.motion.includes(".jpg") || row.motion.includes(".jpeg"))
+          {
+            if(!row.motion.startsWith("http"))
+              {
+                var args = row.motion.split("http");
+                embed.addField("Motion in question",args[0],true);
+                embed.setImage("http"+args[1]);
+              }else{
+            embed.addField("Motion in question","Picture in question",true);
+            embed.setImage(row.motion);
+              }
+          }
+          }else {
           rows.forEach(row => {mot.push(row.motion +"\n From:" +message.guild.members.cache.get(row.creator).toString());});
                            
           if(mot.length >= 25)
@@ -986,13 +1001,16 @@ for (i = 0; i < rows.length; i++) {
           embed.addField("Motion in question", mot[args[1]],false);} else if(args2[args[1]-mot.length]) {embed.addField("Motion in question", args2[args[1]-mot.length],false);} else{embed.addField("Motion in question", "no motion with such ID", false);}
             }
           else {embed.addField("Motion in question", mot[args[1]],false);}
+        
           message.channel.send(embed);
+          }
         });
         
         
         
         
       }
+          
       if(available) message.channel.send(embed);
     });
   }

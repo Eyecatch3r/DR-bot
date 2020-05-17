@@ -932,15 +932,17 @@ for (i = 0; i < rows.length; i++) {
       if (err) {
         throw err;
       }
+      //search motion with Primary Key
+      
       rows.forEach(row => {
         available = true;
         if(row.motion.includes(".png") || row.motion.includes(".jpg") || row.motion.includes(".jpeg"))
           {
             if(!row.motion.startsWith("http"))
               {
-                var args = row.motion.split("http");
-                embed.addField("Motion in question",args[0],true);
-                embed.setImage("http"+args[1]);
+                var args2 = row.motion.split("http");
+                embed.addField("Motion in question",args2[0],true);
+                embed.setImage("http"+args2[1]);
               }else{
             embed.addField("Motion in question","Picture in question",true);
             embed.setImage(row.motion);
@@ -961,24 +963,25 @@ for (i = 0; i < rows.length; i++) {
         );
           }
       });
-      
+      //if no primary key is submitted as an argument the motion is searched after its position
       if (!available) {
         let availablenumber = false;
         var mot = new Array();
         db.all('SELECT * FROM Motions',[],(err,rows) => {
-          rows.forEach(row => {
-          if(row.motion.includes(".png") || row.motion.includes(".jpg") || row.motion.includes(".jpeg"))
+          var args = message.content.split(" ");
+          
+          if(args[1].includes(".png") || args[1].includes(".jpg") || args[1].includes(".jpeg"))
           {
-            if(!row.motion.startsWith("http"))
+            if(!args[1].startsWith("http"))
               {
-                var args = row.motion.split("http");
+                message.channel.send("test");
+                var args = args[1].split("http");
                 embed.addField("Motion in question",args[0],true);
                 embed.setImage("http"+args[1]);
               }else{
             embed.addField("Motion in question","Picture in question",true);
-            embed.setImage(row.motion);
+            embed.setImage(args[1]);
               }
-          }
           }else {
           rows.forEach(row => {mot.push(row.motion +"\n From:" +message.guild.members.cache.get(row.creator).toString());});
                            

@@ -148,10 +148,31 @@ function updateEmbedMessage(message) {
     });
     if (msgs.length <= 25) {
       msgs.forEach(msg => embed.addField("motions", msg));
+      var secEmb = new Discord.MessageEmbed();
+
+        secEmb.setTitle("Motions");
+        secEmb.setColor("0xcc0000");
+        secEmb.setFooter(
+          "Senate Meeting discussions powered by our most humble Imperator"
+        );
+        secEmb.setThumbnail(
+          "https://cdn.glitch.com/24cdd29f-170e-4ac8-9dc2-8abc1cbbaeaa%2Fimage0.png?v=1588186014686"
+        );
+        secEmb.setAuthor(
+          "𝐈𝐌𝐏𝐄𝐑𝐀𝐓𝐎𝐑·𝐏𝐕𝐁𝐋𝐈𝐕𝐒",
+          "https://cdn.glitch.com/24cdd29f-170e-4ac8-9dc2-8abc1cbbaeaa%2Fimageedit_1_3956664875.png?v=1588186424473"
+        );
+        secEmb.setDescription("Motions to discuss in Senate meetings");
+      
       message.guild.channels.cache
         .get("705136080105767004")
         .messages.fetch({ around: "705898782935613501", limit: 1 })
         .then(messages => messages.first().edit(embed));
+      
+      message.guild.channels.cache
+          .get("705136080105767004")
+          .messages.fetch({ around: "705898783757565995", limit: 1 })
+          .then(messages => messages.first().edit(secEmb));
     } else {
       
         var args2 = new Array();

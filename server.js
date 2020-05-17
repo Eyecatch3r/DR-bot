@@ -969,20 +969,21 @@ for (i = 0; i < rows.length; i++) {
         var mot = new Array();
         db.all('SELECT * FROM Motions',[],(err,rows) => {
           var args = message.content.split(" ");
-          rows.forEach(row => {mot.push(row.motion +"\n From:" +message.guild.members.cache.get(row.creator).toString());});
-          message.channel.send(mot[args[1]]);
+          var link = new Array();
+          rows.forEach(row => {mot.push(row.motion +"\n From:" +message.guild.members.cache.get(row.creator).toString()); link.push(row.motion)});
+          
           if(mot[args[1]].includes(".png") || mot[args[1]].includes(".jpg") || mot[args[1]].includes(".jpeg"))
           {
             if(!mot[args[1]].startsWith("http"))
               {
                 
-                var args2 = args[1].split("http");
+                var args2 = link[args[1]].split("http");
                 embed.addField("Motion in question",args2[0],true);
                 embed.setImage("http"+args2[1]);
                 message.channel.send(embed);
               }else{
             embed.addField("Motion in question","Picture in question",true);
-            embed.setImage(mot[args[1]]);
+            embed.setImage(link[args[1]]);
             message.channel.send(embed);
               }
           }else {

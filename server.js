@@ -969,21 +969,24 @@ for (i = 0; i < rows.length; i++) {
         var mot = new Array();
         db.all('SELECT * FROM Motions',[],(err,rows) => {
           var args = message.content.split(" ");
-          
-          if(args[1].includes(".png") || args[1].includes(".jpg") || args[1].includes(".jpeg"))
+          rows.forEach(row => {mot.push(row.motion +"\n From:" +message.guild.members.cache.get(row.creator).toString());});
+          message.channel.send(mot[args[1]]);
+          if(mot[args[1]].includes(".png") || mot[args[1]].includes(".jpg") || mot[args[1]].includes(".jpeg"))
           {
-            if(!args[1].startsWith("http"))
+            if(!mot[args[1]].startsWith("http"))
               {
-                message.channel.send("test");
-                var args = args[1].split("http");
-                embed.addField("Motion in question",args[0],true);
-                embed.setImage("http"+args[1]);
+                
+                var args2 = args[1].split("http");
+                embed.addField("Motion in question",args2[0],true);
+                embed.setImage("http"+args2[1]);
+                message.channel.send(embed);
               }else{
             embed.addField("Motion in question","Picture in question",true);
-            embed.setImage(args[1]);
+            embed.setImage(mot[args[1]]);
+            message.channel.send(embed);
               }
           }else {
-          rows.forEach(row => {mot.push(row.motion +"\n From:" +message.guild.members.cache.get(row.creator).toString());});
+          
                            
           if(mot.length >= 25)
             {

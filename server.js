@@ -308,13 +308,16 @@ let query =
   "'";
 
 clientdc.on("messageReactionAdd",(reaction,user) => {
-  if(user.id === '325296044739133450' && reaction.emoji.id === '640270832115122196')
+  if(user.id == '325296044739133450' && reaction.emoji.id === '640270832115122196')
     {
+      reaction.message.channel.send("g");
       var available = false;
       db.all('SELECT * FROM Generals WHERE DiscordID = '+reaction.message.author,[],(err,rows) =>{
-      if(rows != undefined)
-        {available = true;}
-        if(available){db.run('UPDATE Generals SET generals = generals+1 WHERE DiscordID = '+reaction.message.author.id)}else{
+        if(err){throw err;}
+      reaction.message.channel.send("g");
+        if(rows != undefined)
+        {available = true; }
+        if(available){db.run('UPDATE Generals SET generals = generals+1 WHERE DiscordID = '+reaction.message.author.id); }else{
       db.run("INSERT INTO Generals(DiscordID,generals) VALUES('"+reaction.message.author.id+"',1)");  
         }
              });

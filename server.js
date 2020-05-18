@@ -307,6 +307,14 @@ let query =
   dates[2] +
   "'";
 
+clientdc.on("messageReactionAdd",(reaction,user) => {
+  if(user.id === '220590173962895360' && reaction.emoji.id === '640270832115122196')
+    {
+      reaction.message.channel.send("yay");
+    }
+});
+
+
 clientdc.on("presenceUpdate", (oldPresence, newPresence) => {
   //clientdc.channels.cache.get("514135876909924354").send("test");
 

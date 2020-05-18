@@ -310,7 +310,14 @@ let query =
 clientdc.on("messageReactionAdd",(reaction,user) => {
   if(user.id === '220590173962895360' && reaction.emoji.id === '640270832115122196')
     {
-      reaction.message.channel.send("yay");
+      var available = false;
+      db.all('SELECT * FROM Generals WHERE DiscordID = '+reaction.message.author,[],(err,rows) =>{
+      for(var i = 0; i< rows.length; i++)
+        {available = true;}
+        if(available){}else
+      db.run("INSERT INTO Generals(DiscordID,generals) VALUES('"+reaction.message.author.id+"',0)");  
+      
+             });
     }
 });
 

@@ -19,6 +19,9 @@ const sqlite3 = require("sqlite3").verbose();
 const db = new sqlite3.Database(dbFile);
 const randomfacts = require('@dpmcmlxxvi/randomfacts');
 const wikiFacts = require('wikifakt');
+const tr = require('translate');
+tr.key = 'trnsl.1.1.20200515T222139Z.a68c11f6ccb16bd4.b2bb25b5f6b3c103701bbe0015c7998ab237fa98';
+tr.engine = 'yandex';
 app.use("/assets", assets);
 
 const discordBot = require("./bot");
@@ -135,7 +138,7 @@ function updateEmbedMessage(message) {
           "\n" +
           "motion ID:" +
           row.mID +
-          "\n\n";
+          "";
         msgs.push(msg);
       } else {
         message.channel.send("im sorry but this is the wrong Server");
@@ -145,23 +148,44 @@ function updateEmbedMessage(message) {
     });
     if (msgs.length <= 25) {
       msgs.forEach(msg => embed.addField("motions", msg));
+      var secEmb = new Discord.MessageEmbed();
+
+        secEmb.setTitle("Motions");
+        secEmb.setColor("0xcc0000");
+        secEmb.setFooter(
+          "Senate Meeting discussions powered by our most humble Imperator"
+        );
+        secEmb.setThumbnail(
+          "https://cdn.glitch.com/24cdd29f-170e-4ac8-9dc2-8abc1cbbaeaa%2Fimage0.png?v=1588186014686"
+        );
+        secEmb.setAuthor(
+          "𝐈𝐌𝐏𝐄𝐑𝐀𝐓𝐎𝐑·𝐏𝐕𝐁𝐋𝐈𝐕𝐒",
+          "https://cdn.glitch.com/24cdd29f-170e-4ac8-9dc2-8abc1cbbaeaa%2Fimageedit_1_3956664875.png?v=1588186424473"
+        );
+        secEmb.setDescription("Motions to discuss in Senate meetings");
+      
       message.guild.channels.cache
         .get("705136080105767004")
         .messages.fetch({ around: "705898782935613501", limit: 1 })
         .then(messages => messages.first().edit(embed));
+      
+      message.guild.channels.cache
+          .get("705136080105767004")
+          .messages.fetch({ around: "705898783757565995", limit: 1 })
+          .then(messages => messages.first().edit(secEmb));
     } else {
       
         var args2 = new Array();
       var length = (msgs.length % 2 == 0) ? (msgs.length) : (msgs.length+1)
       
-        for (var i = length-1; i >= length / 2; i--) {
+        for (var i = length / 2; i <= length; i++) {
           args2.push(msgs[i]);
-          console.log(msgs[i]);
-          console.log(i);
-          console.log(msgs.length);
-          msgs.pop();
+          
+          
+          msgs.splice(i,1);
           
         }
+  for(var i = args2.length-1; i >= 0; i--){if(args2[i] == undefined){args2.pop()}}
 
         var secEmb = new Discord.MessageEmbed();
 
@@ -179,8 +203,8 @@ function updateEmbedMessage(message) {
         );
         secEmb.setDescription("Motions to discuss in Senate meetings");
 
-        args2.forEach(msg => secEmb.addField("motion", msg, false));
-        msgs.forEach(msg2 => embed.addField("motion", msg2, false));
+        args2.forEach(msg => secEmb.addField("motion", msg+"/"+parseInt(args2.indexOf(msg)+msgs.length,10), false));
+        msgs.forEach(msg2 => embed.addField("motion", msg2+"/"+msgs.indexOf(msg2), false));
         message.guild.channels.cache
           .get("705136080105767004")
           .messages.fetch({ around: "705898782935613501", limit: 1 })
@@ -449,6 +473,17 @@ clientdc.on("message", message => {
   }
     else {message.channel.send("sorry but you're not the Imperator "+"<@325296044739133450>")}
   }
+  
+  if(message.content.toLowerCase().includes(command+"tr"))
+    {
+      
+      var args = message.content.split(" ");
+      var arg = "";
+      for(var i = 1; i<args.length-1; i++){arg += " "+args[i];}
+      tr(arg,args[args.length-1]).then(t => {message.channel.send(t);
+                                            message.delete();});
+      
+    }
   
   if(message.content.includes(command+"random"))
     {
@@ -918,15 +953,17 @@ for (i = 0; i < rows.length; i++) {
       if (err) {
         throw err;
       }
+      //search motion with Primary Key
+      
       rows.forEach(row => {
         available = true;
         if(row.motion.includes(".png") || row.motion.includes(".jpg") || row.motion.includes(".jpeg"))
           {
             if(!row.motion.startsWith("http"))
               {
-                var args = row.motion.split("http");
-                embed.addField("Motion in question",args[0],true);
-                embed.setImage("http"+args[1]);
+                var args2 = row.motion.split("http");
+                embed.addField("Motion in question",args2[0],true);
+                embed.setImage("http"+args2[1]);
               }else{
             embed.addField("Motion in question","Picture in question",true);
             embed.setImage(row.motion);
@@ -947,10 +984,62 @@ for (i = 0; i < rows.length; i++) {
         );
           }
       });
+      //if no primary key is submitted as an argument the motion is searched after its position
       if (!available) {
-        embed.addField("Motion in question", "no motion with such ID", false);
+        let availablenumber = false;
+        var mot = new Array();
+        db.all('SELECT * FROM Motions',[],(err,rows) => {
+          var args = message.content.split(" ");
+          var link = new Array();
+          rows.forEach(row => {mot.push(row.motion +"\n From:" +message.guild.members.cache.get(row.creator).toString()); link.push(row.motion)});
+          
+          if(mot[args[1]].includes(".png") || mot[args[1]].includes(".jpg") || mot[args[1]].includes(".jpeg"))
+          {
+            if(!mot[args[1]].startsWith("http"))
+              {
+                
+                var args2 = link[args[1]].split("http");
+                embed.addField("Motion in question",args2[0],true);
+                embed.setImage("http"+args2[1]);
+                message.channel.send(embed);
+              }else{
+            embed.addField("Motion in question","Picture in question",true);
+            embed.setImage(link[args[1]]);
+            message.channel.send(embed);
+              }
+          }else {
+          
+                           
+          if(mot.length >= 25)
+            {
+          
+          var args2 = new Array();
+      var length = (mot.length % 2 == 0) ? (mot.length) : (mot.length+1)
+      
+        for (var i = length / 2; i <= length; i++) {
+          args2.push(mot[i]);
+          
+          
+          mot.splice(i,1);
+          
+        }
+  for(var i = args2.length-1; i >= 0; i--){if(args2[i] == undefined){args2.pop()}}
+          
+          if(mot[args[1]]) {embed.setTitle("Motion number:"+args[1])
+          embed.addField("Motion in question", mot[args[1]],false);} else if(args2[args[1]-mot.length]) {embed.addField("Motion in question", args2[args[1]-mot.length],false);} else{embed.addField("Motion in question", "no motion with such ID", false);}
+            }
+          else {embed.addField("Motion in question", mot[args[1]],false);}
+        
+          message.channel.send(embed);
+          }
+        });
+        
+        
+        
+        
       }
-      message.channel.send(embed);
+          
+      if(available) message.channel.send(embed);
     });
   }
 
@@ -990,13 +1079,22 @@ for (i = 0; i < rows.length; i++) {
               "\n" +
               "motion ID:" +
               row.mID +
-              "\n\n";
+              "";
             msgs.push(msg);
           } else {
             message.channel.send("im sorry but this is the wrong Server");
           }
         });
-
+  
+         
+        
+        if (msgs.length <= 25) {
+      msgs.forEach(msg => embed.addField("motions", msg+"\n"+msgs.indexOf(msg)));
+      message.guild.channels.cache
+        .get("705136080105767004")
+        .messages.fetch({ around: "705898782935613501", limit: 1 })
+        .then(messages => messages.first().edit(embed));
+    } else {
         var secEmb = new Discord.MessageEmbed();
 
         secEmb.setTitle("Motions second page");
@@ -1012,27 +1110,18 @@ for (i = 0; i < rows.length; i++) {
           "https://cdn.glitch.com/24cdd29f-170e-4ac8-9dc2-8abc1cbbaeaa%2Fimageedit_1_3956664875.png?v=1588186424473"
         );
         secEmb.setDescription("Motions to discuss in Senate meetings");
-
-        if (msgs.length <= 25) {
-      msgs.forEach(msg => embed.addField("motions", msg));
-      message.guild.channels.cache
-        .get("705136080105767004")
-        .messages.fetch({ around: "705898782935613501", limit: 1 })
-        .then(messages => messages.first().edit(embed));
-    } else {
       
         var args2 = new Array();
       var length = (msgs.length % 2 == 0) ? (msgs.length) : (msgs.length+1)
       
-        for (var i = length / 2; i <= length / 2; i++) {
+        for (var i = length / 2; i <= length; i++) {
           args2.push(msgs[i]);
-          console.log(msgs[i]);
-          console.log(i);
-          console.log(msgs.length);
-          msgs.pop();
+          
+          
+          msgs.splice(i,1);
           
         }
-
+  for(var i = args2.length-1; i >= 0; i--){if(args2[i] == undefined){args2.pop()}}
         var secEmb = new Discord.MessageEmbed();
 
         secEmb.setTitle("Motions");
@@ -1049,8 +1138,8 @@ for (i = 0; i < rows.length; i++) {
         );
         secEmb.setDescription("Motions to discuss in Senate meetings");
 
-        args2.forEach(msg => secEmb.addField("motion", msg, false));
-        msgs.forEach(msg2 => embed.addField("motion", msg2, false));
+        args2.forEach(msg => secEmb.addField("motion", msg+"/"+parseInt(args2.indexOf(msg)+msgs.length,10), false));
+        msgs.forEach(msg2 => embed.addField("motion", msg2+"/"+msgs.indexOf(msg2), false));
         message.channel.send(embed);
         message.channel.send(secEmb);
       }
@@ -1137,7 +1226,7 @@ for (i = 0; i < rows.length; i++) {
       db.all("DELETE FROM Motions", [], (err, rows) => {
         if (err) {
           message.channel.send("sth went wrong");
-          db.run("UPDATE SQLITE_SEQUENCE SET SEQ=0 WHERE NAME='Motions';");
+          
         } else message.channel.send("motions deleted");
         updateEmbedMessage(message);
       });

@@ -913,6 +913,7 @@ for (i = 0; i < rows.length; i++) {
       db.all(query, [], err => {
         if (err) {
           message.channel.send("month already specified");
+          throw err;
         }
       else{
       message.channel.send(args[1] + " Elections react here with 🔴").then(m => {

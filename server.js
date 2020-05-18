@@ -308,7 +308,7 @@ let query =
   "'";
 
 clientdc.on("messageReactionAdd",(reaction,user) => {
-  if(user.id === '220590173962895360' && reaction.emoji.id === '640270832115122196')
+  if(user.id === '325296044739133450' && reaction.emoji.id === '640270832115122196')
     {
       var available = false;
       db.all('SELECT * FROM Generals WHERE DiscordID = '+reaction.message.author,[],(err,rows) =>{
@@ -470,17 +470,28 @@ clientdc.on("message", message => {
         console.log("discordID \n" + row.DiscordID);
         
       });
-    });
-      
-      db.all("SELECT * FROM votercandidate", [], (err, rows) => {
+        
+        db.all("SELECT * FROM Voters", [], (err, rows) => {
       if (err) {
         throw err;
       }
       rows.forEach(row => {
-        console.log("vcID \n" + row.vcID);
-        console.log("candidate \n" + row.candidate);
-        console.log("voter \n" + row.voter);
+        console.log("vID \n" + row.vID);
+        console.log("discordID \n" + row.DiscordID);
+        
       });
+    });
+      
+      db.all("SELECT * FROM Generals", [], (err, rows) => {
+      if (err) {
+        throw err;
+      }
+      rows.forEach(row => {
+        
+        console.log("general \n" + row.DiscordID);
+        
+      });
+         });
     });
       
       
@@ -496,7 +507,8 @@ clientdc.on("message", message => {
       
       emb.setTitle("𝐈𝐌𝐏𝐄𝐑𝐀𝐓𝐎𝐑·𝐏𝐕𝐁𝐋𝐈𝐕𝐒","https://cdn.glitch.com/24cdd29f-170e-4ac8-9dc2-8abc1cbbaeaa%2Fimageedit_1_3956664875.png?v=1588186424473");
       emb.setFooter("General reactions powered by our most humble Imperator");
-      db.get('SELECT * FROM Generals WHERE DiscordID = '+message.author.id,[],(row) => {
+      db.get('SELECT * FROM Generals WHERE DiscordID = '+message.author.id,[],(err,row) => {
+        if(err){throw err;}
         emb.addField(clientdc.users.cache.get(row.DiscordID),"Generals:"+row.generals,true);
         message.channel.send(emb);
       });

@@ -310,18 +310,19 @@ let query =
 clientdc.on("messageReactionAdd",(reaction,user) => {
   if(user.id == '325296044739133450' && reaction.emoji.id === '640270832115122196')
     {
-      reaction.message.channel.send("g");
+      
       var available = false;
       db.all('SELECT * FROM Generals WHERE DiscordID = '+reaction.message.author,[],(err,rows) =>{
         if(err){throw err;}
-      reaction.message.channel.send("g");
-        if(rows != undefined)
+      
+        if(rows[1] != undefined)
         {available = true; }
-        if(available){db.run('UPDATE Generals SET generals = generals+1 WHERE DiscordID = '+reaction.message.author.id); }else{
+        if(available){db.run('UPDATE Generals SET generals = generals+1 WHERE DiscordID = '+reaction.message.author.id);}else{
       db.run("INSERT INTO Generals(DiscordID,generals) VALUES('"+reaction.message.author.id+"',1)");  
         }
              });
     }
+  
 });
 
 
@@ -508,11 +509,11 @@ clientdc.on("message", message => {
       let emb = new Discord.MessageEmbed();
       emb.setColor(message.member.displayHexColor);
       
-      emb.setTitle("𝐈𝐌𝐏𝐄𝐑𝐀𝐓𝐎𝐑·𝐏𝐕𝐁𝐋𝐈𝐕𝐒","https://cdn.glitch.com/24cdd29f-170e-4ac8-9dc2-8abc1cbbaeaa%2Fimageedit_1_3956664875.png?v=1588186424473");
+      emb.setTitle("𝐈𝐌𝐏𝐄𝐑𝐀𝐓𝐎𝐑·𝐏𝐕𝐁𝐋𝐈𝐕𝐒",);
       emb.setFooter("General reactions powered by our most humble Imperator");
       db.get('SELECT * FROM Generals WHERE DiscordID = '+message.author.id,[],(err,row) => {
         if(err){throw err;}
-        emb.addField(clientdc.users.cache.get(row.DiscordID),"Generals:"+row.generals,true);
+        emb.addField("Generals",row.generals,true);
         message.channel.send(emb);
       });
       

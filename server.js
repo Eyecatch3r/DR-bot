@@ -312,11 +312,11 @@ clientdc.on("messageReactionAdd",(reaction,user) => {
     {
       var available = false;
       db.all('SELECT * FROM Generals WHERE DiscordID = '+reaction.message.author,[],(err,rows) =>{
-      for(var i = 0; i< rows.length; i++)
+      if(rows != undefined)
         {available = true;}
-        if(available){}else
-      db.run("INSERT INTO Generals(DiscordID,generals) VALUES('"+reaction.message.author.id+"',0)");  
-      
+        if(available){db.run('UPDATE Generals SET generals = generals+1 WHERE DiscordID = '+reaction.message.author.id)}else{
+      db.run("INSERT INTO Generals(DiscordID,generals) VALUES('"+reaction.message.author.id+"',1)");  
+        }
              });
     }
 });
@@ -488,6 +488,20 @@ clientdc.on("message", message => {
   }
     else {message.channel.send("sorry but you're not the Imperator "+"<@325296044739133450>")}
   }
+  
+  if(message.content === command+"General")
+    {
+      let emb = new Discord.MessageEmbed();
+      emb.setColor(message.member.displayHexColor);
+      
+      emb.setTitle("𝐈𝐌𝐏𝐄𝐑𝐀𝐓𝐎𝐑·𝐏𝐕𝐁𝐋𝐈𝐕𝐒","https://cdn.glitch.com/24cdd29f-170e-4ac8-9dc2-8abc1cbbaeaa%2Fimageedit_1_3956664875.png?v=1588186424473");
+      emb.setFooter("General reactions powered by our most humble Imperator");
+      db.get('SELECT * FROM Generals WHERE DiscordID = '+message.author.id,[],(row) => {
+        emb.addField(clientdc.users.cache.get(row.DiscordID),"Generals:"+row.generals,true);
+        message.channel.send(emb);
+      });
+      
+    }
   
   if(message.content.toLowerCase().includes(command+"tr"))
     {

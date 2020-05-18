@@ -509,7 +509,7 @@ clientdc.on("message", message => {
       let emb = new Discord.MessageEmbed();
       emb.setColor(message.member.displayHexColor);
       
-      emb.setTitle("𝐈𝐌𝐏𝐄𝐑𝐀𝐓𝐎𝐑·𝐏𝐕𝐁𝐋𝐈𝐕𝐒",);
+      emb.setTitle(message.member.nickname,message.author.avatarURL());
       emb.setFooter("General reactions powered by our most humble Imperator");
       db.get('SELECT * FROM Generals WHERE DiscordID = '+message.author.id,[],(err,row) => {
         if(err){throw err;}
@@ -1012,6 +1012,10 @@ for (i = 0; i < rows.length; i++) {
               }else{
             embed.addField("Motion in question","Picture in question",true);
             embed.setImage(row.motion);
+                embed.setAuthor(
+          "𝐈𝐌𝐏𝐄𝐑𝐀𝐓𝐎𝐑·𝐏𝐕𝐁𝐋𝐈𝐕𝐒",
+          clientdc.users.cache.get(row.creator).avatarURL()
+        );
               }
           }else {
         

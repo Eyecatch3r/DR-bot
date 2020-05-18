@@ -308,7 +308,7 @@ let query =
   "'";
 
 clientdc.on("messageReactionAdd",(reaction,user) => {
-  if(user.id == '325296044739133450' && reaction.emoji.id === '640270832115122196')
+  if(user.id == '220590173962895360' && reaction.emoji.id === '640270832115122196')
     {
       
       var available = false;
@@ -514,6 +514,10 @@ clientdc.on("message", message => {
       db.get('SELECT * FROM Generals WHERE DiscordID = '+message.author.id,[],(err,row) => {
         if(err){throw err;}
         emb.addField("Generals",row.generals,true);
+        emb.setAuthor(
+          message.member.nickname,
+          clientdc.users.cache.get(message.author.id).avatarURL()
+        );
         message.channel.send(emb);
       });
       
@@ -1040,7 +1044,8 @@ for (i = 0; i < rows.length; i++) {
         db.all('SELECT * FROM Motions',[],(err,rows) => {
           var args = message.content.split(" ");
           var link = new Array();
-          rows.forEach(row => {mot.push(row.motion +"\n From:" +message.guild.members.cache.get(row.creator).toString()); link.push(row.motion)});
+          var creator = new Array();
+          rows.forEach(row => {mot.push(row.motion +"\n From:" +message.guild.members.cache.get(row.creator).toString()); link.push(row.motion); creator.push(row.creator)});
           
           if(mot[args[1]].includes(".png") || mot[args[1]].includes(".jpg") || mot[args[1]].includes(".jpeg"))
           {
@@ -1050,23 +1055,20 @@ for (i = 0; i < rows.length; i++) {
                 var args2 = link[args[1]].split("http");
                 embed.addField("Motion in question",args2[0],true);
                 embed.setImage("http"+args2[1]);
-                var temp = mot[args[1]].split("@");
-                var temp2 = temp[1].split(">");
-                message.channel.send(temp2[0]);
+                
                 embed.setAuthor(
           "𝐈𝐌𝐏𝐄𝐑𝐀𝐓𝐎𝐑·𝐏𝐕𝐁𝐋𝐈𝐕𝐒",
-          clientdc.users.cache.get(temp2[0]).avatarURL()
+          clientdc.users.cache.get(creator[args[1]]).avatarURL()
         );
                 message.channel.send(embed);
               }else{
             embed.addField("Motion in question","Picture in question",true);
             embed.setImage(link[args[1]]);
-                var temp = mot[args[1]].split("@");
-                var temp2 = temp[1].split(">");
-                message.channel.send(temp2[0]);
+                
+                
                 embed.setAuthor(
           "𝐈𝐌𝐏𝐄𝐑𝐀𝐓𝐎𝐑·𝐏𝐕𝐁𝐋𝐈𝐕𝐒",
-          clientdc.users.cache.get(temp2[0]).avatarURL()
+          clientdc.users.cache.get(creator[args[1]]).avatarURL()
         );
             message.channel.send(embed);
               }
@@ -1090,9 +1092,16 @@ for (i = 0; i < rows.length; i++) {
           
           if(mot[args[1]]) {embed.setTitle("Motion number:"+args[1])
           embed.addField("Motion in question", mot[args[1]],false);} else if(args2[args[1]-mot.length]) {embed.addField("Motion in question", args2[args[1]-mot.length],false);} else{embed.addField("Motion in question", "no motion with such ID", false);}
+              embed.setAuthor(
+          "𝐈𝐌𝐏𝐄𝐑𝐀𝐓𝐎𝐑·𝐏𝐕𝐁𝐋𝐈𝐕𝐒",
+          clientdc.users.cache.get(creator[args[1]]).avatarURL()
+        );
             }
-          else {embed.addField("Motion in question", mot[args[1]],false);}
-        
+          else {embed.addField("Motion in question", mot[args[1]],false); embed.setAuthor(
+          "𝐈𝐌𝐏𝐄𝐑𝐀𝐓𝐎𝐑·𝐏𝐕𝐁𝐋𝐈𝐕𝐒",
+          clientdc.users.cache.get(creator[args[1]]).avatarURL()
+        );}
+          
           message.channel.send(embed);
           }
         });

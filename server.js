@@ -1050,10 +1050,24 @@ for (i = 0; i < rows.length; i++) {
                 var args2 = link[args[1]].split("http");
                 embed.addField("Motion in question",args2[0],true);
                 embed.setImage("http"+args2[1]);
+                var temp = mot[args[1]].split("@");
+                var temp2 = temp[1].split(">");
+                message.channel.send(temp2[0]);
+                embed.setAuthor(
+          "𝐈𝐌𝐏𝐄𝐑𝐀𝐓𝐎𝐑·𝐏𝐕𝐁𝐋𝐈𝐕𝐒",
+          clientdc.users.cache.get(temp2[0]).avatarURL()
+        );
                 message.channel.send(embed);
               }else{
             embed.addField("Motion in question","Picture in question",true);
             embed.setImage(link[args[1]]);
+                var temp = mot[args[1]].split("@");
+                var temp2 = temp[1].split(">");
+                message.channel.send(temp2[0]);
+                embed.setAuthor(
+          "𝐈𝐌𝐏𝐄𝐑𝐀𝐓𝐎𝐑·𝐏𝐕𝐁𝐋𝐈𝐕𝐒",
+          clientdc.users.cache.get(temp2[0]).avatarURL()
+        );
             message.channel.send(embed);
               }
           }else {

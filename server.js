@@ -524,11 +524,22 @@ clientdc.on("message", message => {
     else {message.channel.send("sorry but you're not the Imperator "+"<@325296044739133450>")}
   }
   
+  if(message.content.toLowerCase() === command+"lb"){
+    let emb = new Discord.MessageEmbed();
+      emb.setColor("0xe94606");
+    emb.setTitle("Leaderboard for the most Generalissimo reactions",message.author.avatarURL());
+      emb.setFooter("General reactions powered by our most humble Imperator");
+    
+  }
+  
   if(message.content.toLowerCase() === command+"general")
     {
       let emb = new Discord.MessageEmbed();
       emb.setColor(message.member.displayHexColor);
-      
+      db.each('SELECT * FROM Generals WHERE DiscordID = '+message.author.id+'ORDER BY generals DESC',[],(err,row) => {
+        if(err){throw err;}
+        
+      });
       
       
       emb.setTitle(message.member.nickname,message.author.avatarURL());

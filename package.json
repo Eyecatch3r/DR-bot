@@ -31,7 +31,8 @@
     "wikifact": "^1.0.1",
     "wikifakt": "^1.0.3",
     "romcal": "^1.3.0",
-    "translate": "^1.1.2"
+    "translate": "^1.1.2",
+    "unb-api": "^1.1.0"
   },
   "devDependencies": {
     "minimist": ">=1.2.2"

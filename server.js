@@ -12,6 +12,7 @@ const app = express();
 let portunus = require('romans');
 const http = require("http");
 const can = require("canvas");
+const unb = require('unb-api');
 //init sqlite API
 const dbFile = "./DR.db";
 const exists = fs.existsSync(dbFile);
@@ -307,6 +308,25 @@ let query =
   dates[2] +
   "'";
 
+clientdc.on("messageReactionRemove",(reaction,user) => {
+  if(user.id == '220590173962895360' && reaction.emoji.id === '640270832115122196')
+    {
+      
+      var available = false;
+      db.all('SELECT * FROM Generals WHERE DiscordID = '+reaction.message.author,[],(err,rows) =>{
+        if(err){throw err;}
+      
+        if(rows[1] != undefined)
+        {available = true; }
+        if(available){db.run('UPDATE Generals SET generals = generals-1 WHERE DiscordID = '+reaction.message.author.id);}else{
+      
+        }
+             });
+    }
+  
+});
+
+
 clientdc.on("messageReactionAdd",(reaction,user) => {
   if(user.id == '220590173962895360' && reaction.emoji.id === '640270832115122196')
     {
@@ -504,10 +524,27 @@ clientdc.on("message", message => {
     else {message.channel.send("sorry but you're not the Imperator "+"<@325296044739133450>")}
   }
   
-  if(message.content === command+"General")
+  if(message.content.toLowerCase() === command+"lb"){
+    let emb = new Discord.MessageEmbed();
+      emb.setColor("0xe94606");
+    emb.setAuthor("Leaderboard for the most Generalissimo reactions",message.author.avatarURL());
+      emb.setFooter("General reactions powered by our most humble Imperator");
+   
+    db.all('SELECT * FROM Generals ORDER BY generals DESC',[],(err,rows) => {
+        if(err){throw err;}
+      rows.forEach(row => {emb.addField(clientdc.users.cache.get(row.DiscordID).username,row.generals+"\n"+message.guild.members.cache.get(row.DiscordID).toString(),false);});
+        message.channel.send(emb);
+      
+      });
+    
+  }
+  
+  if(message.content.toLowerCase() === command+"general")
     {
       let emb = new Discord.MessageEmbed();
       emb.setColor(message.member.displayHexColor);
+      
+      
       
       emb.setTitle(message.member.nickname,message.author.avatarURL());
       emb.setFooter("General reactions powered by our most humble Imperator");
@@ -518,6 +555,15 @@ clientdc.on("message", message => {
           message.member.nickname,
           clientdc.users.cache.get(message.author.id).avatarURL()
         );
+        
+        if(!message.member.nickname){
+          emb.setTitle(message.author.username,message.author.avatarURL());
+          emb.setAuthor(
+          message.author.username,
+          clientdc.users.cache.get(message.author.id).avatarURL()
+        );
+        }
+        
         message.channel.send(emb);
       });
       

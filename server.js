@@ -527,8 +527,15 @@ clientdc.on("message", message => {
   if(message.content.toLowerCase() === command+"lb"){
     let emb = new Discord.MessageEmbed();
       emb.setColor("0xe94606");
-    emb.setTitle("Leaderboard for the most Generalissimo reactions",message.author.avatarURL());
+    emb.setAuthor("Leaderboard for the most Generalissimo reactions",message.author.avatarURL());
       emb.setFooter("General reactions powered by our most humble Imperator");
+   
+    db.all('SELECT * FROM Generals ORDER BY generals DESC',[],(err,rows) => {
+        if(err){throw err;}
+      rows.forEach(row => {emb.addField(message.guild.members.cache.get(row.DiscordID).username,row.generals+"\n",true);});
+        message.channel.send(emb);
+      
+      });
     
   }
   
@@ -536,10 +543,7 @@ clientdc.on("message", message => {
     {
       let emb = new Discord.MessageEmbed();
       emb.setColor(message.member.displayHexColor);
-      db.each('SELECT * FROM Generals WHERE DiscordID = '+message.author.id+'ORDER BY generals DESC',[],(err,row) => {
-        if(err){throw err;}
-        
-      });
+      
       
       
       emb.setTitle(message.member.nickname,message.author.avatarURL());

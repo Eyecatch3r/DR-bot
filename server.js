@@ -505,10 +505,12 @@ clientdc.on("message", message => {
     else {message.channel.send("sorry but you're not the Imperator "+"<@325296044739133450>")}
   }
   
-  if(message.content === command+"General")
+  if(message.content.toLowerCase() === command+"general")
     {
       let emb = new Discord.MessageEmbed();
       emb.setColor(message.member.displayHexColor);
+      
+      
       
       emb.setTitle(message.member.nickname,message.author.avatarURL());
       emb.setFooter("General reactions powered by our most humble Imperator");
@@ -519,6 +521,15 @@ clientdc.on("message", message => {
           message.member.nickname,
           clientdc.users.cache.get(message.author.id).avatarURL()
         );
+        
+        if(!message.member.nickname){
+          emb.setTitle(message.author.username,message.author.avatarURL());
+          emb.setAuthor(
+          message.author.username,
+          clientdc.users.cache.get(message.author.id).avatarURL()
+        );
+        }
+        
         message.channel.send(emb);
       });
       

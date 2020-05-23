@@ -316,11 +316,9 @@ clientdc.on("messageReactionRemove",(reaction,user) => {
       db.all('SELECT * FROM Generals WHERE DiscordID = '+reaction.message.author,[],(err,rows) =>{
         if(err){throw err;}
       
-        if(rows[1] != undefined)
+        if(rows[0] != undefined)
         {available = true; }
-        if(available){db.run('UPDATE Generals SET generals = generals-1 WHERE DiscordID = '+reaction.message.author.id);}else{
-      
-        }
+        if(available){db.run('UPDATE Generals SET generals = generals-1 WHERE DiscordID = '+reaction.message.author.id);}
              });
     }
   
@@ -335,7 +333,7 @@ clientdc.on("messageReactionAdd",(reaction,user) => {
       db.all('SELECT * FROM Generals WHERE DiscordID = '+reaction.message.author,[],(err,rows) =>{
         if(err){throw err;}
       
-        if(rows[1] != undefined)
+        if(rows[0] != undefined)
         {available = true; }
         if(available){db.run('UPDATE Generals SET generals = generals+1 WHERE DiscordID = '+reaction.message.author.id);}else{
       db.run("INSERT INTO Generals(DiscordID,generals) VALUES('"+reaction.message.author.id+"',1)");  

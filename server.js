@@ -530,7 +530,7 @@ clientdc.on("message", message => {
    
     db.all('SELECT * FROM Generals ORDER BY generals DESC',[],(err,rows) => {
         if(err){throw err;}
-      rows.forEach(row => {emb.addField(clientdc.users.cache.get(row.DiscordID).username,row.generals+"\n"+message.guild.members.cache.get(row.DiscordID).toString(),false);});
+      rows.forEach(row => {if(row.DisordID != "220590173962895360"){emb.addField(clientdc.users.cache.get(row.DiscordID).username,row.generals+"\n"+message.guild.members.cache.get(row.DiscordID).toString(),false);}});
         message.channel.send(emb);
       
       });

@@ -532,7 +532,7 @@ clientdc.on("message", message => {
    
     db.all('SELECT * FROM Generals ORDER BY generals DESC',[],(err,rows) => {
         if(err){throw err;}
-      rows.forEach(row => {emb.addField(message.guild.members.cache.get(row.DiscordID).username,row.generals+"\n",true);});
+      rows.forEach(row => {emb.addField(clientdc.users.cache.get(row.DiscordID).username,row.generals+"\n"+message.guild.members.cache.get(row.DiscordID).toString(),false);});
         message.channel.send(emb);
       
       });

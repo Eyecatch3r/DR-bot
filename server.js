@@ -308,6 +308,25 @@ let query =
   dates[2] +
   "'";
 
+clientdc.on("messageReactionRemove",(reaction,user) => {
+  if(user.id == '220590173962895360' && reaction.emoji.id === '640270832115122196')
+    {
+      
+      var available = false;
+      db.all('SELECT * FROM Generals WHERE DiscordID = '+reaction.message.author,[],(err,rows) =>{
+        if(err){throw err;}
+      
+        if(rows[1] != undefined)
+        {available = true; }
+        if(available){db.run('UPDATE Generals SET generals = generals-1 WHERE DiscordID = '+reaction.message.author.id);}else{
+      
+        }
+             });
+    }
+  
+});
+
+
 clientdc.on("messageReactionAdd",(reaction,user) => {
   if(user.id == '220590173962895360' && reaction.emoji.id === '640270832115122196')
     {

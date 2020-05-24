@@ -148,7 +148,7 @@ function updateEmbedMessage(message) {
       //message.channel.send(row.mID);
     });
     if (msgs.length <= 25) {
-      msgs.forEach(msg => embed.addField("motions", msg));
+      msgs.forEach(msg => embed.addField("motions", msg+"/"+msgs.indexOf(msg)));
       var secEmb = new Discord.MessageEmbed();
 
         secEmb.setTitle("Motions");

@@ -829,10 +829,10 @@ for (i = 0; i < rows.length; i++) {
         collector.on("collect", (reaction, user) => {
           if (!user.bot) {
             
-            for (i = 0; i < rows.length; i++) {
+            
               reaction.users.remove(user);
               //check the reaction, then find the user based by its ID in the database and update the vote count
-              if (reaction.emoji.name == lett[i]) {
+              if (lett[i].includes(reaction.emoji.name)) {
                 
                 rows.forEach(candidate => {
                   if (can[i] == candidate.DiscordID && !user.bot) {
@@ -911,7 +911,7 @@ for (i = 0; i < rows.length; i++) {
             
           }
           }
-          }
+          
         });
         
         collector.on("dispose",(reaction,user) =>{

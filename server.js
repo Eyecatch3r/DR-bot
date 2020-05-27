@@ -835,6 +835,7 @@ for (i = 0; i < rows.length; i++) {
               if (lett.includes(reaction.emoji.name)) {
                 
                 rows.forEach(candidate => {
+                  message.channel.send(can[lett.indexOf(reaction.emoji.name)]);
                   if (can[lett.indexOf(reaction.emoji.name)] == candidate.DiscordID && !user.bot) {
                     db.get("SELECT COUNT() AS c FROM Voters JOIN votercandidate ON vID = voter JOIN candidates ON cID = votercandidate.candidate JOIN CandidateElections ON cID = CandidateElections.candidate JOIN Elections ON election = eID WHERE Voters.DiscordID = '"+user.id+"' AND candidates.DiscordID = '"+candidate.DiscordID+"' AND Month = '"+args[2]+"' AND title = '"+args[1]+"'",[],(err,count) => {
                     db.get("SELECT * FROM Voters JOIN votercandidate ON vID = voter JOIN candidates ON cID = votercandidate.candidate JOIN CandidateElections ON cID = CandidateElections.candidate JOIN Elections ON election = eID WHERE Voters.DiscordID = '"+user.id+"' AND candidates.DiscordID = '"+candidate.DiscordID+"' AND Month = '"+args[2]+"' AND title = '"+args[1]+"'",[],(err,alreadyVoted) => {

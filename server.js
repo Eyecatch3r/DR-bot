@@ -148,7 +148,7 @@ function updateEmbedMessage(message) {
       //message.channel.send(row.mID);
     });
     if (msgs.length <= 25) {
-      msgs.forEach(msg => embed.addField("motions", msg));
+      msgs.forEach(msg => embed.addField("motions", msg+"/"+msgs.indexOf(msg)));
       var secEmb = new Discord.MessageEmbed();
 
         secEmb.setTitle("Motions");
@@ -316,11 +316,9 @@ clientdc.on("messageReactionRemove",(reaction,user) => {
       db.all('SELECT * FROM Generals WHERE DiscordID = '+reaction.message.author,[],(err,rows) =>{
         if(err){throw err;}
       
-        if(rows[1] != undefined)
+        if(rows[0] != undefined)
         {available = true; }
-        if(available){db.run('UPDATE Generals SET generals = generals-1 WHERE DiscordID = '+reaction.message.author.id);}else{
-      
-        }
+        if(available){db.run('UPDATE Generals SET generals = generals-1 WHERE DiscordID = '+reaction.message.author.id);}
              });
     }
   
@@ -335,7 +333,7 @@ clientdc.on("messageReactionAdd",(reaction,user) => {
       db.all('SELECT * FROM Generals WHERE DiscordID = '+reaction.message.author,[],(err,rows) =>{
         if(err){throw err;}
       
-        if(rows[1] != undefined)
+        if(rows[0] != undefined)
         {available = true; }
         if(available){db.run('UPDATE Generals SET generals = generals+1 WHERE DiscordID = '+reaction.message.author.id);}else{
       db.run("INSERT INTO Generals(DiscordID,generals) VALUES('"+reaction.message.author.id+"',1)");  
@@ -532,7 +530,7 @@ clientdc.on("message", message => {
    
     db.all('SELECT * FROM Generals ORDER BY generals DESC',[],(err,rows) => {
         if(err){throw err;}
-      rows.forEach(row => {emb.addField(clientdc.users.cache.get(row.DiscordID).username,row.generals+"\n"+message.guild.members.cache.get(row.DiscordID).toString(),false);});
+      rows.forEach(row => {if(row.DisordID != "220590173962895360"){emb.addField(clientdc.users.cache.get(row.DiscordID).username,row.generals+"\n"+message.guild.members.cache.get(row.DiscordID).toString(),false);}});
         message.channel.send(emb);
       
       });
@@ -831,24 +829,26 @@ for (i = 0; i < rows.length; i++) {
         collector.on("collect", (reaction, user) => {
           if (!user.bot) {
             
-            for (i = 0; i < rows.length; i++) {
+            
               reaction.users.remove(user);
               //check the reaction, then find the user based by its ID in the database and update the vote count
-              if (reaction.emoji.name == lett[i]) {
+              if (lett.includes(reaction.emoji.name)) {
                 
                 rows.forEach(candidate => {
-                  if (can[i] == candidate.DiscordID && !user.bot) {
-                    db.get("SELECT COUNT() AS c FROM Voters JOIN votercandidate ON vID = voter JOIN candidates ON cID = votercandidate.candidate JOIN CandidateElections ON cID = CandidateElections.candidate JOIN Elections ON election = eID WHERE Voters.DiscordID = '"+user.id+"' AND candidates.DiscordID = '"+candidate.DiscordID+"' AND Month = '"+args[2]+"' AND title = '"+args[1]+"'",[],(err,count) => {
-                    db.get("SELECT * FROM Voters JOIN votercandidate ON vID = voter JOIN candidates ON cID = votercandidate.candidate JOIN CandidateElections ON cID = CandidateElections.candidate JOIN Elections ON election = eID WHERE Voters.DiscordID = '"+user.id+"' AND candidates.DiscordID = '"+candidate.DiscordID+"' AND Month = '"+args[2]+"' AND title = '"+args[1]+"'",[],(err,alreadyVoted) => {
-                      if(count.c != 0){db.run("UPDATE CandidateElections SET votes = votes-1 WHERE candidate IN (SELECT cID From candidates WHERE DiscordID = '"+candidate.DiscordID+"') AND election IN (SELECT eID FROM Elections WHERE title = '"+args[1]+"' AND Month = '"+args[2]+"')");
+                  
+                  if (can[lett.indexOf(reaction.emoji.name)] == candidate.DiscordID && !user.bot) {
+                    message.channel.send(can[lett.indexOf(reaction.emoji.name)] );
+                    db.get("SELECT COUNT() AS c FROM Voters JOIN votercandidate ON vID = voter JOIN candidates ON cID = votercandidate.candidate JOIN CandidateElections ON cID = CandidateElections.candidate JOIN Elections ON election = eID WHERE Voters.DiscordID = '"+user.id+"' AND candidates.DiscordID = '"+can[lett.indexOf(reaction.emoji.name)] +"' AND Month = '"+args[2]+"' AND title = '"+args[1]+"'",[],(err,count) => {
+                    db.get("SELECT * FROM Voters JOIN votercandidate ON vID = voter JOIN candidates ON cID = votercandidate.candidate JOIN CandidateElections ON cID = CandidateElections.candidate JOIN Elections ON election = eID WHERE Voters.DiscordID = '"+user.id+"' AND candidates.DiscordID = '"+can[lett.indexOf(reaction.emoji.name)] +"' AND Month = '"+args[2]+"' AND title = '"+args[1]+"'",[],(err,alreadyVoted) => {
+                      if(count.c != 0){db.run("UPDATE CandidateElections SET votes = votes-1 WHERE candidate IN (SELECT cID From candidates WHERE DiscordID = '"+can[lett.indexOf(reaction.emoji.name)] +"') AND election IN (SELECT eID FROM Elections WHERE title = '"+args[1]+"' AND Month = '"+args[2]+"')");
                                                    db.run("DELETE FROM votercandidate WHERE vcID = '"+alreadyVoted.vcID+"'")
                                                    }
                       else {
                     db.get("SELECT COUNT() AS count FROM Voters JOIN votercandidate ON vID = voter JOIN CandidateElections ON votercandidate.candidate = candidateElections.candidate JOIN Elections ON Election = eID WHERE voter IN (SELECT vID FROM Voters WHERE DiscordID = '"+user.id+"') AND Election IN (SELECT eID WHERE Month = '"+args[2]+"' AND title = '"+args[1]+"')",[],(err,rowt) => {
                       if(rowt.count <= maxVote || rowt.count == undefined){
-                   
+                  
                         
-                      db.run("UPDATE CandidateElections SET votes = votes+1 WHERE candidate IN (SELECT cID FROM candidates WHERE DiscordID = "+candidate.DiscordID+")  AND Election IN (SELECT eID FROM Elections WHERE Month ='"+args[2]+"' AND title = '"+args[1]+"')");
+                      db.run("UPDATE CandidateElections SET votes = votes+1 WHERE candidate IN (SELECT cID FROM candidates WHERE DiscordID = "+can[lett.indexOf(reaction.emoji.name)] +")  AND Election IN (SELECT eID FROM Elections WHERE Month ='"+args[2]+"' AND title = '"+args[1]+"')");
                     let cID;
                     let vID;
                     db.get("SELECT * FROM Voters WHERE DiscordID = '"+user.id+"'",[],(err,rows) =>{
@@ -856,14 +856,14 @@ for (i = 0; i < rows.length; i++) {
                     
                       if(rows == undefined){
                         db.run("INSERT INTO Voters(DiscordID) VALUES("+user.id+")");
-                        db.get("SELECT cID FROM candidates WHERE DiscordID = '"+candidate.DiscordID+"'",[],(err,row) =>{ 
+                        db.get("SELECT cID FROM candidates WHERE DiscordID = '"+can[lett.indexOf(reaction.emoji.name)] +"'",[],(err,row) =>{ 
                           cID = row.cID; 
                           db.get("SELECT vID FROM VOTERS WHERE DiscordID = '"+user.id+"'",[],(err,r) => {
                             vID = r.vID;
                           db.run("INSERT INTO votercandidate(voter,candidate) VALUES('"+vID+"','"+cID+"')")});
                         });
                       }
-                      else db.get("SELECT cID FROM candidates WHERE DiscordID = '"+candidate.DiscordID+"'",[],(err,row) => {cID = row.cID; 
+                      else db.get("SELECT cID FROM candidates WHERE DiscordID = '"+can[lett.indexOf(reaction.emoji.name)] +"'",[],(err,row) => {cID = row.cID; 
                           db.get("SELECT vID FROM VOTERS WHERE DiscordID = '"+user.id+"'",[],(err,r) => {
                             vID = r.vID;
                           db.run("INSERT INTO votercandidate(voter,candidate) VALUES('"+vID+"','"+cID+"')")});
@@ -913,7 +913,7 @@ for (i = 0; i < rows.length; i++) {
             
           }
           }
-          }
+          
         });
         
         collector.on("dispose",(reaction,user) =>{

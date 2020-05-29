@@ -1004,7 +1004,7 @@ for (i = 0; i < rows.length; i++) {
                           cID +
                           '","' +
                           eID +
-                          '",'+order+')'
+                          '","'+order+'")'
                       )
                     
                     });

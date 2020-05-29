@@ -973,6 +973,7 @@ for (i = 0; i < rows.length; i++) {
               message.guild.members.cache
                 .get(user.id)
                 .roles.add("703401102795604079");
+              //try to insert a new candidate, if already existant the exception will abort the process
               db.all(
                 'INSERT INTO candidates(DiscordID) VALUES("' + user.id + '")',
                 [],

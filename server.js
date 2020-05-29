@@ -469,6 +469,7 @@ clientdc.on("message", message => {
         console.log("candidate \n" + row.candidate);
         console.log("Election \n" + row.Election);
         console.log("votes \n"+row.votes);
+        console.log("order \n"+row.order);
       });
     });
 

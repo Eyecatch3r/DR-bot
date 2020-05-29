@@ -999,13 +999,8 @@ for (i = 0; i < rows.length; i++) {
                     cID = rowss.cID;
                     db.get("SELECT eID FROM Elections WHERE Month = '"+args[2]+"' AND Title = '"+args[1]+"'",[],(err, row)=> {
                     eID = row.eID;
-                      db.run(
-                        'INSERT INTO CandidateElections(candidate,Election,order) VALUES("' +
-                          cID +
-                          '","' +
-                          eID +
-                          '",'+order+')'
-                      )
+                      message.channel.send(order);
+                      //db.run('INSERT INTO CandidateElections(candidate,Election,order) VALUES("' +cID +'","' +eID +'",'+order+')')
                     
                     });
                   }

@@ -997,14 +997,14 @@ for (i = 0; i < rows.length; i++) {
                     
                     let eID,cID;
                     cID = rowss.cID;
-                    db.get("SELECT eID FROM Elections WHERE Month = '"+args[2]+"'",[],(err, row)=> {
+                    db.get("SELECT eID FROM Elections WHERE Month = '"+args[2]+"' AND Title = '"+args[1]+"'",[],(err, row)=> {
                     eID = row.eID;
                       db.run(
                         'INSERT INTO CandidateElections(candidate,Election,order) VALUES("' +
                           cID +
                           '","' +
                           eID +
-                          '","'+order+'")'
+                          '",'+order+')'
                       )
                     
                     });

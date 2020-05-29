@@ -964,7 +964,7 @@ for (i = 0; i < rows.length; i++) {
         }
       else{
       message.channel.send(args[1] + " Elections react here with 🔴").then(m => {
-        let order = 0;
+        var order = 0;
           const filter = (reaction, user) => reaction.emoji.name === "🔴";
           m.react("🔴");
           const collector = m.createReactionCollector(filter, { max: 1000 });

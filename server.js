@@ -469,7 +469,7 @@ clientdc.on("message", message => {
         console.log("candidate \n" + row.candidate);
         console.log("Election \n" + row.Election);
         console.log("votes \n"+row.votes);
-        console.log("order \n"+row.order);
+        console.log("order \n"+row.number);
       });
     });
 
@@ -999,8 +999,7 @@ for (i = 0; i < rows.length; i++) {
                     cID = rowss.cID;
                     db.get("SELECT eID FROM Elections WHERE Month = '"+args[2]+"' AND Title = '"+args[1]+"'",[],(err, row)=> {
                     eID = row.eID;
-                      message.channel.send(order);
-                      //db.run('INSERT INTO CandidateElections(candidate,Election,order) VALUES("' +cID +'","' +eID +'",'+order+')')
+                      db.run('INSERT INTO CandidateElections(candidate,Election,number) VALUES("' +cID +'","' +eID +'",'+order+')')
                     
                     });
                   }

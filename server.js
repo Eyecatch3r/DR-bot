@@ -994,12 +994,13 @@ for (i = 0; i < rows.length; i++) {
                       "sorry but there was an error (probably wrong ID)"
                     );
                   } else {
+                    
                     let eID,cID;
                     cID = rowss.cID;
                     db.get("SELECT eID FROM Elections WHERE Month = '"+args[2]+"'",[],(err, row)=> {
                     eID = row.eID;
                       db.run(
-                        'INSERT INTO CandidateElections(candidate,Election) VALUES("' +
+                        'INSERT INTO CandidateElections(candidate,Election,order) VALUES("' +
                           cID +
                           '","' +
                           eID +

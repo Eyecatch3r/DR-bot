@@ -849,7 +849,7 @@ for (i = 0; i < rows.length; i++) {
                       if(rowt.count <= maxVote || rowt.count == undefined){
                   
                         
-                      db.run("UPDATE CandidateElections SET votes = votes+1 WHERE = "+candidate.number +" AND Election IN (SELECT eID FROM Elections WHERE Month ='"+args[2]+"' AND title = '"+args[1]+"')");
+                      db.run("UPDATE CandidateElections SET votes = votes+1 WHERE number = "+candidate.number +" AND Election IN (SELECT eID FROM Elections WHERE Month ='"+args[2]+"' AND title = '"+args[1]+"')");
                     let cID;
                     let vID;
                     db.get("SELECT * FROM Voters WHERE DiscordID = '"+user.id+"'",[],(err,rows) =>{
@@ -857,14 +857,14 @@ for (i = 0; i < rows.length; i++) {
                     
                       if(rows == undefined){
                         db.run("INSERT INTO Voters(DiscordID) VALUES("+user.id+")");
-                        db.get("SELECT cID FROM candidates WHERE DiscordID = '"+candidate.number +"'",[],(err,row) =>{ 
-                          cID = row.cID; 
+                        db.get("SELECT * FROM CandidateElections WHERE number = '"+candidate.number +"'",[],(err,row) =>{ 
+                          cID = row.candidate; 
                           db.get("SELECT vID FROM VOTERS WHERE DiscordID = '"+user.id+"'",[],(err,r) => {
                             vID = r.vID;
                           db.run("INSERT INTO votercandidate(voter,candidate) VALUES('"+vID+"','"+cID+"')")});
                         });
                       }
-                      else db.get("SELECT cID FROM candidates WHERE DiscordID = '"+candidate.number+"'",[],(err,row) => {cID = row.cID; 
+                      else db.get("SELECT * FROM CandidateElections WHERE number = '"+candidate.number+"'",[],(err,row) => {cID = row.candidate; 
                           db.get("SELECT vID FROM VOTERS WHERE DiscordID = '"+user.id+"'",[],(err,r) => {
                             vID = r.vID;
                           db.run("INSERT INTO votercandidate(voter,candidate) VALUES('"+vID+"','"+cID+"')")});

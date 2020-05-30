@@ -839,9 +839,9 @@ for (i = 0; i < rows.length; i++) {
                   
                   if (lett.indexOf(reaction.emoji.name) == candidate.number-1 && !user.bot) {
                     //message.channel.send(can[lett.indexOf(reaction.emoji.name)] );
-                    db.get("SELECT COUNT() AS c FROM Voters JOIN votercandidate ON vID = voter JOIN candidates ON cID = votercandidate.candidate JOIN CandidateElections ON cID = CandidateElections.candidate JOIN Elections ON election = eID WHERE Voters.DiscordID = '"+user.id+"' AND candidates.DiscordID = '"+candidate.DiscordID +"' AND Month = '"+args[2]+"' AND title = '"+args[1]+"'",[],(err,count) => {
-                    db.get("SELECT * FROM Voters JOIN votercandidate ON vID = voter JOIN candidates ON cID = votercandidate.candidate JOIN CandidateElections ON cID = CandidateElections.candidate JOIN Elections ON election = eID WHERE Voters.DiscordID = '"+user.id+"' AND candidates.DiscordID = '"+candidate.DiscordID+"' AND Month = '"+args[2]+"' AND title = '"+args[1]+"'",[],(err,alreadyVoted) => {
-                      if(count.c != 0){db.run("UPDATE CandidateElections SET votes = votes-1 WHERE candidate IN (SELECT cID From candidates WHERE DiscordID = '"+candidate.DiscordID +"') AND election IN (SELECT eID FROM Elections WHERE title = '"+args[1]+"' AND Month = '"+args[2]+"')");
+                    db.get("SELECT COUNT() AS c FROM Voters JOIN votercandidate ON vID = voter JOIN candidates ON cID = votercandidate.candidate JOIN CandidateElections ON cID = CandidateElections.candidate JOIN Elections ON election = eID WHERE Voters.DiscordID = '"+user.id+"' AND candidates.DiscordID = '"+candidate.number +"' AND Month = '"+args[2]+"' AND title = '"+args[1]+"'",[],(err,count) => {
+                    db.get("SELECT * FROM Voters JOIN votercandidate ON vID = voter JOIN candidates ON cID = votercandidate.candidate JOIN CandidateElections ON cID = CandidateElections.candidate JOIN Elections ON election = eID WHERE Voters.DiscordID = '"+user.id+"' AND candidates.DiscordID = '"+candidate.number+"' AND Month = '"+args[2]+"' AND title = '"+args[1]+"'",[],(err,alreadyVoted) => {
+                      if(count.c != 0){db.run("UPDATE CandidateElections SET votes = votes-1 WHERE candidate IN (SELECT cID From candidates WHERE DiscordID = '"+candidate.number +"') AND election IN (SELECT eID FROM Elections WHERE title = '"+args[1]+"' AND Month = '"+args[2]+"')");
                                                    db.run("DELETE FROM votercandidate WHERE vcID = '"+alreadyVoted.vcID+"'")
                                                    }
                       else {
@@ -849,7 +849,7 @@ for (i = 0; i < rows.length; i++) {
                       if(rowt.count <= maxVote || rowt.count == undefined){
                   
                         
-                      db.run("UPDATE CandidateElections SET votes = votes+1 WHERE candidate IN (SELECT cID FROM candidates WHERE DiscordID = "+candidate.DiscordID +")  AND Election IN (SELECT eID FROM Elections WHERE Month ='"+args[2]+"' AND title = '"+args[1]+"')");
+                      db.run("UPDATE CandidateElections SET votes = votes+1 WHERE candidate IN (SELECT cID FROM candidates WHERE DiscordID = "+candidate.number +")  AND Election IN (SELECT eID FROM Elections WHERE Month ='"+args[2]+"' AND title = '"+args[1]+"')");
                     let cID;
                     let vID;
                     db.get("SELECT * FROM Voters WHERE DiscordID = '"+user.id+"'",[],(err,rows) =>{
@@ -857,14 +857,14 @@ for (i = 0; i < rows.length; i++) {
                     
                       if(rows == undefined){
                         db.run("INSERT INTO Voters(DiscordID) VALUES("+user.id+")");
-                        db.get("SELECT cID FROM candidates WHERE DiscordID = '"+candidate.DiscordID +"'",[],(err,row) =>{ 
+                        db.get("SELECT cID FROM candidates WHERE DiscordID = '"+candidate.number +"'",[],(err,row) =>{ 
                           cID = row.cID; 
                           db.get("SELECT vID FROM VOTERS WHERE DiscordID = '"+user.id+"'",[],(err,r) => {
                             vID = r.vID;
                           db.run("INSERT INTO votercandidate(voter,candidate) VALUES('"+vID+"','"+cID+"')")});
                         });
                       }
-                      else db.get("SELECT cID FROM candidates WHERE DiscordID = '"+candidate.DiscordID+"'",[],(err,row) => {cID = row.cID; 
+                      else db.get("SELECT cID FROM candidates WHERE DiscordID = '"+candidate.number+"'",[],(err,row) => {cID = row.cID; 
                           db.get("SELECT vID FROM VOTERS WHERE DiscordID = '"+user.id+"'",[],(err,r) => {
                             vID = r.vID;
                           db.run("INSERT INTO votercandidate(voter,candidate) VALUES('"+vID+"','"+cID+"')")});

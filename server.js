@@ -834,8 +834,8 @@ for (i = 0; i < rows.length; i++) {
               reaction.users.remove(user);
               //check the reaction, then find the user based by its ID in the database and update the vote count
               if (lett.includes(reaction.emoji.name)) {
-                
-                rows.forEach(candidate => {
+                db.all(sql4,[],(err,candidates) => {
+                candidates.forEach(candidate => {
                   
                   if (lett.indexOf(reaction.emoji.name) == candidate.number-1 && !user.bot) {
                     //message.channel.send(can[lett.indexOf(reaction.emoji.name)] );
@@ -883,7 +883,7 @@ for (i = 0; i < rows.length; i++) {
                     });
                   }
                 });
-             
+             });
               //updates the embed with the new votes 
               let emb2 = new Discord.MessageEmbed();
               emb2.setTitle(args[1] + " elections from: " + args[2]);

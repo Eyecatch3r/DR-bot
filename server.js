@@ -833,13 +833,13 @@ for (i = 0; i < rows.length; i++) {
             
               reaction.users.remove(user);
               //check the reaction, then find the user based by its ID in the database and update the vote count
-              if (lett.includes(reaction.emoji.name)) {
+              if (lett.includes(reaction.emoji.name)  && lett.indexOf(reaction.emoji.name) < rows.length) {
                 let order = lett.indexOf(reaction.emoji.name)+1;
                 db.get('SELECT * FROM Elections JOIN CandidateElections ON eID = Election JOIN Candidates ON candidate = cID WHERE Title = "' +args[1] +'" AND Month = "' +args[2] +'" AND number = '+order,[],(err,candidate) => {
                 
                   
                   if (lett.indexOf(reaction.emoji.name) == candidate.number-1 && !user.bot) {
-                    //message.channel.send(can[lett.indexOf(reaction.emoji.name)] );
+                    message.channel.send(lett.indexOf(reaction.emoji.name) );
                     db.get("SELECT COUNT() AS c FROM Voters JOIN votercandidate ON vID = voter JOIN candidates ON cID = votercandidate.candidate JOIN CandidateElections ON cID = CandidateElections.candidate JOIN Elections ON election = eID WHERE Voters.DiscordID = '"+user.id+"' AND CandidateElections.number = '"+candidate.number +"' AND Month = '"+args[2]+"' AND title = '"+args[1]+"'",[],(err,count) => {
                     db.get("SELECT * FROM Voters JOIN votercandidate ON vID = voter JOIN candidates ON cID = votercandidate.candidate JOIN CandidateElections ON cID = CandidateElections.candidate JOIN Elections ON election = eID WHERE Voters.DiscordID = '"+user.id+"' AND CandidateElections.number = '"+candidate.number+"' AND Month = '"+args[2]+"' AND title = '"+args[1]+"'",[],(err,alreadyVoted) => {
                       if(count.c != 0){db.run("UPDATE CandidateElections SET votes = votes-1 WHERE number = '"+candidate.number +"' AND election IN (SELECT eID FROM Elections WHERE title = '"+args[1]+"' AND Month = '"+args[2]+"')");

@@ -899,7 +899,7 @@ for (i = 0; i < rows.length; i++) {
                 emb2.addField(
                   "Candidate",
                   lett[j]+": "+
-                    message.guild.members.cache.get(can[j]).toString() +
+                    message.guild.members.cache.get(results[j].DiscordID).toString() +
                     "\n votes: " +
                     results[j].votes,
                   true

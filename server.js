@@ -1008,6 +1008,22 @@ for (i = 0; i < rows.length; i++) {
             }
                 
           });
+        collector.on("dispose",(reaction,user) => {
+          order--;
+          db.get(
+                "SELECT cID FROM candidates WHERE DiscordID = '" +
+                  user.id +
+                  "';",
+                [],
+                (err, rowss) => {
+          let eID,cID;
+                    cID = rowss.cID;
+                    db.get("SELECT eID FROM Elections WHERE Month = '"+args[2]+"' AND Title = '"+args[1]+"'",[],(err, row)=> {
+                    eID = row.eID;
+          db.run("DELETE FROM candidateElections WHERE cnadidate = "++);
+                      });
+                });
+        });
         
         });
       }

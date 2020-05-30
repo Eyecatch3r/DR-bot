@@ -829,12 +829,13 @@ for (i = 0; i < rows.length; i++) {
 
         collector.on("collect", (reaction, user) => {
           if (!user.bot) {
-            
+            db.serialize(() => {
             
               reaction.users.remove(user);
               //check the reaction, then find the user based by its ID in the database and update the vote count
               if (lett.includes(reaction.emoji.name)  && lett.indexOf(reaction.emoji.name) < rows.length) {
                 let order = lett.indexOf(reaction.emoji.name)+1;
+                
                 db.get('SELECT * FROM Elections JOIN CandidateElections ON eID = Election JOIN Candidates ON candidate = cID WHERE Title = "' +args[1] +'" AND Month = "' +args[2] +'" AND number = '+order,[],(err,candidate) => {
                 
                   
@@ -944,6 +945,7 @@ for (i = 0; i < rows.length; i++) {
 
             
           }
+            });
           }
           
         });

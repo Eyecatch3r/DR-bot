@@ -839,7 +839,7 @@ for (i = 0; i < rows.length; i++) {
                 
                   
                   if (lett.indexOf(reaction.emoji.name) == candidate.number-1 && !user.bot) {
-                    message.channel.send(candidate.number );
+                    
                     db.get("SELECT COUNT() AS c FROM Voters JOIN votercandidate ON vID = voter JOIN candidates ON cID = votercandidate.candidate JOIN CandidateElections ON cID = CandidateElections.candidate JOIN Elections ON election = eID WHERE Voters.DiscordID = '"+user.id+"' AND CandidateElections.number = '"+candidate.number +"' AND Month = '"+args[2]+"' AND title = '"+args[1]+"'",[],(err,count) => {
                     db.get("SELECT * FROM Voters JOIN votercandidate ON vID = voter JOIN candidates ON cID = votercandidate.candidate JOIN CandidateElections ON cID = CandidateElections.candidate JOIN Elections ON election = eID WHERE Voters.DiscordID = '"+user.id+"' AND CandidateElections.number = '"+candidate.number+"' AND Month = '"+args[2]+"' AND title = '"+args[1]+"'",[],(err,alreadyVoted) => {
                       if(count.c != 0){db.run("UPDATE CandidateElections SET votes = votes-1 WHERE number = '"+candidate.number +"' AND election IN (SELECT eID FROM Elections WHERE title = '"+args[1]+"' AND Month = '"+args[2]+"')");
@@ -878,14 +878,8 @@ for (i = 0; i < rows.length; i++) {
                       else { message.channel.send("voted too many");
                         
                       }
-                   }); 
-                    }  
-                  });
-                    });
-                  }
-                });
-             
-              //updates the embed with the new votes 
+                      
+                      //updates the embed with the new votes 
               let emb2 = new Discord.MessageEmbed();
               emb2.setTitle(args[1] + " elections from: " + args[2]);
     emb2.setColor("0x66023c");
@@ -909,6 +903,15 @@ for (i = 0; i < rows.length; i++) {
               }
                 m.edit(emb2);
               });
+                      
+                   }); 
+                    }  
+                  });
+                    });
+                  }
+                });
+             
+              
               
             
 

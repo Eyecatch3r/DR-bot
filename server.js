@@ -837,8 +837,8 @@ for (i = 0; i < rows.length; i++) {
                 
                 rows.forEach(candidate => {
                   
-                  if (can[lett.indexOf(reaction.emoji.name)] == candidate.DiscordID && !user.bot) {
-                    message.channel.send(can[lett.indexOf(reaction.emoji.name)] );
+                  if (lett.indexOf(reaction.emoji.name) == candidate.order-1 && !user.bot) {
+                    //message.channel.send(can[lett.indexOf(reaction.emoji.name)] );
                     db.get("SELECT COUNT() AS c FROM Voters JOIN votercandidate ON vID = voter JOIN candidates ON cID = votercandidate.candidate JOIN CandidateElections ON cID = CandidateElections.candidate JOIN Elections ON election = eID WHERE Voters.DiscordID = '"+user.id+"' AND candidates.DiscordID = '"+can[lett.indexOf(reaction.emoji.name)] +"' AND Month = '"+args[2]+"' AND title = '"+args[1]+"'",[],(err,count) => {
                     db.get("SELECT * FROM Voters JOIN votercandidate ON vID = voter JOIN candidates ON cID = votercandidate.candidate JOIN CandidateElections ON cID = CandidateElections.candidate JOIN Elections ON election = eID WHERE Voters.DiscordID = '"+user.id+"' AND candidates.DiscordID = '"+can[lett.indexOf(reaction.emoji.name)] +"' AND Month = '"+args[2]+"' AND title = '"+args[1]+"'",[],(err,alreadyVoted) => {
                       if(count.c != 0){db.run("UPDATE CandidateElections SET votes = votes-1 WHERE candidate IN (SELECT cID From candidates WHERE DiscordID = '"+can[lett.indexOf(reaction.emoji.name)] +"') AND election IN (SELECT eID FROM Elections WHERE title = '"+args[1]+"' AND Month = '"+args[2]+"')");
@@ -1020,7 +1020,7 @@ for (i = 0; i < rows.length; i++) {
                     cID = rowss.cID;
                     db.get("SELECT eID FROM Elections WHERE Month = '"+args[2]+"' AND Title = '"+args[1]+"'",[],(err, row)=> {
                     eID = row.eID;
-          db.run("DELETE FROM candidateElections WHERE cnadidate = "++);
+          db.run("DELETE FROM candidateElections WHERE cnadidate = "+cID+"AND Election ="+eID);
                       });
                 });
         });

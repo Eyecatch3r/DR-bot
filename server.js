@@ -875,8 +875,7 @@ for (i = 0; i < rows.length; i++) {
                                                    }
                       else {
                     db.get("SELECT COUNT() AS count FROM Voters JOIN votercandidate ON vID = voter JOIN CandidateElections ON votercandidate.candidate = candidateElections.candidate JOIN Elections ON Election = eID WHERE voter IN (SELECT vID FROM Voters WHERE DiscordID = '"+user.id+"') AND Election IN (SELECT eID WHERE Month = '"+args[2]+"' AND title = '"+args[1]+"')",[],(err,rowt) => {
-                      if(rowt.count <= maxVote || rowt.count == undefined){
-                  //updates the embed with the new votes 
+                      //updates the embed with the new votes 
               let emb2 = new Discord.MessageEmbed();
               emb2.setTitle(args[1] + " elections from: " + args[2]);
     emb2.setColor("0x66023c");
@@ -900,6 +899,8 @@ for (i = 0; i < rows.length; i++) {
               }
                 m.edit(emb2);
               });
+                      if(rowt.count <= maxVote || rowt.count == undefined){
+                  
                         
                       db.run("UPDATE CandidateElections SET votes = votes+1 WHERE number = "+candidate.number +" AND Election IN (SELECT eID FROM Elections WHERE Month ='"+args[2]+"' AND title = '"+args[1]+"')");
                     let cID;

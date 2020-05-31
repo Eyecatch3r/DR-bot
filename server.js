@@ -277,14 +277,16 @@ clientdc.on("ready", () => {
 async function SenateMeetingTimer(){
   var senateDate = dateformat("fullDate");
   var senateTime = dateformat(senateTime,"UTC:H:MM:ss:ll");
-  while(senateDate != dateformat("fullDate") || senateTime != dateformat("IsoDateTime")){
+  setInterval(function(){
+  if(senateDate != dateformat("fullDate") || senateTime != dateformat("UTC:HH")){
     senateDate = dateformat("fullDate");
-    senateTime = dateformat("UTC:H:MM:ss:ll");
+    senateTime = dateformat("UTC:HH"); 
   }
   console.log(senateTime);
-  while(senateDate.includes("Sunday") && senateTime == "11:00:20:00"){
+  if(senateDate.includes("Sunday") && senateTime.includes("19")){
     console.log("OK");
   }
+    },3600000);
 }
 
 //simple test query

@@ -271,12 +271,20 @@ clientdc.on("ready", () => {
       console.log("Month \n" + row.Month);
     });
   });
+  
+});
+
+async function SenateMeetingTimer(){
   var senateDate = dateformat("fullDate");
-  updateDate();
-  while(dateformat){
+  var senateTime = dateformat(senateTime,"UTC:h:MM:ss:ll");
+  while(senateDate != dateformat("fullDate") || senateTime != dateformat("IsoDateTime")){
+    senateDate = dateformat("fullDate");
+    senateTime = dateformat(senateTime,"UTC:h:MM:ss:ll");
+  }
+  while(senateDate.includes("Sunday") && senateTime == "11:00:01:00"){
     console.log("OK");
   }
-});
+}
 
 //simple test query
 let sql = `SELECT * FROM Birthdates;`;

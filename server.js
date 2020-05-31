@@ -13,6 +13,7 @@ let portunus = require('romans');
 const http = require("http");
 const can = require("canvas");
 const unb = require('unb-api');
+var CronJob = require('cron').CronJob;
 //init sqlite API
 const dbFile = "./DR.db";
 const exists = fs.existsSync(dbFile);
@@ -271,13 +272,15 @@ clientdc.on("ready", () => {
       console.log("Month \n" + row.Month);
     });
   });
+  var job = new CronJob('0 21 * * SUN', function() {
   SenateMeetingTimer();
+  });
 });
 
 async function SenateMeetingTimer(){
   var senateDate = dateformat("fullDate");
   var senateTime = dateformat(senateTime,"UTC:H:MM:ss:ll");
-  setInterval(function(){
+  
   if(senateDate != dateformat("fullDate") || senateTime != dateformat("UTC:HH")){
     senateDate = dateformat("fullDate");
     senateTime = dateformat("UTC:HH"); 
@@ -287,7 +290,7 @@ async function SenateMeetingTimer(){
     clientdc.channels.cache
           .get("514135876909924354").send("<@&549645921487421495>");
   }
-    },3600000);
+    
 }
 
 //simple test query

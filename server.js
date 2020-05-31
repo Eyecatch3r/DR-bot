@@ -286,10 +286,10 @@ async function SenateMeetingTimer(){
     senateTime = dateformat("UTC:HH"); 
   }
   console.log(senateTime);
-  if(senateDate.includes("Sunday") && senateTime.includes("19")){
+  
     clientdc.channels.cache
           .get("514135876909924354").send("<@&549645921487421495>");
-  }
+  
     
 }
 

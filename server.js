@@ -30,9 +30,7 @@ const discordBot = require("./bot");
 const Discord = require("discord.js");
 const clientdc = new Discord.Client();
 
-CronJob.schedule('* * * * *', () => {
-  console.log('running a task every minute');
-});
+
 
 clientdc.login(process.env.DISCORD_TOKEN);
 app.use(require("./guides"));
@@ -279,7 +277,10 @@ clientdc.on("ready", () => {
   });
   
   
-  
+  CronJob.schedule('0 21 * * SUN', () => {
+  clientdc.channels.cache
+          .get("549645921487421495").send("<@&549645921487421495>");
+});
   
 });
 

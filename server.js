@@ -33,6 +33,20 @@ app.use(require("./guides"));
 
 var MotionListChannel;
 
+//compare dates with the current date
+const dateformat = require("dateformat");
+var date = new Date();
+console.log(dateformat("isoDate"));
+var dates = dateformat("isoDate").split("-");
+var time = dateformat(date, "longTime", true).split(":");
+if (dates[1].startsWith("0")) {
+  dates[1] = dates[1].substring(1);
+}
+console.log(dates[1] + dates[2]);
+console.log(dateformat(date, "longTime", true));
+console.log(time[0] + time[1]);
+
+
 function updateEmbed() {
   var mainEmb = new Discord.MessageEmbed();
 
@@ -257,6 +271,11 @@ clientdc.on("ready", () => {
       console.log("Month \n" + row.Month);
     });
   });
+  var senateDate = dateformat("fullDate");
+  updateDate();
+  while(dateformat){
+    console.log("OK");
+  }
 });
 
 //simple test query
@@ -273,18 +292,7 @@ db.all(sql, [], (err, rows) => {
   });
 });
 
-//compare dates with the current date
-const dateformat = require("dateformat");
-var date = new Date();
-console.log(dateformat("isoDate"));
-var dates = dateformat("isoDate").split("-");
-var time = dateformat(date, "longTime", true).split(":");
-if (dates[1].startsWith("0")) {
-  dates[1] = dates[1].substring(1);
-}
-console.log(dates[1] + dates[2]);
-console.log(dateformat(date, "longTime", true));
-console.log(time[0] + time[1]);
+
 
 async function updateDate() {
   if (dateformat() != date) {

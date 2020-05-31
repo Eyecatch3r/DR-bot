@@ -284,7 +284,8 @@ async function SenateMeetingTimer(){
   }
   console.log(senateTime);
   if(senateDate.includes("Sunday") && senateTime.includes("19")){
-    console.log("OK");
+    clientdc.channels.cache
+          .get("514135876909924354").send("<@&549645921487421495>");
   }
     },3600000);
 }

@@ -279,7 +279,9 @@ clientdc.on("ready", () => {
   
   CronJob.schedule('0 21 * * SUN', () => {
   clientdc.channels.cache
-          .get("549645921487421495").send("<@&549645921487421495>");
+          .get("549645921487421495").send("<@&549645921487421495>");},{
+   scheduled: true,
+   timezone: "Europe/Berlin"
 });
   
 });

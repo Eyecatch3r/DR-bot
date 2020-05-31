@@ -272,6 +272,9 @@ clientdc.on("ready", () => {
       console.log("Month \n" + row.Month);
     });
   });
+  var job = new CronJob('54 * * * *', function() {console.log("YEP COCK")});
+  
+  
   var job = new CronJob('0 21 * * SUN', function() {
   SenateMeetingTimer();
   });

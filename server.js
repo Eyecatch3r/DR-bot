@@ -271,17 +271,18 @@ clientdc.on("ready", () => {
       console.log("Month \n" + row.Month);
     });
   });
-  
+  SenateMeetingTimer();
 });
 
 async function SenateMeetingTimer(){
   var senateDate = dateformat("fullDate");
-  var senateTime = dateformat(senateTime,"UTC:h:MM:ss:ll");
+  var senateTime = dateformat(senateTime,"UTC:H:MM:ss:ll");
   while(senateDate != dateformat("fullDate") || senateTime != dateformat("IsoDateTime")){
     senateDate = dateformat("fullDate");
-    senateTime = dateformat(senateTime,"UTC:h:MM:ss:ll");
+    senateTime = dateformat("UTC:H:MM:ss:ll");
   }
-  while(senateDate.includes("Sunday") && senateTime == "11:00:01:00"){
+  console.log(senateTime);
+  while(senateDate.includes("Sunday") && senateTime == "11:00:20:00"){
     console.log("OK");
   }
 }

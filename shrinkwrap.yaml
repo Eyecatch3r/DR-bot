@@ -4,13 +4,13 @@ dependencies:
   bibleverses: 3.1.1
   botkit-discord: 0.1.3
   canvas: 2.6.1
-  cron: 1.8.2
   dateformat: 3.0.3
   discord.js: 12.2.0
   each-async: 1.1.1
   express: 4.17.1
   minimist: 1.2.5
   node-cmd: 3.0.0
+  node-cron: 2.0.3
   romans: 1.0.2
   romcal: 1.3.0
   sqlite: 4.0.9
@@ -1267,12 +1267,6 @@ packages:
     dev: false
     resolution:
       integrity: sha1-tf1UIgqivFq1eqtxQMlAdUUDwac=
-  /cron/1.8.2:
-    dependencies:
-      moment-timezone: 0.5.31
-    dev: false
-    resolution:
-      integrity: sha512-Gk2c4y6xKEO8FSAUTklqtfSr7oTq0CiPQeLBG5Fl0qoXpZyMcj1SG59YL+hqq04bu6/IuEA7lMkYDAplQNKkyg==
   /cross-spawn/4.0.2:
     dependencies:
       lru-cache: 4.1.5
@@ -2746,20 +2740,10 @@ packages:
     dev: false
     resolution:
       integrity: sha1-TVCSr2SK7e1q/lwT7zjFKQHJlBk=
-  /moment-timezone/0.5.31:
-    dependencies:
-      moment: 2.26.0
-    dev: false
-    resolution:
-      integrity: sha512-+GgHNg8xRhMXfEbv81iDtrVeTcWt0kWmTEY1XQK14dICTXnWJnT0dxdlPspwqF3keKMVPXwayEsk1DI0AA/jdA==
   /moment/2.25.3:
     dev: false
     resolution:
       integrity: sha512-PuYv0PHxZvzc15Sp8ybUCoQ+xpyPWvjOuK72a5ovzp2LI32rJXOiIfyoFoYvG3s6EwwrdkMyWuRiEHSZRLJNdg==
-  /moment/2.26.0:
-    dev: false
-    resolution:
-      integrity: sha512-oIixUO+OamkUkwjhAVE18rAMfRJNsNe/Stid/gwHSOfHrOtw9EhAY2AHvdKZ/k/MggcYELFCJz/Sn2pL8b8JMw==
   /ms/2.0.0:
     dev: false
     resolution:
@@ -2822,6 +2806,16 @@ packages:
     dev: false
     resolution:
       integrity: sha1-OP/3CkqqT2WdID61eGJzcBjiT28=
+  /node-cron/2.0.3:
+    dependencies:
+      opencollective-postinstall: 2.0.3
+      tz-offset: 0.0.1
+    dev: false
+    engines:
+      node: '>=6.0.0'
+    requiresBuild: true
+    resolution:
+      integrity: sha512-eJI+QitXlwcgiZwNNSRbqsjeZMp5shyajMR81RZCqeW0ZDEj4zU9tpd4nTh/1JsBiKbF8d08FCewiipDmVIYjg==
   /node-fetch/1.7.3:
     dependencies:
       encoding: 0.1.12
@@ -3026,6 +3020,11 @@ packages:
       node: '>=0.10.0'
     resolution:
       integrity: sha1-ofeDj4MUxRbwXs78vEzP4EtO14k=
+  /opencollective-postinstall/2.0.3:
+    dev: false
+    hasBin: true
+    resolution:
+      integrity: sha512-8AV/sCtuzUeTo8gQK5qDZzARrulB3egtLzFgteqB2tcT4Mw7B8Kt7JcDHmltjz6FOAHsvTevk70gZEbhM4ZS9Q==
   /openurl/1.1.1:
     dev: false
     resolution:
@@ -4017,6 +4016,10 @@ packages:
     dev: false
     resolution:
       integrity: sha512-Jh/fykZSaxeKO0ceMAs6agki9T5TNA9kiIR6fzKbvafKpIw8UlNlHhzuqKyi5lfJJ5VojJOx9tooIbyy7vHV/g==
+  /tz-offset/0.0.1:
+    dev: false
+    resolution:
+      integrity: sha512-kMBmblijHJXyOpKzgDhKx9INYU4u4E1RPMB0HqmKSgWG8vEcf3exEfLh4FFfzd3xdQOw9EuIy/cP0akY6rHopQ==
   /ul/5.2.14:
     dependencies:
       deffy: 2.2.3
@@ -4338,13 +4341,13 @@ specifiers:
   bibleverses: ^3.1.1
   botkit-discord: ^0.1.3
   canvas: ^2.6.1
-  cron: ^1.8.2
   dateformat: ^3.0.3
   discord.js: ^12.2.0
   each-async: ^1.1.1
   express: ^4.17.1
   minimist: ^1.2.5
   node-cmd: ^3.0.0
+  node-cron: ^2.0.3
   romans: ^1.0.2
   romcal: ^1.3.0
   sqlite: ^4.0.9

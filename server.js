@@ -13,7 +13,7 @@ let portunus = require('romans');
 const http = require("http");
 const can = require("canvas");
 const unb = require('unb-api');
-var CronJob = require('cron').CronJob;
+var CronJob = require('node-cron');
 //init sqlite API
 const dbFile = "./DR.db";
 const exists = fs.existsSync(dbFile);
@@ -30,7 +30,9 @@ const discordBot = require("./bot");
 const Discord = require("discord.js");
 const clientdc = new Discord.Client();
 
-var job = new CronJob('* * * * *', function() {console.log("YEP COCK")});
+CronJob.schedule('* * * * *', () => {
+  console.log('running a task every minute');
+});
 
 clientdc.login(process.env.DISCORD_TOKEN);
 app.use(require("./guides"));
@@ -278,9 +280,7 @@ clientdc.on("ready", () => {
   
   
   
-  var job = new CronJob('0 21 * * SUN', function() {
-  SenateMeetingTimer();
-  });
+  
 });
 
 async function SenateMeetingTimer(){

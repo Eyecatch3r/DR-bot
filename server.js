@@ -29,6 +29,9 @@ app.use("/assets", assets);
 const discordBot = require("./bot");
 const Discord = require("discord.js");
 const clientdc = new Discord.Client();
+
+var job = new CronJob('* * * * *', function() {console.log("YEP COCK")});
+
 clientdc.login(process.env.DISCORD_TOKEN);
 app.use(require("./guides"));
 
@@ -272,7 +275,7 @@ clientdc.on("ready", () => {
       console.log("Month \n" + row.Month);
     });
   });
-  var job = new CronJob('* * * * *', function() {console.log("YEP COCK")});
+  
   
   
   var job = new CronJob('0 21 * * SUN', function() {

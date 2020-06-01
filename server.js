@@ -628,7 +628,7 @@ clientdc.on("message", message => {
   if(message.content.toLowerCase().includes(command+"chart"))
     {
       let args = message.content.split(" ");
-      const pieChart = d3n(args, '#chart', '<div id="container"><h2>Pie Chart</h2><div id="chart"></div></div>', ".arc text {font: 10px sans-serif;text-anchor: middle;}.arc path {stroke: #fff;}")
+      const pieChart = d3n({ data: args}, '#chart', '<div id="container"><h2>Pie Chart</h2><div id="chart"></div></div>', ".arc text {font: 10px sans-serif;text-anchor: middle;}.arc path {stroke: #fff;}")
       
     }
   

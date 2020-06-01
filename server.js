@@ -15,6 +15,7 @@ const can = require("canvas");
 const unb = require('unb-api');
 var CronJob = require('node-cron');
  const D3Node = require('d3-node');
+const d3n = require('d3node-piechart');
 //init sqlite API
 const dbFile = "./DR.db";
 const exists = fs.existsSync(dbFile);
@@ -627,11 +628,7 @@ clientdc.on("message", message => {
   if(message.content.toLowerCase().includes(command+"chart"))
     {
       let args = message.content.split(" ");
-      const d3n = new D3Node({ can }); // pass it node-canvas
- const canvas = d3n.createCanvas(960, 500);
- const context = canvas.getContext('2d');
- // draw on your canvas, then output canvas to png
- canvas.pngStream().pipe(fs.createWriteStream('output.png'));
+      const pieChart = d3n(args, '#chart', '<div id="container"><h2>Pie Chart</h2><div id="chart"></div></div>', ".arc text {font: 10px sans-serif;text-anchor: middle;}.arc path {stroke: #fff;}")
       
     }
   

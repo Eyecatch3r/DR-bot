@@ -631,9 +631,10 @@ clientdc.on("message", message => {
     {
       let args = message.content.split(" ");
       const pieChart = d3n({ data: args}, '#chart', '<div id="container"><h2>Pie Chart</h2><div id="chart"></div></div>', ".arc text {font: 10px sans-serif;text-anchor: middle;}.arc path {stroke: #fff;}");
-      let attachment = new Discord.MessageAttachment('./Augustus.png');
-     message.channel.send(attachment);
       output('./example/output', pieChart);
+      let attachment = new Discord.MessageAttachment('./example/output');
+     message.channel.send(attachment);
+      
     }
   
     

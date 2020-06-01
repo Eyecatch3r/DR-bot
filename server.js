@@ -14,6 +14,7 @@ const http = require("http");
 const can = require("canvas");
 const unb = require('unb-api');
 var CronJob = require('node-cron');
+ const D3Node = require('d3-node');
 //init sqlite API
 const dbFile = "./DR.db";
 const exists = fs.existsSync(dbFile);
@@ -622,6 +623,18 @@ clientdc.on("message", message => {
       message.channel.send(emb);
       
     }
+  
+  if(message.content.toLowerCase().includes(command+"chart"))
+    {
+      let args = message.content.split(" ");
+      const d3n = new D3Node({ can }); // pass it node-canvas
+ const canvas = d3n.createCanvas(960, 500);
+ const context = canvas.getContext('2d');
+ // draw on your canvas, then output canvas to png
+ canvas.pngStream().pipe(fs.createWriteStream('output.png'));
+      
+    }
+  
     
   if(message.content.toLowerCase().includes(command+"wiki"))
     {
@@ -1510,7 +1523,7 @@ clientdc.on("message", async message => {
 
     if (message.channel.type === "dm") {
       var args = message.content.split("-");
-      clientdc.channels.cache.get(args[0]).send(args[1]);
+     clientdc.channels.cache.get(args[0]).send(args[1]);
     }
 
     if (

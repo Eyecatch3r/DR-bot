@@ -598,7 +598,7 @@ clientdc.on("message", message => {
           clientdc.users.cache.get(message.author.id).avatarURL()
         );
         }
-        
+        if row == undefined
         message.channel.send(emb);
       });
       

@@ -926,9 +926,19 @@ for (i = 0; i < rows.length; i++) {
                     results[j].votes,
                   true
                 );
-                
-               
+      let tit = "";
+      let val = "t:";
+      for(let i = 0; i < results.length; i++)
+        {
+          if(i % 2 == 0){val += results[i].votes+","}else{tit += message.guild.members.cache.get(results[j].DiscordID).nickname+"|";}
+          
+        }
+               let pieChart = ImageCharts().cht('p3').chs('250x190') // 700px x 190px
+.chd(val) // 2 data points: 60 and 40
+.chl(tit).chtt("chart").toURL();
+                emb2.setImage(pieChart);
               }
+                
                 m.edit(emb2);
               });
                                        
@@ -962,7 +972,17 @@ for (i = 0; i < rows.length; i++) {
                     results[j].votes,
                   true
                 );
-                
+                let tit = "";
+      let val = "t:";
+      for(let i = 0; i < results.length; i++)
+        {
+          if(i % 2 == 0){val += results[i].votes+","}else{tit += message.guild.members.cache.get(results[j].DiscordID).nickname+"|";}
+          
+        }
+               let pieChart = ImageCharts().cht('p3').chs('250x190') // 700px x 190px
+.chd(val) // 2 data points: 60 and 40
+.chl(tit).chtt("chart").toURL();
+                emb2.setImage(pieChart);
                
               }
                 m.edit(emb2);

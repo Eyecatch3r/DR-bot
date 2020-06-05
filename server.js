@@ -585,12 +585,15 @@ clientdc.on("message", message => {
       emb.setFooter("General reactions powered by our most humble Imperator");
       db.get('SELECT * FROM Generals WHERE DiscordID = '+message.author.id,[],(err,row) => {
         if(err){throw err;}
+        if (row == undefined){emb.addField("Generals","0",true)}else{
         emb.addField("Generals",row.generals,true);
         emb.setAuthor(
           message.member.nickname,
           clientdc.users.cache.get(message.author.id).avatarURL()
         );
         
+        
+        }
         if(!message.member.nickname){
           emb.setTitle(message.author.username,message.author.avatarURL());
           emb.setAuthor(
@@ -598,7 +601,6 @@ clientdc.on("message", message => {
           clientdc.users.cache.get(message.author.id).avatarURL()
         );
         }
-        if row == undefined
         message.channel.send(emb);
       });
       
@@ -630,8 +632,7 @@ clientdc.on("message", message => {
   if(message.content.toLowerCase().includes(command+"chart"))
     {
       let args = message.content.split(" ");
-      const pieChart = d3n({ data: args}, '#chart', '<div id="container"><h2>Pie Chart</h2><div id="chart"></div></div>', ".arc text {font: 10px sans-serif;text-anchor: middle;}.arc path {stroke: #fff;}");
-      output('./example/output', pieChart);
+      let pieChart = 
       let attachment = new Discord.MessageAttachment('./example/output');
      message.channel.send(attachment);
       

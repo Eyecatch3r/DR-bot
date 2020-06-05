@@ -17,7 +17,7 @@ var CronJob = require('node-cron');
  const D3Node = require('d3-node');
 const d3n = require('d3node-piechart');
 const output = require('d3node-output');
-
+const ImageCharts = require('image-charts');
 //init sqlite API
 const dbFile = "./DR.db";
 const exists = fs.existsSync(dbFile);
@@ -585,12 +585,15 @@ clientdc.on("message", message => {
       emb.setFooter("General reactions powered by our most humble Imperator");
       db.get('SELECT * FROM Generals WHERE DiscordID = '+message.author.id,[],(err,row) => {
         if(err){throw err;}
+        if (row == undefined){emb.addField("Generals","0",true)}else{
         emb.addField("Generals",row.generals,true);
         emb.setAuthor(
           message.member.nickname,
           clientdc.users.cache.get(message.author.id).avatarURL()
         );
         
+        
+        }
         if(!message.member.nickname){
           emb.setTitle(message.author.username,message.author.avatarURL());
           emb.setAuthor(
@@ -598,7 +601,6 @@ clientdc.on("message", message => {
           clientdc.users.cache.get(message.author.id).avatarURL()
         );
         }
-        
         message.channel.send(emb);
       });
       
@@ -630,10 +632,23 @@ clientdc.on("message", message => {
   if(message.content.toLowerCase().includes(command+"chart"))
     {
       let args = message.content.split(" ");
-      const pieChart = d3n({ data: args}, '#chart', '<div id="container"><h2>Pie Chart</h2><div id="chart"></div></div>', ".arc text {font: 10px sans-serif;text-anchor: middle;}.arc path {stroke: #fff;}");
-      output('./example/output', pieChart);
-      let attachment = new Discord.MessageAttachment('./example/output');
-     message.channel.send(attachment);
+      let tit = "";
+      let val = "t:";
+      for(let i = 1; i < args.length; i++)
+        {
+          if(i % 2 == 0){val += args[i]+","}else{tit += args[i]+"|";}
+          
+        }
+      
+      console.log(tit+"\n"+val);
+      let pieChart = ImageCharts().cht('p3').chs('250x190') // 700px x 190px
+.chd(val) // 2 data points: 60 and 40
+.chl(tit).chtt("chart").toURL();
+      let attachment = new Discord.MessageAttachment(pieChart,"test.png");
+      let emb = new Discord.MessageEmbed();
+      emb.setImage(pieChart);
+      
+     message.channel.send(emb);
       
     }
   
@@ -854,6 +869,8 @@ gradient.addColorStop(1, "#000");
       
       message.channel.send(emb).then(m => {
         let filter = reaction => lett.includes(reaction.emoji.name);
+        let tit = "";
+        let val = "t:";
 for (i = 0; i < rows.length; i++) {
         
           emb.addField(
@@ -864,9 +881,20 @@ for (i = 0; i < rows.length; i++) {
               rows[i].votes,
             true
           );
-          
-        
-        
+          let name = "";
+      if(message.guild.members.cache.get(rows[i].DiscordID).nickname != null){
+        name = message.guild.members.cache.get(rows[i].DiscordID).nickname}
+      else{
+       name = message.guild.members.cache.get(rows[i].DiscordID).user.username; 
+      }
+        val += parseInt(rows[i].votes)+",";
+          tit += name+"|";
+  
+  let pieChart = ImageCharts().cht('p3').chs('250x190') // 700px x 190px
+.chd(val) // 2 data points: 60 and 40
+.chl(tit).chtt("chart").toURL();
+                emb.setImage(pieChart);
+  
           m.edit(emb);
           m.react(lett[i]);
           can[i] = rows[i].DiscordID;
@@ -901,6 +929,8 @@ for (i = 0; i < rows.length; i++) {
     emb2.setAuthor("𝐈𝐌𝐏𝐄𝐑𝐀𝐓𝐎𝐑·𝐏𝐕𝐁𝐋𝐈𝐕𝐒","https://cdn.glitch.com/24cdd29f-170e-4ac8-9dc2-8abc1cbbaeaa%2Fimageedit_1_3956664875.png?v=1588186424473");
 
               db.all('SELECT * FROM Elections JOIN CandidateElections ON eID = Election JOIN Candidates ON candidate = cID WHERE Title = "' +args[1] +'" AND Month = "' +args[2] +'"',[],(err,results) => {
+                let tit = "";
+      let val = "t:";
               for(var j = 0; j < results.length; j++){
                 
                 emb2.addField(
@@ -911,9 +941,23 @@ for (i = 0; i < rows.length; i++) {
                     results[j].votes,
                   true
                 );
-                
-               
+                let name = "";
+      if(message.guild.members.cache.get(results[j].DiscordID).nickname != null){
+        name = message.guild.members.cache.get(results[j].DiscordID).nickname}
+      else{
+       name = message.guild.members.cache.get(results[j].DiscordID).user.username; 
+      }
+     
+          val += parseInt(results[j].votes)+",";
+          tit += name+"|";
+        
               }
+               
+               let pieChart = ImageCharts().cht('p3').chs('250x190') // 700px x 190px
+.chd(val) // 2 data points: 60 and 40
+.chl(tit).chtt("chart").toURL();
+                emb2.setImage(pieChart);
+                
                 m.edit(emb2);
               });
                                        
@@ -924,7 +968,7 @@ for (i = 0; i < rows.length; i++) {
                     db.get("SELECT COUNT() AS count FROM Voters JOIN votercandidate ON vID = voter JOIN CandidateElections ON votercandidate.candidate = candidateElections.candidate JOIN Elections ON Election = eID WHERE voter IN (SELECT vID FROM Voters WHERE DiscordID = '"+user.id+"') AND Election IN (SELECT eID WHERE Month = '"+args[2]+"' AND title = '"+args[1]+"')",[],(err,rowt) => {
                      
               
-                      if(rowt.count <= maxVote || rowt.count == undefined){
+                      if(rowt.count <= maxVote || rowt.count == null){
                   let cID;
                   let vID;
                         
@@ -937,6 +981,8 @@ for (i = 0; i < rows.length; i++) {
     emb2.setAuthor("𝐈𝐌𝐏𝐄𝐑𝐀𝐓𝐎𝐑·𝐏𝐕𝐁𝐋𝐈𝐕𝐒","https://cdn.glitch.com/24cdd29f-170e-4ac8-9dc2-8abc1cbbaeaa%2Fimageedit_1_3956664875.png?v=1588186424473");
                         
                       db.run("UPDATE CandidateElections SET votes = votes+1 WHERE number = "+candidate.number +" AND Election IN (SELECT eID FROM Elections WHERE Month ='"+args[2]+"' AND title = '"+args[1]+"')").all('SELECT * FROM Elections JOIN CandidateElections ON eID = Election JOIN Candidates ON candidate = cID WHERE Title = "' +args[1] +'" AND Month = "' +args[2] +'"',[],(err,results) => {
+                        let tit = "";
+      let val = "t:";
               for(var j = 0; j < results.length; j++){
                 
                 emb2.addField(
@@ -947,9 +993,22 @@ for (i = 0; i < rows.length; i++) {
                     results[j].votes,
                   true
                 );
-                
-               
+              let name = "";
+      if(message.guild.members.cache.get(results[j].DiscordID).nickname != null){
+        name = message.guild.members.cache.get(results[j].DiscordID).nickname}
+      else{
+       name = message.guild.members.cache.get(results[j].DiscordID).user.username; 
+      }
+     
+          val += parseInt(results[j].votes)+",";
+          tit += name+"|";
               }
+                        
+               let pieChart = ImageCharts().cht('p3').chs('250x190') // 700px x 190px
+.chd(val) // 2 data points: 60 and 40
+.chl(tit).chtt("chart").toURL();
+                emb2.setImage(pieChart);
+                        
                 m.edit(emb2);
               });
                         
@@ -1054,6 +1113,8 @@ for (i = 0; i < rows.length; i++) {
 
           collector.on("collect", (reaction, user) => {
             if (!user.bot) {
+              if(clientdc.guilds.cache.get('514135876909924352').members.cache.get(user.id).roles.cache.get('548455163044560897') && args[1] === "tribune" || args[1] != "tribune")
+                {
               order++;
               message.guild.members.cache
                 .get(user.id)
@@ -1088,6 +1149,7 @@ for (i = 0; i < rows.length; i++) {
                   }
                 });
                   });
+                }else(user.send("sorry but only plebs can candidate"))
             }
                 
           });

@@ -1054,6 +1054,8 @@ for (i = 0; i < rows.length; i++) {
 
           collector.on("collect", (reaction, user) => {
             if (!user.bot) {
+              if(clientdc.guilds.cache.get('514135876909924352').members.cache.get(user.id).roles.cache.get('548455163044560897') && args[1] === "tribune" || args[1] != "tribune")
+                {
               order++;
               message.guild.members.cache
                 .get(user.id)
@@ -1088,6 +1090,7 @@ for (i = 0; i < rows.length; i++) {
                   }
                 });
                   });
+                }else(message.channel.send("not a pleb"))
             }
                 
           });

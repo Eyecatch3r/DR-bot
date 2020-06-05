@@ -530,13 +530,14 @@ clientdc.on("message", message => {
         
       });
         
-        db.all("SELECT * FROM Voters", [], (err, rows) => {
+        db.all("SELECT * FROM votercandidate", [], (err, rows) => {
       if (err) {
         throw err;
       }
       rows.forEach(row => {
-        console.log("vID \n" + row.vID);
-        console.log("discordID \n" + row.DiscordID);
+        console.log("vcID \n" + row.vcID);
+        console.log("voter \n" + row.voter);
+        console.log("candidate \n" + row.candidate);
         
       });
     });

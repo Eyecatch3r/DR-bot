@@ -916,6 +916,8 @@ for (i = 0; i < rows.length; i++) {
     emb2.setAuthor("𝐈𝐌𝐏𝐄𝐑𝐀𝐓𝐎𝐑·𝐏𝐕𝐁𝐋𝐈𝐕𝐒","https://cdn.glitch.com/24cdd29f-170e-4ac8-9dc2-8abc1cbbaeaa%2Fimageedit_1_3956664875.png?v=1588186424473");
 
               db.all('SELECT * FROM Elections JOIN CandidateElections ON eID = Election JOIN Candidates ON candidate = cID WHERE Title = "' +args[1] +'" AND Month = "' +args[2] +'"',[],(err,results) => {
+                let tit = "";
+      let val = "t:";
               for(var j = 0; j < results.length; j++){
                 
                 emb2.addField(
@@ -926,11 +928,10 @@ for (i = 0; i < rows.length; i++) {
                     results[j].votes,
                   true
                 );
-      let tit = "";
-      let val = "t:";
+      
       for(let i = 0; i < results.length; i++)
         {
-          if(i % 2 == 0){val += results[i].votes+","}else{tit += message.guild.members.cache.get(results[j].DiscordID).nickname+"|";}
+          if(i % 2 == 0){val += results[i].votes+","}else{tit += message.guild.members.cache.get(results[j].DiscordID).user.username+"|";}
           
         }
                let pieChart = ImageCharts().cht('p3').chs('250x190') // 700px x 190px
@@ -962,6 +963,8 @@ for (i = 0; i < rows.length; i++) {
     emb2.setAuthor("𝐈𝐌𝐏𝐄𝐑𝐀𝐓𝐎𝐑·𝐏𝐕𝐁𝐋𝐈𝐕𝐒","https://cdn.glitch.com/24cdd29f-170e-4ac8-9dc2-8abc1cbbaeaa%2Fimageedit_1_3956664875.png?v=1588186424473");
                         
                       db.run("UPDATE CandidateElections SET votes = votes+1 WHERE number = "+candidate.number +" AND Election IN (SELECT eID FROM Elections WHERE Month ='"+args[2]+"' AND title = '"+args[1]+"')").all('SELECT * FROM Elections JOIN CandidateElections ON eID = Election JOIN Candidates ON candidate = cID WHERE Title = "' +args[1] +'" AND Month = "' +args[2] +'"',[],(err,results) => {
+                        let tit = "";
+      let val = "t:";
               for(var j = 0; j < results.length; j++){
                 
                 emb2.addField(
@@ -972,11 +975,10 @@ for (i = 0; i < rows.length; i++) {
                     results[j].votes,
                   true
                 );
-                let tit = "";
-      let val = "t:";
+                
       for(let i = 0; i < results.length; i++)
         {
-          if(i % 2 == 0){val += results[i].votes+","}else{tit += message.guild.members.cache.get(results[j].DiscordID).nickname+"|";}
+          if(i % 2 == 0){val += results[i].votes+","}else{tit += message.guild.members.cache.get(results[j].DiscordID).user.username+"|";}
           
         }
                let pieChart = ImageCharts().cht('p3').chs('250x190') // 700px x 190px

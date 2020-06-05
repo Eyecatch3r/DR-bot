@@ -632,9 +632,17 @@ clientdc.on("message", message => {
   if(message.content.toLowerCase().includes(command+"chart"))
     {
       let args = message.content.split(" ");
+      let tit = "";
+      let val = "";
+      for(let i = 0; i < args.length; i++)
+        {
+          if(tit);
+        }
+      
+      
       let pieChart = ImageCharts().cht('p3').chs('250x190') // 700px x 190px
 .chd('t:'+args[2]+","+args[4]) // 2 data points: 60 and 40
-.chl(args[1]+"|"+args[3]).toURL();
+.chl(args[1]+"|"+args[3]).chtt("chart").toURL();
       let attachment = new Discord.MessageAttachment(pieChart,"test.png");
       let emb = new Discord.MessageEmbed();
       emb.setImage(pieChart);

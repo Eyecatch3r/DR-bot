@@ -869,7 +869,8 @@ gradient.addColorStop(1, "#000");
       
       message.channel.send(emb).then(m => {
         let filter = reaction => lett.includes(reaction.emoji.name);
-        let tit =
+        let tit = "";
+        let val = "t:";
 for (i = 0; i < rows.length; i++) {
         
           emb.addField(
@@ -886,7 +887,14 @@ for (i = 0; i < rows.length; i++) {
       else{
        name = message.guild.members.cache.get(rows[i].DiscordID).user.username; 
       }
-        
+        val += parseInt(rows[i].votes)+",";
+          tit += name+"|";
+  
+  let pieChart = ImageCharts().cht('p3').chs('250x190') // 700px x 190px
+.chd(val) // 2 data points: 60 and 40
+.chl(tit).chtt("chart").toURL();
+                emb.setImage(pieChart);
+  
           m.edit(emb);
           m.react(lett[i]);
           can[i] = rows[i].DiscordID;

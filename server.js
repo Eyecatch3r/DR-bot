@@ -634,12 +634,13 @@ clientdc.on("message", message => {
       let args = message.content.split(" ");
       let pieChart = ImageCharts().cht('p3').chs('250x190') // 700px x 190px
 .chd('t:'+args[2]+","+args[4]) // 2 data points: 60 and 40
-.chl(args[1]+"|"+args[3]).toBuffer().then(() => {
+.chl(args[1]+"|"+args[3]).toURL();
       let attachment = new Discord.MessageAttachment(pieChart,"test.png");
       let emb = new Discord.MessageEmbed();
-      emb.addField("chart",pieChart,false);
+      emb.setImage(pieChart);
+      
      message.channel.send(emb);
-      });
+      
     }
   
     

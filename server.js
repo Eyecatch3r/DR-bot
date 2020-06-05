@@ -869,6 +869,7 @@ gradient.addColorStop(1, "#000");
       
       message.channel.send(emb).then(m => {
         let filter = reaction => lett.includes(reaction.emoji.name);
+        let tit =
 for (i = 0; i < rows.length; i++) {
         
           emb.addField(
@@ -879,8 +880,12 @@ for (i = 0; i < rows.length; i++) {
               rows[i].votes,
             true
           );
-          
-        
+          let name = "";
+      if(message.guild.members.cache.get(rows[i].DiscordID).nickname != null){
+        name = message.guild.members.cache.get(rows[i].DiscordID).nickname}
+      else{
+       name = message.guild.members.cache.get(rows[i].DiscordID).user.username; 
+      }
         
           m.edit(emb);
           m.react(lett[i]);
@@ -929,10 +934,14 @@ for (i = 0; i < rows.length; i++) {
                   true
                 );
                 let name = "";
-      if(message.guild.members.cache.get(results[j].DiscordID).nickname )
+      if(message.guild.members.cache.get(results[j].DiscordID).nickname != null){
+        name = message.guild.members.cache.get(results[j].DiscordID).nickname}
+      else{
+       name = message.guild.members.cache.get(results[j].DiscordID).user.username; 
+      }
      
           val += parseInt(results[j].votes)+",";
-          tit += message.guild.members.cache.get(results[j].DiscordID).nickname+"|";
+          tit += name+"|";
         
               }
                
@@ -951,7 +960,7 @@ for (i = 0; i < rows.length; i++) {
                     db.get("SELECT COUNT() AS count FROM Voters JOIN votercandidate ON vID = voter JOIN CandidateElections ON votercandidate.candidate = candidateElections.candidate JOIN Elections ON Election = eID WHERE voter IN (SELECT vID FROM Voters WHERE DiscordID = '"+user.id+"') AND Election IN (SELECT eID WHERE Month = '"+args[2]+"' AND title = '"+args[1]+"')",[],(err,rowt) => {
                      
               
-                      if(rowt.count <= maxVote || rowt.count == undefined){
+                      if(rowt.count <= maxVote || rowt.count == null){
                   let cID;
                   let vID;
                         
@@ -976,10 +985,15 @@ for (i = 0; i < rows.length; i++) {
                     results[j].votes,
                   true
                 );
-                
-      
+              let name = "";
+      if(message.guild.members.cache.get(results[j].DiscordID).nickname != null){
+        name = message.guild.members.cache.get(results[j].DiscordID).nickname}
+      else{
+       name = message.guild.members.cache.get(results[j].DiscordID).user.username; 
+      }
+     
           val += parseInt(results[j].votes)+",";
-          tit += message.guild.members.cache.get(results[j].DiscordID).nickname+"|";
+          tit += name+"|";
               }
                         
                let pieChart = ImageCharts().cht('p3').chs('250x190') // 700px x 190px

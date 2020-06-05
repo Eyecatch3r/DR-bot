@@ -928,16 +928,18 @@ for (i = 0; i < rows.length; i++) {
                     results[j].votes,
                   true
                 );
-      
+                let name = "";
+      if(message.guild.members.cache.get(results[j].DiscordID).nickname )
      
-          if(i % 2 == 0){val += parseInt(results[j].votes)+","}else{tit += message.guild.members.cache.get(results[j].DiscordID).user.username+"|";}
-          
+          val += parseInt(results[j].votes)+",";
+          tit += message.guild.members.cache.get(results[j].DiscordID).nickname+"|";
         
+              }
+               
                let pieChart = ImageCharts().cht('p3').chs('250x190') // 700px x 190px
 .chd(val) // 2 data points: 60 and 40
 .chl(tit).chtt("chart").toURL();
                 emb2.setImage(pieChart);
-              }
                 
                 m.edit(emb2);
               });
@@ -976,15 +978,15 @@ for (i = 0; i < rows.length; i++) {
                 );
                 
       
-          if(i % 2 == 0){val += parseInt(results[j].votes)+","}else{tit += message.guild.members.cache.get(results[j].DiscordID).user.username+"|";}
-          
-      
+          val += parseInt(results[j].votes)+",";
+          tit += message.guild.members.cache.get(results[j].DiscordID).nickname+"|";
+              }
+                        
                let pieChart = ImageCharts().cht('p3').chs('250x190') // 700px x 190px
 .chd(val) // 2 data points: 60 and 40
 .chl(tit).chtt("chart").toURL();
                 emb2.setImage(pieChart);
-               
-              }
+                        
                 m.edit(emb2);
               });
                         

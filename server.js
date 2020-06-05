@@ -955,7 +955,7 @@ for (i = 0; i < rows.length; i++) {
                
                let pieChart = ImageCharts().cht('p3').chs('250x190') // 700px x 190px
 .chd(val) // 2 data points: 60 and 40
-.chl(tit).chtt("chart").toURL();
+.chl(tit).chtt("Election results").toURL();
                 emb2.setImage(pieChart);
                 
                 m.edit(emb2);
@@ -1006,7 +1006,7 @@ for (i = 0; i < rows.length; i++) {
                         
                let pieChart = ImageCharts().cht('p3').chs('250x190') // 700px x 190px
 .chd(val) // 2 data points: 60 and 40
-.chl(tit).chtt("chart").toURL();
+.chl(tit).chtt("Election results").toURL();
                 emb2.setImage(pieChart);
                         
                 m.edit(emb2);

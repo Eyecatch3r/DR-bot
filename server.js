@@ -929,11 +929,10 @@ for (i = 0; i < rows.length; i++) {
                   true
                 );
       
-      for(let i = 0; i < results.length; i++)
-        {
-          if(i % 2 == 0){val += results[i].votes+","}else{tit += message.guild.members.cache.get(results[j].DiscordID).user.username+"|";}
+     
+          if(i % 2 == 0){val += parseInt(results[j].votes)+","}else{tit += message.guild.members.cache.get(results[j].DiscordID).user.username+"|";}
           
-        }
+        
                let pieChart = ImageCharts().cht('p3').chs('250x190') // 700px x 190px
 .chd(val) // 2 data points: 60 and 40
 .chl(tit).chtt("chart").toURL();
@@ -976,11 +975,10 @@ for (i = 0; i < rows.length; i++) {
                   true
                 );
                 
-      for(let i = 0; i < results.length; i++)
-        {
-          if(i % 2 == 0){val += results[i].votes+","}else{tit += message.guild.members.cache.get(results[j].DiscordID).user.username+"|";}
+      
+          if(i % 2 == 0){val += parseInt(results[j].votes)+","}else{tit += message.guild.members.cache.get(results[j].DiscordID).user.username+"|";}
           
-        }
+      
                let pieChart = ImageCharts().cht('p3').chs('250x190') // 700px x 190px
 .chd(val) // 2 data points: 60 and 40
 .chl(tit).chtt("chart").toURL();

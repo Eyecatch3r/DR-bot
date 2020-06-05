@@ -1090,7 +1090,7 @@ for (i = 0; i < rows.length; i++) {
                   }
                 });
                   });
-                }else(message.channel.send("not a pleb"))
+                }else(user.send("sorry but only plebs can candidate"))
             }
                 
           });

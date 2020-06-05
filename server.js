@@ -17,7 +17,7 @@ var CronJob = require('node-cron');
  const D3Node = require('d3-node');
 const d3n = require('d3node-piechart');
 const output = require('d3node-output');
-
+const ImageCharts = require('image-charts');
 //init sqlite API
 const dbFile = "./DR.db";
 const exists = fs.existsSync(dbFile);
@@ -632,8 +632,10 @@ clientdc.on("message", message => {
   if(message.content.toLowerCase().includes(command+"chart"))
     {
       let args = message.content.split(" ");
-      let pieChart = 
-      let attachment = new Discord.MessageAttachment('./example/output');
+      let pieChart = ImageCharts().cht('p3').chs('700x190') // 700px x 190px
+.chd('t:60,40') // 2 data points: 60 and 40
+.chl('Hello|World').toURL();
+      let attachment = new Discord.MessageAttachment(pieChart,"test");
      message.channel.send(attachment);
       
     }

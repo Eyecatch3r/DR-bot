@@ -530,13 +530,14 @@ clientdc.on("message", message => {
         
       });
         
-        db.all("SELECT * FROM Voters", [], (err, rows) => {
+        db.all("SELECT * FROM votercandidate", [], (err, rows) => {
       if (err) {
         throw err;
       }
       rows.forEach(row => {
-        console.log("vID \n" + row.vID);
-        console.log("discordID \n" + row.DiscordID);
+        console.log("vcID \n" + row.vcID);
+        console.log("voter \n" + row.voter);
+        console.log("candidate \n" + row.candidate);
         
       });
     });
@@ -955,7 +956,7 @@ for (i = 0; i < rows.length; i++) {
                
                let pieChart = ImageCharts().cht('p3').chs('250x190') // 700px x 190px
 .chd(val) // 2 data points: 60 and 40
-.chl(tit).chtt("chart").toURL();
+.chl(tit).chtt("Election results").toURL();
                 emb2.setImage(pieChart);
                 
                 m.edit(emb2);
@@ -965,7 +966,7 @@ for (i = 0; i < rows.length; i++) {
                                        db.run("DELETE FROM votercandidate WHERE vcID = '"+alreadyVoted.vcID+"'")
                                                    }
                       else {
-                    db.get("SELECT COUNT() AS count FROM Voters JOIN votercandidate ON vID = voter JOIN CandidateElections ON votercandidate.candidate = candidateElections.candidate JOIN Elections ON Election = eID WHERE voter IN (SELECT vID FROM Voters WHERE DiscordID = '"+user.id+"') AND Election IN (SELECT eID WHERE Month = '"+args[2]+"' AND title = '"+args[1]+"')",[],(err,rowt) => {
+                    db.get("SELECT COUNT() AS count FROM Voters JOIN votercandidate ON vID = voter JOIN CandidateElections ON votercandidate.candidate = candidateElections.candidate JOIN Elections ON Election = eID WHERE Voters.DiscordID = "+user.id+" AND Election IN (SELECT eID WHERE Month = '"+args[2]+"' AND title = '"+args[1]+"')",[],(err,rowt) => {
                      
               
                       if(rowt.count <= maxVote || rowt.count == null){
@@ -1006,7 +1007,7 @@ for (i = 0; i < rows.length; i++) {
                         
                let pieChart = ImageCharts().cht('p3').chs('250x190') // 700px x 190px
 .chd(val) // 2 data points: 60 and 40
-.chl(tit).chtt("chart").toURL();
+.chl(tit).chtt("Election results").toURL();
                 emb2.setImage(pieChart);
                         
                 m.edit(emb2);

@@ -464,6 +464,11 @@ const applyText = (canvas, text,fontsize) => {
 
 var command = process.env.Prefix;
 clientdc.on("message", message => {
+  if (message.content === command + "clearE") {
+    let args = message.content.split(" ");
+    db.run("UPDATE CandidateElections SET votes = 0 WHERE Election IN (SELECT eID FROM Elections WHERE Month = "+args[1]+")");
+  }
+  
   if (message.content === command + "clearDB") {
     if(message.author.id === '325296044739133450'){
     db.run("DELETE FROM candidates");
@@ -905,7 +910,7 @@ for (i = 0; i < rows.length; i++) {
 
         collector.on("collect", (reaction, user) => {
           if (!user.bot) {
-            db.serialize(() => {
+            db.parallelize(() => {
             
               reaction.users.remove(user);
               //check the reaction, then find the user based by its ID in the database and update the vote count

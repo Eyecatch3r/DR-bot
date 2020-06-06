@@ -466,7 +466,7 @@ var command = process.env.Prefix;
 clientdc.on("message", message => {
   if (message.content === command + "clearE") {
     let args = message.content.split(" ");
-    db.run("UPDATE CandidateElections SET votes = 0 WHERE Election IN (SELECT eID FROM Elections WHERE Month = '"+args[1]+"')");
+    db.run("UPDATE CandidateElections SET votes = 0 WHERE Election IN (SELECT eID FROM Elections WHERE Month = 'generalprobe')");
     db.run("DELETE FROM votercandidate WHERE candidate IN (SELECT candidate FROM candidateElections WHERE Election IN (SELECT eID FROM Elections WHERE Month = '"+args[1]+"'))");
   }
   

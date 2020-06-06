@@ -895,7 +895,7 @@ for (i = 0; i < rows.length; i++) {
        name = message.guild.members.cache.get(rows[i].DiscordID).user.username; 
       }
         val += parseInt(rows[i].votes)+",";
-          tit += name+"|";
+          tit += i+"|";
   
   let pieChart = ImageCharts().cht('p3').chs('250x190') // 700px x 190px
 .chd(val) // 2 data points: 60 and 40
@@ -956,7 +956,7 @@ for (i = 0; i < rows.length; i++) {
       }
      
           val += parseInt(results[j].votes)+",";
-          tit += name+"|";
+          tit += j+"|";
         
               }
                
@@ -975,7 +975,7 @@ for (i = 0; i < rows.length; i++) {
                     db.get("SELECT COUNT() AS count FROM Voters JOIN votercandidate ON vID = voter JOIN CandidateElections ON votercandidate.candidate = candidateElections.candidate JOIN Elections ON Election = eID WHERE Voters.DiscordID = "+user.id+" AND Election IN (SELECT eID WHERE Month = '"+args[2]+"' AND title = '"+args[1]+"')",[],(err,rowt) => {
                      
               
-                      if(rowt.count <= maxVote || rowt.count == null){
+                      if(rowt.count < maxVote || rowt.count == null){
                   let cID;
                   let vID;
                         
@@ -1008,7 +1008,7 @@ for (i = 0; i < rows.length; i++) {
       }
      
           val += parseInt(results[j].votes)+",";
-          tit += name+"|";
+          tit += j+"|";
               }
                         
                let pieChart = ImageCharts().cht('p3').chs('250x190') // 700px x 190px

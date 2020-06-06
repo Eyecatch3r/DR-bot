@@ -925,7 +925,7 @@ for (i = 0; i < rows.length; i++) {
                     
                     db.get("SELECT COUNT() AS c FROM Voters JOIN votercandidate ON vID = voter JOIN candidates ON cID = votercandidate.candidate JOIN CandidateElections ON cID = CandidateElections.candidate JOIN Elections ON election = eID WHERE Voters.DiscordID = '"+user.id+"' AND CandidateElections.number = '"+candidate.number +"' AND Month = '"+args[2]+"' AND title = '"+args[1]+"'",[],(err,count) => {
                     db.get("SELECT * FROM Voters JOIN votercandidate ON vID = voter JOIN candidates ON cID = votercandidate.candidate JOIN CandidateElections ON cID = CandidateElections.candidate JOIN Elections ON election = eID WHERE Voters.DiscordID = '"+user.id+"' AND CandidateElections.number = '"+candidate.number+"' AND Month = '"+args[2]+"' AND title = '"+args[1]+"'",[],(err,alreadyVoted) => {
-                      if(count.c != 0){db.run("UPDATE CandidateElections SET votes = votes-1 WHERE number = '"+candidate.number +"' AND election IN (SELECT eID FROM Elections WHERE title = '"+args[1]+"' AND Month = '"+args[2]+"')");
+                      if(count.c != null){db.run("UPDATE CandidateElections SET votes = votes-1 WHERE number = '"+candidate.number +"' AND election IN (SELECT eID FROM Elections WHERE title = '"+args[1]+"' AND Month = '"+args[2]+"')");
                                        
                                        //updates the embed with the new votes 
               let emb2 = new Discord.MessageEmbed();
@@ -976,6 +976,7 @@ for (i = 0; i < rows.length; i++) {
                      
               
                       if(rowt.count < maxVote || rowt.count == null){
+                       
                   let cID;
                   let vID;
                         
@@ -1041,7 +1042,7 @@ for (i = 0; i < rows.length; i++) {
                     
                     
                       }
-                      else { message.channel.send("voted too many");
+                      else { user.send("voted too many");
                         
                       }
                       

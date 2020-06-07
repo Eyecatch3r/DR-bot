@@ -1030,7 +1030,7 @@ for (i = 0; i < rows.length; i++) {
                           cID = row.candidate; 
                           db.get("SELECT vID FROM VOTERS WHERE DiscordID = '"+user.id+"'",[],(err,r) => {
                             vID = r.vID;
-                          db.run("INSERT INTO votercandidate(voter,candidate) VALUES('"+vID+"','"+cID+"')")});
+                          db.run("INSERT INTO votercandidate(voter,candidate,Election) VALUES('"+vID+"','"+cID+"','"+candidate.eID+"')")});
                         });
                       }
                       else db.get("SELECT * FROM CandidateElections WHERE number = '"+candidate.number+"'",[],(err,row) => {cID = row.candidate; 

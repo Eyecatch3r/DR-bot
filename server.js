@@ -281,7 +281,7 @@ clientdc.on("ready", () => {
   });
   
   
-  CronJob.schedule('03 21 * * SUN', () => {
+  CronJob.schedule('0 20 * * SUN', () => {
   clientdc.channels.cache
           .get("549645921487421495").send("<@&549645921487421495>");},{
    scheduled: true,
@@ -301,7 +301,7 @@ async function SenateMeetingTimer(){
   console.log(senateTime);
   
     clientdc.channels.cache
-          .get("514135876909924354").send("<@&549645921487421495>");
+          .get("514135876909924354").send("<@&577587377195974656>");
   
     
 }
@@ -500,6 +500,7 @@ clientdc.on("message", message => {
         console.log("cID \n" + row.cID);
         console.log("DiscordID \n" + row.DiscordID);
       });
+      
     });
 
     db.all("SELECT * FROM CandidateElections", [], (err, rows) => {

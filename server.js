@@ -925,7 +925,7 @@ for (i = 0; i < rows.length; i++) {
                   if (lett.indexOf(reaction.emoji.name) == candidate.number-1 && !user.bot) {
                     
                     db.get("SELECT COUNT() AS c FROM Voters JOIN votercandidate ON vID = voter WHERE Voters.DiscordID = '"+user.id+"' AND votercandidate.Election = '"+candidate.eID+"' AND candidate = '"+candidate.cID+"'",[],(err,count) => {
-                    db.get("SELECT * FROM Voters JOIN votercandidate ON vID = voter JOIN candidates ON cID = votercandidate.candidate JOIN CandidateElections ON cID = CandidateElections.candidate JOIN Elections ON election = eID WHERE Voters.DiscordID = '"+user.id+"' AND CandidateElections.number = '"+candidate.number+"' AND Month = '"+args[2]+"' AND title = '"+args[1]+"'",[],(err,alreadyVoted) => {
+                    db.get("SELECT * FROM Voters JOIN votercandidate ON vID = voter JOIN candidates ON cID = votercandidate.candidate JOIN CandidateElections ON cID = CandidateElections.candidate JOIN Elections ON CandidateElections.election = eID WHERE Voters.DiscordID = '"+user.id+"' AND CandidateElections.number = '"+candidate.number+"' AND Month = '"+args[2]+"' AND title = '"+args[1]+"'",[],(err,alreadyVoted) => {
                       if(count.c != 0){db.run("UPDATE CandidateElections SET votes = votes-1 WHERE number = '"+candidate.number +"' AND election IN (SELECT eID FROM Elections WHERE title = '"+args[1]+"' AND Month = '"+args[2]+"')");
                                        
                                        //updates the embed with the new votes 
@@ -1036,7 +1036,7 @@ for (i = 0; i < rows.length; i++) {
                       else db.get("SELECT * FROM CandidateElections WHERE number = '"+candidate.number+"'",[],(err,row) => {cID = row.candidate; 
                           db.get("SELECT vID FROM VOTERS WHERE DiscordID = '"+user.id+"'",[],(err,r) => {
                             vID = r.vID;
-                          db.run("INSERT INTO votercandidate(voter,candidate) VALUES('"+vID+"','"+cID+"','"+candidate.eID+"')")});
+                          db.run("INSERT INTO votercandidate(voter,candidate,Election) VALUES('"+vID+"','"+cID+"','"+candidate.eID+"')")});
                           });
                       
                                                                                                               }); 

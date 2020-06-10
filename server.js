@@ -288,6 +288,14 @@ clientdc.on("ready", () => {
    timezone: "Europe/Berlin"
 });
   
+  CronJob.schedule('0 11 * * *', () => {
+  clientdc.channels.cache
+          .get("554355563602116608").send("oh shit");},{
+   scheduled: true,
+   timezone: "Europe/Berlin"
+});
+  
+  
 });
 
 async function SenateMeetingTimer(){

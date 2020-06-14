@@ -2,13 +2,13 @@
 // where your node app starts
 
 // init project
-//const express = require("express");
+const express = require("express");
 var assets = require("./assets");
 const fs = require("fs");
 const discordBotkit = require("botkit-discord");
 var Client = require("uptime-robot");
 const bible = require("bible-english");
-//const app = express();
+const app = express();
 let portunus = require('romans');
 const http = require("http");
 const can = require("canvas");
@@ -28,7 +28,7 @@ const wikiFacts = require('wikifakt');
 const tr = require('translate');
 tr.key = 'trnsl.1.1.20200515T222139Z.a68c11f6ccb16bd4.b2bb25b5f6b3c103701bbe0015c7998ab237fa98';
 tr.engine = 'yandex';
-//app.use("/assets", assets);
+app.use("/assets", assets);
 
 const discordBot = require("./bot");
 const Discord = require("discord.js");
@@ -37,7 +37,7 @@ const clientdc = new Discord.Client();
 
 
 clientdc.login(process.env.DISCORD_TOKEN);
-//app.use(require("./guides"));
+app.use(require("./guides"));
 
 var MotionListChannel;
 
@@ -287,14 +287,6 @@ clientdc.on("ready", () => {
    scheduled: true,
    timezone: "Europe/Berlin"
 });
-  
-  CronJob.schedule('0 11 * * *', () => {
-  clientdc.channels.cache
-          .get("554355563602116608").send("oh shit");},{
-   scheduled: true,
-   timezone: "Europe/Berlin"
-});
-  
   
 });
 
@@ -1665,12 +1657,12 @@ clientdc.on("messageUpdate", message => {
 });
 
 // http://expressjs.com/en/starter/static-files.html
-//app.use(express.static("public"));
+app.use(express.static("public"));
 // listen for requests :)
-//const listener = app.listen(process.env.PORT, function() {
-  //console.log("Your app is listening on port " + listener.address().port);
+const listener = app.listen(process.env.PORT, function() {
+  console.log("Your app is listening on port " + listener.address().port);
 
-  //setInterval(() => {
-   // http.get(`http://${process.env.PROJECT_DOMAIN}.glitch.me/`);
-  //}, 280000);
-//});
+  setInterval(() => {
+    http.get(`http://${process.env.PROJECT_DOMAIN}.glitch.me/`);
+  }, 280000);
+});

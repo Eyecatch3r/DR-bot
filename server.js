@@ -2,13 +2,13 @@
 // where your node app starts
 
 // init project
-const express = require("express");
+//const express = require("express");
 var assets = require("./assets");
 const fs = require("fs");
 const discordBotkit = require("botkit-discord");
 var Client = require("uptime-robot");
 const bible = require("bible-english");
-const app = express();
+//const app = express();
 let portunus = require('romans');
 const http = require("http");
 const can = require("canvas");

@@ -14,9 +14,6 @@ const http = require("http");
 const can = require("canvas");
 const unb = require('unb-api');
 var CronJob = require('node-cron');
- const D3Node = require('d3-node');
-const d3n = require('d3node-piechart');
-const output = require('d3node-output');
 const ImageCharts = require('image-charts');
 //init sqlite API
 const dbFile = "./DR.db";

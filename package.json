@@ -34,9 +34,6 @@
     "translate": "^1.1.2",
     "unb-api": "^1.1.0",
     "node-cron": "^2.0.3",
-    "d3-node": "^2.2.2",
-    "d3node-piechart": "^0.0.10",
-    "d3node-output": "^1.0.3",
     "image-charts": "^5.2.0"
   },
   "devDependencies": {

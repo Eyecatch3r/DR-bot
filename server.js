@@ -1440,10 +1440,11 @@ for (i = 0; i < rows.length; i++) {
       message.member.roles.cache.has("543783180130320385") ||
       message.member.roles.cache.has("550392133991923738")
     ) {
-const filter = ["yes","no"];
+      const answer = ["yes","no"];
+const filter = response => {return answer};
       message.channel.send("do you really want to motion?").then(() => {
-	message.channel.awaitMessages(filter,{ max: 1, time: 30000, errors: ['time'] }).then( response => {
-    if(response == "yes"){
+	message.channel.awaitMessages(filter,{ max: 1, time: 30000, errors: ['time'] }).then( collected => {
+    if(collected == "yes"){
       var args = message.content.split(" ");
       console.log(
         "INSERT INTO Motions(motion,creator) VALUES(" +
@@ -1482,6 +1483,9 @@ const filter = ["yes","no"];
     } else {message.channel.send("Motion not noted")}
     
     })
+    .catch(collected => {
+			message.channel.send('ok then');
+		});
   });
       
       

@@ -622,7 +622,7 @@ clientdc.on("message", message => {
       
     }
   
-  if(message.content.toLowerCase().includes(command+"insertCandidate"))
+  if(message.content.toLowerCase().includes(command+"insertcandidate"))
     {
       var args = message.content.split(" ");
       db.run("INSERT INTO Candidates(DiscordID) VALUES('"+args[1]+"')");
@@ -631,7 +631,14 @@ db.get(
                   args[1] +
                   "';",
                 [],
-                (err, rowss) => {  db.run("INSERT INTO CandidateElections()")  });
+                (err, rowss) => {  let eID,cID;
+                    cID = rowss.cID;
+                    db.get("SELECT eID FROM Elections WHERE Month = '"+args[3]+"' AND Title = '"+args[2]+"'",[],(err, row)=> {
+                    eID = row.eID;
+                      db.run('INSERT INTO CandidateElections(candidate,Election,number) VALUES("' +cID +'","' +eID +'",'+args[4]+')')
+                    
+                    }); });
+      message.channel.send("candidate manually inserted");
     }
   if(message.content.includes(command+"random"))
     {

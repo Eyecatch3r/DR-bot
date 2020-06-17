@@ -1440,12 +1440,10 @@ for (i = 0; i < rows.length; i++) {
       message.member.roles.cache.has("543783180130320385") ||
       message.member.roles.cache.has("550392133991923738")
     ) {
-
+const filter = ["yes","no"];
       message.channel.send("do you really want to motion?").then(() => {
-	message.channel.awaitMessages(["yes","no"],{ max: 1, time: 30000, errors: ['time'] }).then( response => {
-    
-  });
-      
+	message.channel.awaitMessages(filter,{ max: 1, time: 30000, errors: ['time'] }).then( response => {
+    if(response == "yes"){
       var args = message.content.split(" ");
       console.log(
         "INSERT INTO Motions(motion,creator) VALUES(" +
@@ -1481,7 +1479,14 @@ for (i = 0; i < rows.length; i++) {
           }
         }
       );
-    } else {
+    } else {message.channel.send("Motion not noted")}
+    
+    })
+  });
+      
+      
+  }
+    else {
       message.channel.send(
         "you do not have any authority to propose motions, please turn to your corresponding Senator or Tribune (if you're a filthy Pleb)"
       );

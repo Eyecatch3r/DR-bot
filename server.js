@@ -631,7 +631,9 @@ db.get(
                   args[1] +
                   "';",
                 [],
-                (err, rowss) => {  let eID,cID;
+                (err, rowss) => { 
+                  if(rowss == undefined){db.run("INSERT INTO Candidates(DiscordID) VALUES('"+args[1]+"')");}
+                  let eID,cID;
                     cID = rowss.cID;
                     db.get("SELECT eID FROM Elections WHERE Month = '"+args[3]+"' AND Title = '"+args[2]+"'",[],(err, row)=> {
                     eID = row.eID;

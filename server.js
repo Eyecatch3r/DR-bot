@@ -622,6 +622,11 @@ clientdc.on("message", message => {
       
     }
   
+  if(message.content.toLowerCase().includes(command+"insertCandidate"))
+    {
+      
+    }
+  
   if(message.content.includes(command+"random"))
     {
      let args = message.content.split(" ");

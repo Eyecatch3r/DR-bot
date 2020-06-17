@@ -624,9 +624,15 @@ clientdc.on("message", message => {
   
   if(message.content.toLowerCase().includes(command+"insertCandidate"))
     {
-      db.run("INSERT INTO Candidates(DiscordID) ")
+      var args = message.content.split(" ");
+      db.run("INSERT INTO Candidates(DiscordID) VALUES('"+args[1]+"')");
+db.get(
+                "SELECT cID FROM candidates WHERE DiscordID = '" +
+                  args[1] +
+                  "';",
+                [],
+                (err, rowss) => {  db.run("INSERT INTO CandidateElections()")  });
     }
-  
   if(message.content.includes(command+"random"))
     {
      let args = message.content.split(" ");

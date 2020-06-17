@@ -624,7 +624,7 @@ clientdc.on("message", message => {
   
   if(message.content.toLowerCase().includes(command+"insertCandidate"))
     {
-      
+      db.run("INSERT INTO Candidates(DiscordID) ")
     }
   
   if(message.content.includes(command+"random"))

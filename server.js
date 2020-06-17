@@ -1440,6 +1440,12 @@ for (i = 0; i < rows.length; i++) {
       message.member.roles.cache.has("543783180130320385") ||
       message.member.roles.cache.has("550392133991923738")
     ) {
+
+      message.channel.send("do you really want to motion?").then(() => {
+	message.channel.awaitMessages(["yes","no"],{ max: 1, time: 30000, errors: ['time'] }).then( response => {
+    
+  });
+      
       var args = message.content.split(" ");
       console.log(
         "INSERT INTO Motions(motion,creator) VALUES(" +

@@ -1441,10 +1441,10 @@ for (i = 0; i < rows.length; i++) {
       message.member.roles.cache.has("550392133991923738")
     ) {
       const answer = ["yes","no"];
-const filter = response => {return answer};
+const filter = response => {return answer.includes(response.content.toLowerCase())};
       message.channel.send("do you really want to motion?").then(() => {
-	message.channel.awaitMessages(filter,{ max: 1, time: 30000, errors: ['time'] }).then( collected => {
-    if(collected == "yes"){
+	message.channel.awaitMessages(filter,{ max: 1, time: 3000, errors: ['time'] }).then( collected => {
+    if(collected === "yes"){
       var args = message.content.split(" ");
       console.log(
         "INSERT INTO Motions(motion,creator) VALUES(" +

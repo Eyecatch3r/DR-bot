@@ -625,7 +625,7 @@ clientdc.on("message", message => {
   if(message.content.toLowerCase().includes(command+"insertcandidate"))
     {
       var args = message.content.split(" ");
-      db.run("INSERT INTO Candidates(DiscordID) VALUES('"+args[1]+"')");
+      
 db.get(
                 "SELECT cID FROM candidates WHERE DiscordID = '" +
                   args[1] +

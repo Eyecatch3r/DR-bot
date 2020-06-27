@@ -14,9 +14,6 @@ const http = require("http");
 const can = require("canvas");
 const unb = require('unb-api');
 var CronJob = require('node-cron');
- const D3Node = require('d3-node');
-const d3n = require('d3node-piechart');
-const output = require('d3node-output');
 const ImageCharts = require('image-charts');
 //init sqlite API
 const dbFile = "./DR.db";
@@ -625,6 +622,26 @@ clientdc.on("message", message => {
       
     }
   
+  if(message.content.toLowerCase().includes(command+"insertcandidate"))
+    {
+      var args = message.content.split(" ");
+      
+db.get(
+                "SELECT cID FROM candidates WHERE DiscordID = '" +
+                  args[1] +
+                  "';",
+                [],
+                (err, rowss) => { 
+                  if(rowss == undefined){db.run("INSERT INTO Candidates(DiscordID) VALUES('"+args[1]+"')");}
+                  let eID,cID;
+                    cID = rowss.cID;
+                    db.get("SELECT eID FROM Elections WHERE Month = '"+args[3]+"' AND Title = '"+args[2]+"'",[],(err, row)=> {
+                    eID = row.eID;
+                      db.run('INSERT INTO CandidateElections(candidate,Election,number) VALUES("' +cID +'","' +eID +'",'+args[4]+')')
+                    
+                    }); });
+      message.channel.send("candidate manually inserted");
+    }
   if(message.content.includes(command+"random"))
     {
      let args = message.content.split(" ");
@@ -1443,6 +1460,11 @@ for (i = 0; i < rows.length; i++) {
       message.member.roles.cache.has("543783180130320385") ||
       message.member.roles.cache.has("550392133991923738")
     ) {
+      const answer = ["yes","no"];
+const filter = response => {return answer.includes(response.content.toLowerCase())};
+      message.channel.send("do you really want to motion?").then(() => {
+	message.channel.awaitMessages(filter,{ max: 1, time: 3000, errors: ['time'] }).then( collected => {
+    if(collected === "yes"){
       var args = message.content.split(" ");
       console.log(
         "INSERT INTO Motions(motion,creator) VALUES(" +
@@ -1478,7 +1500,17 @@ for (i = 0; i < rows.length; i++) {
           }
         }
       );
-    } else {
+    } else {message.channel.send("Motion not noted")}
+    
+    })
+    .catch(collected => {
+			message.channel.send('ok then');
+		});
+  });
+      
+      
+  }
+    else {
       message.channel.send(
         "you do not have any authority to propose motions, please turn to your corresponding Senator or Tribune (if you're a filthy Pleb)"
       );

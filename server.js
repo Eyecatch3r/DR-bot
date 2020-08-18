@@ -14,7 +14,7 @@ const can = require("canvas");
 const { Client } = require('unb-api');
 const client = new Client('eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJhcHBfaWQiOiI3Mjg5NjU5MTQ0NzY4MDY2ODUiLCJpYXQiOjE1OTM4Njk0MTd9._E6dCtkLswWgDySTPihh32Al9tvHPxFuxqY_eBk8waQ');
 const GuildID = "514135876909924352";
-
+const Tree = require("treeify");
 var CronJob = require('node-cron');
 const ImageCharts = require('image-charts');
 //init sqlite API
@@ -283,10 +283,11 @@ clientdc.on("ready", () => {
   
   CronJob.schedule('0 20 * * SUN', () => {
   clientdc.channels.cache
-          .get("549645921487421495").send("<@&549645921487421495>");},{
+          .get("549645921487421495").send("<@&577587377195974656>");},{
    scheduled: true,
    timezone: "Europe/Berlin"
 });
+  
   CronJob.schedule('0 1 * * *', () => {
   collectTaxes()},{
    scheduled: true,
@@ -521,7 +522,7 @@ clientdc.on("message", message => {
   else {message.channel.send("sorry but you're not the Imperator "+"<@325296044739133450>")}
   }
   
-  if(message.content.toLowerCase().includes("showtreasury")){
+  if(message.content.toLowerCase().includes(command+"showtreasury")){
     let emb = new Discord.MessageEmbed();
     emb.setColor("0x66023c");
     emb.setFooter("Imperial treasury powered by our most humble Imperator");
@@ -629,7 +630,9 @@ clientdc.on("message", message => {
    
     db.all('SELECT * FROM Generals ORDER BY generals DESC',[],(err,rows) => {
         if(err){throw err;}
-      rows.forEach(row => {if(row.DisordID != "220590173962895360"){emb.addField(clientdc.users.cache.get(row.DiscordID).username,row.generals+"\n"+message.guild.members.cache.get(row.DiscordID).toString(),false);}});
+      rows.forEach(row => {
+        if(row.DiscordID != "220590173962895360" && clientdc.users.cache.get(row.DiscordID)){emb.addField(clientdc.guilds.cache.get("514135876909924352").members.cache.get(row.DiscordID).displayName,row.generals+"\n"+message.guild.members.cache.get(row.DiscordID).toString(),false);
+                                                 }});
         message.channel.send(emb);
       
       });
@@ -888,7 +891,9 @@ gradient.addColorStop(1, "#000");
         case "tribune":
           maxVote = 2;
           break;
-          
+        case "pope":
+          maxVote = 1;
+          break;
       }
     
     let emb = new Discord.MessageEmbed();
@@ -995,7 +1000,7 @@ for (i = 0; i < rows.length; i++) {
                 
                 db.get('SELECT * FROM Elections JOIN CandidateElections ON eID = Election JOIN Candidates ON candidate = cID WHERE Title = "' +args[1] +'" AND Month = "' +args[2] +'" AND number = '+order,[],(err,candidate) => {
                 
-                if(args[1] == "tribune" && clientdc.guilds.cache.get('514135876909924352').members.cache.get(user.id).roles.cache.get('548455163044560897') || args[1] != "tribune" && clientdc.guilds.cache.get('514135876909924352').members.cache.get(user.id).roles.cache.get('548455163044560897') || clientdc.guilds.cache.get('514135876909924352').members.cache.get(user.id).roles.cache.get('548455006693752852')){
+                if(args[1] == "tribune" && clientdc.guilds.cache.get('514135876909924352').members.cache.get(user.id).roles.cache.get('548455163044560897') || args[1] != "tribune" && clientdc.guilds.cache.get('514135876909924352').members.cache.get(user.id).roles.cache.get('548455163044560897') || clientdc.guilds.cache.get('514135876909924352').members.cache.get(user.id).roles.cache.get('548455006693752852') || args[1] == "pope" && clientdc.guilds.cache.get('514135876909924352').members.cache.get(user.id).roles.cache.get('564496146622316556')){
                   if (lett.indexOf(reaction.emoji.name) == candidate.number-1 && !user.bot) {
                     
                     db.get("SELECT COUNT() AS c FROM Voters JOIN votercandidate ON vID = voter WHERE Voters.DiscordID = '"+user.id+"' AND votercandidate.Election = '"+candidate.eID+"' AND candidate = '"+candidate.cID+"'",[],(err,count) => {
@@ -1679,6 +1684,93 @@ const filter = response => {return answer.includes(response.content.toLowerCase(
   }
 });
 
+clientdc.on("message", async message => {
+  if (!message.author.bot && message.author.id != "241349696856129539") {
+    if (message.content.toLowerCase().includes("istanbul")) {
+      message.channel.send("its Constantinople smh");
+    }
+
+    if (message.channel.type === "dm") {
+      var args = message.content.split("-");
+     clientdc.channels.cache.get(args[0]).send(args[1]);
+    }
+
+    if (
+      message.content.toLowerCase().includes("the general") ||
+      message.content.toLowerCase().includes("general")
+    ) {
+      message.channel.send("hail Apicius");
+      message.react("640270832115122196");
+    }
+
+    if (
+      message.content.toLowerCase().includes("hre ") ||
+      message.content.toLowerCase().includes("holy Roman Empire") ||
+      message.content.toLowerCase().includes("hre ")
+    ) {
+      message.channel.send("shame on you");
+    }
+
+    if (
+      message.content.toLowerCase().includes("Civil war") ||
+      message.content.toLowerCase().includes("civil war")
+    ) {
+      message.channel.send("yall know who won right :wink:");
+    }
+
+    if (
+      message.content.toLowerCase().includes("imperator") ||
+      message.content.toLowerCase().includes("emperor")
+    ) {
+      var num = Math.random();
+      console.log(num);
+      if (num <= 0.8) {
+        message.channel.send(
+          "All hail the Imperator https://media.4teachers.de/images/thumbs/image_thumb.1146.jpg"
+        );
+      } else
+        message.channel.send(
+          "All hail the Imperator https://cdn.discordapp.com/attachments/543787157127561216/706809950327799848/waaw.png"
+        );
+      message.react("664229248944439301");
+    }
+    if (
+      message.content.toLowerCase().includes("imperatrix") ||
+      message.content.toLowerCase().includes("empress")
+    ) {
+      message.channel.send(
+        "All hail the Empress https://pbs.twimg.com/profile_images/837236794387234816/megbmYw2_400x400.jpg"
+      );
+      message.react("636456201273475113");
+    }
+    
+     if (
+      message.content.toLowerCase().includes("boo") && !message.content.toLowerCase().includes("book")
+    ) {
+      message.channel.send(
+        "https://cdn.discordapp.com/attachments/536547184448110602/741412013430931467/IMG-20200807-WA0082.jpg"
+      );
+      
+    }
+    
+    if (
+      message.content.toLowerCase().includes("canis")
+    ) {
+      message.channel.send(
+        "https://lh3.googleusercontent.com/pw/ACtC-3ei9pLdPL1wJ3B7FtjbDyEsNHlUQeE8eCITVyQ8uUf_BxaAJaaG3LChL2mMoKjoKh_Zk35cQS9J2CdLjpqB91hOoqS_1Zvf09O4gvnafBjf_YM-kMoswDQMPH66ZI0eVd-TIlAInxWfHYBrNjadAfqG=w963-h1286-no?authuser=0"
+      );
+      
+    }
+    
+    
+    if (
+      message.content.toLowerCase().includes("carthago")){
+      message.channel.send("Carthago Delenda Est!");
+          
+      }
+      }
+  }
+);
 
 
 clientdc.on("messageUpdate", message => {

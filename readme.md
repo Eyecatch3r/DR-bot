@@ -5,4 +5,24 @@
 this is the official Discord Romanum bot
 =============
 
+Changes to Version 3.0
+
+Province System-
+-added Province commands
+-implemented Province Framework
+-Resource system
+-Province editing commands
+
+Automatic Unbelievaboat API changes
+-Cronjob tax collection
+-Gambling tax Feature
+
+Gladiator feature-
+-added challenge command
+-added bet command
+
+Battle System v1.0
+-added initial combat system mechanic
+
+
 Author: Eyecatcher#7783

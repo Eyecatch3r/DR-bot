@@ -6,13 +6,15 @@ const express = require("express");
 var assets = require("./assets");
 const fs = require("fs");
 const discordBotkit = require("botkit-discord");
-var Client = require("uptime-robot");
 const bible = require("bible-english");
 const app = express();
 let portunus = require('romans');
 const http = require("http");
 const can = require("canvas");
-const unb = require('unb-api');
+const { Client } = require('unb-api');
+const client = new Client('eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJhcHBfaWQiOiI3Mjg5NjU5MTQ0NzY4MDY2ODUiLCJpYXQiOjE1OTM4Njk0MTd9._E6dCtkLswWgDySTPihh32Al9tvHPxFuxqY_eBk8waQ');
+const GuildID = "514135876909924352";
+const Tree = require("treeify");
 var CronJob = require('node-cron');
 const ImageCharts = require('image-charts');
 //init sqlite API
@@ -26,30 +28,38 @@ const tr = require('translate');
 tr.key = 'trnsl.1.1.20200515T222139Z.a68c11f6ccb16bd4.b2bb25b5f6b3c103701bbe0015c7998ab237fa98';
 tr.engine = 'yandex';
 app.use("/assets", assets);
-
+const arrayList = require("arraylist");
 const discordBot = require("./bot");
 const Discord = require("discord.js");
 const clientdc = new Discord.Client();
-
-
+const interactions = require("discord-slash-commands-client");
+//global variables
+var BattleAlreadyCommenced = false;
+var taxRate = 0.6; 
+var taxRateTop5 = 0.65;
 
 clientdc.login(process.env.DISCORD_TOKEN);
 app.use(require("./guides"));
 
 var MotionListChannel;
 
+//register Slash interactions with the client
+
+clientdc.interactions = new interactions.Client(
+    process.env.DISCORD_TOKEN,
+    "700662464856981564"
+);
+
 //compare dates with the current date
 const dateformat = require("dateformat");
 var date = new Date();
-console.log(dateformat("isoDate"));
+//console.log(dateformat("isoDate"));
 var dates = dateformat("isoDate").split("-");
 var time = dateformat(date, "longTime", true).split(":");
 if (dates[1].startsWith("0")) {
   dates[1] = dates[1].substring(1);
 }
-console.log(dates[1] + dates[2]);
-console.log(dateformat(date, "longTime", true));
-console.log(time[0] + time[1]);
+
 
 
 function updateEmbed() {
@@ -58,37 +68,37 @@ function updateEmbed() {
   mainEmb.setTitle("Motions");
   mainEmb.setColor("0xcc0000");
   mainEmb.setFooter(
-    "Senate Meeting discussions powered by our most humble Imperator"
+      "Senate Meeting discussions powered by our most humble Imperator"
   );
   mainEmb.setThumbnail(
-    "https://cdn.glitch.com/24cdd29f-170e-4ac8-9dc2-8abc1cbbaeaa%2Fimage0.png?v=1588186014686"
+      "https://cdn.discordapp.com/attachments/548918811391295489/776740280266784778/purpleDR.png"
   );
   mainEmb.setAuthor(
-    "𝐈𝐌𝐏𝐄𝐑𝐀𝐓𝐎𝐑·𝐏𝐕𝐁𝐋𝐈𝐕𝐒",
-    "https://cdn.glitch.com/24cdd29f-170e-4ac8-9dc2-8abc1cbbaeaa%2Fimageedit_1_3956664875.png?v=1588186424473"
+      "𝐈𝐌𝐏𝐄𝐑𝐀𝐓𝐎𝐑·𝐏𝐕𝐁𝐋𝐈𝐕𝐒",
+      "https://cdn.glitch.com/24cdd29f-170e-4ac8-9dc2-8abc1cbbaeaa%2Fimageedit_1_3956664875.png?v=1588186424473"
   );
   mainEmb.setDescription("Motions to discuss in Senate meetings");
 
   let msgs = new Array();
-  let sql2 = `SELECT * FROM Motions;`;
+  let sql2 = 'SELECT * FROM Motions';
   db.all(sql2, [], (err, rows) => {
     if (err) {
       throw err;
     }
     rows.forEach(row => {
       //message.channel.send(row.motion);
-      if (clientdc.users.cache.get(row.creator) != undefined) {
+      if (clientdc.users.cache.get(row.creator) !== undefined) {
         let msg =
-          row.motion +
-          "\n" +
-          "From:" +
-          clientdc.users.cache.get(row.creator).toString() +
-          "\n" +
-          "motion ID:" +
-          row.mID +
-          "\n" +
-          "--------------------" +
-          "\n";
+            row.motion +
+            "\n" +
+            "From:" +
+            "<@!"+row.creator+">"+
+            "\n" +
+            "motion ID:" +
+            row.mID +
+            "\n" +
+            "--------------------" +
+            "\n";
         msgs.push(msg);
       }
     });
@@ -108,14 +118,14 @@ function updateEmbed() {
       secEmb.setTitle("Motions");
       secEmb.setColor("0xcc0000");
       secEmb.setFooter(
-        "Senate Meeting discussions powered by our most humble Imperator"
+          "Senate Meeting discussions powered by our most humble Imperator"
       );
       secEmb.setThumbnail(
-        "https://cdn.glitch.com/24cdd29f-170e-4ac8-9dc2-8abc1cbbaeaa%2Fimage0.png?v=1588186014686"
+          "https://cdn.discordapp.com/attachments/548918811391295489/776740280266784778/purpleDR.png"
       );
       secEmb.setAuthor(
-        "𝐈𝐌𝐏𝐄𝐑𝐀𝐓𝐎𝐑·𝐏𝐕𝐁𝐋𝐈𝐕𝐒",
-        "https://cdn.glitch.com/24cdd29f-170e-4ac8-9dc2-8abc1cbbaeaa%2Fimageedit_1_3956664875.png?v=1588186424473"
+          "𝐈𝐌𝐏𝐄𝐑𝐀𝐓𝐎𝐑·𝐏𝐕𝐁𝐋𝐈𝐕𝐒",
+          "https://cdn.glitch.com/24cdd29f-170e-4ac8-9dc2-8abc1cbbaeaa%2Fimageedit_1_3956664875.png?v=1588186424473"
       );
       secEmb.setDescription("Motions to discuss in Senate meetings");
 
@@ -131,18 +141,18 @@ function updateEmbedMessage(message) {
   embed.setTitle("Motions");
   embed.setColor("0xcc0000");
   embed.setFooter(
-    "Senate Meeting discussions powered by our most humble Imperator"
+      "Senate Meeting discussions powered by our most humble Imperator"
   );
   embed.setThumbnail(
-    "https://cdn.glitch.com/24cdd29f-170e-4ac8-9dc2-8abc1cbbaeaa%2Fimage0.png?v=1588186014686"
+      "https://cdn.discordapp.com/attachments/548918811391295489/776740280266784778/purpleDR.png"
   );
   embed.setAuthor(
-    "𝐈𝐌𝐏𝐄𝐑𝐀𝐓𝐎𝐑·𝐏𝐕𝐁𝐋𝐈𝐕𝐒",
-    "https://cdn.glitch.com/24cdd29f-170e-4ac8-9dc2-8abc1cbbaeaa%2Fimageedit_1_3956664875.png?v=1588186424473"
+      "𝐈𝐌𝐏𝐄𝐑𝐀𝐓𝐎𝐑·𝐏𝐕𝐁𝐋𝐈𝐕𝐒",
+      "https://cdn.glitch.com/24cdd29f-170e-4ac8-9dc2-8abc1cbbaeaa%2Fimageedit_1_3956664875.png?v=1588186424473"
   );
 
-  let msgs = new Array();
-  let sql2 = `SELECT * FROM Motions;`;
+  let msgs = [];
+  let sql2 = `SELECT * FROM Motions`;
   db.all(sql2, [], (err, rows) => {
     if (err) {
       throw err;
@@ -151,17 +161,15 @@ function updateEmbedMessage(message) {
       //message.channel.send(row.motion);
       if (message.guild.members.cache.get(row.creator) != undefined) {
         let msg =
-          row.motion +
-          "\n" +
-          "From:" +
-          message.guild.members.cache.get(row.creator).toString() +
-          "\n" +
-          "motion ID:" +
-          row.mID +
-          "";
+            row.motion +
+            "\n" +
+            "From:" +
+            message.guild.members.cache.get(row.creator).toString() +
+            "\n" +
+            "motion ID:" +
+            row.mID +
+            "";
         msgs.push(msg);
-      } else {
-        message.channel.send("im sorry but this is the wrong Server");
       }
 
       //message.channel.send(row.mID);
@@ -170,80 +178,175 @@ function updateEmbedMessage(message) {
       msgs.forEach(msg => embed.addField("motions", msg+"/"+msgs.indexOf(msg)));
       var secEmb = new Discord.MessageEmbed();
 
-        secEmb.setTitle("Motions");
-        secEmb.setColor("0xcc0000");
-        secEmb.setFooter(
+      secEmb.setTitle("Motions");
+      secEmb.setColor("0xcc0000");
+      secEmb.setFooter(
           "Senate Meeting discussions powered by our most humble Imperator"
-        );
-        secEmb.setThumbnail(
-          "https://cdn.glitch.com/24cdd29f-170e-4ac8-9dc2-8abc1cbbaeaa%2Fimage0.png?v=1588186014686"
-        );
-        secEmb.setAuthor(
+      );
+      secEmb.setThumbnail(
+          "https://cdn.discordapp.com/attachments/548918811391295489/776740280266784778/purpleDR.png"
+      );
+      secEmb.setAuthor(
           "𝐈𝐌𝐏𝐄𝐑𝐀𝐓𝐎𝐑·𝐏𝐕𝐁𝐋𝐈𝐕𝐒",
           "https://cdn.glitch.com/24cdd29f-170e-4ac8-9dc2-8abc1cbbaeaa%2Fimageedit_1_3956664875.png?v=1588186424473"
-        );
-        secEmb.setDescription("Motions to discuss in Senate meetings");
-      
+      );
+      secEmb.setDescription("Motions to discuss in Senate meetings");
+
       message.guild.channels.cache
-        .get("705136080105767004")
-        .messages.fetch({ around: "705898782935613501", limit: 1 })
-        .then(messages => messages.first().edit(embed));
-      
+          .get("705136080105767004")
+          .messages.fetch({ around: "705898782935613501", limit: 1 })
+          .then(messages => messages.first().edit(embed));
+
       message.guild.channels.cache
           .get("705136080105767004")
           .messages.fetch({ around: "705898783757565995", limit: 1 })
           .then(messages => messages.first().edit(secEmb));
     } else {
-      
-        var args2 = new Array();
+
+      var args2 = new Array();
       var length = (msgs.length % 2 == 0) ? (msgs.length) : (msgs.length+1)
-      
-        for (var i = length / 2; i <= length; i++) {
-          args2.push(msgs[i]);
-          
-          
-          msgs.splice(i,1);
-          
-        }
-  for(var i = args2.length-1; i >= 0; i--){if(args2[i] == undefined){args2.pop()}}
 
-        var secEmb = new Discord.MessageEmbed();
+      for (var i = length / 2; i <= length; i++) {
+        args2.push(msgs[i]);
 
-        secEmb.setTitle("Motions");
-        secEmb.setColor("0xcc0000");
-        secEmb.setFooter(
+
+        msgs.splice(i,1);
+
+      }
+      for(var i = args2.length-1; i >= 0; i--){if(args2[i] == undefined){args2.pop()}}
+
+      var secEmb = new Discord.MessageEmbed();
+
+      secEmb.setTitle("Motions");
+      secEmb.setColor("0xcc0000");
+      secEmb.setFooter(
           "Senate Meeting discussions powered by our most humble Imperator"
-        );
-        secEmb.setThumbnail(
-          "https://cdn.glitch.com/24cdd29f-170e-4ac8-9dc2-8abc1cbbaeaa%2Fimage0.png?v=1588186014686"
-        );
-        secEmb.setAuthor(
+      );
+      secEmb.setThumbnail(
+          "https://cdn.discordapp.com/attachments/548918811391295489/776740280266784778/purpleDR.png"
+      );
+      secEmb.setAuthor(
           "𝐈𝐌𝐏𝐄𝐑𝐀𝐓𝐎𝐑·𝐏𝐕𝐁𝐋𝐈𝐕𝐒",
           "https://cdn.glitch.com/24cdd29f-170e-4ac8-9dc2-8abc1cbbaeaa%2Fimageedit_1_3956664875.png?v=1588186424473"
-        );
-        secEmb.setDescription("Motions to discuss in Senate meetings");
+      );
+      secEmb.setDescription("Motions to discuss in Senate meetings");
 
-        args2.forEach(msg => secEmb.addField("motion", msg+"/"+parseInt(args2.indexOf(msg)+msgs.length,10), false));
-        msgs.forEach(msg2 => embed.addField("motion", msg2+"/"+msgs.indexOf(msg2), false));
-        message.guild.channels.cache
+      args2.forEach(msg => secEmb.addField("motion", msg+"/"+parseInt(args2.indexOf(msg)+msgs.length,10), false));
+      msgs.forEach(msg2 => embed.addField("motion", msg2+"/"+msgs.indexOf(msg2), false));
+      message.guild.channels.cache
           .get("705136080105767004")
-          .messages.fetch({ around: "705898782935613501", limit: 1 })
+          .messages.cache.get({ around: "705898782935613501", limit: 1 })
           .then(messages => messages.first().edit(embed));
-        message.guild.channels.cache
+      message.guild.channels.cache
           .get("705136080105767004")
-          .messages.fetch({ around: "705898783757565995", limit: 1 })
+          .messages.cache.get({ around: "705898783757565995", limit: 1 })
           .then(messages => messages.first().edit(secEmb));
-      }
-    
+    }
+
   });
 }
 
-clientdc.on("ready", () => {
-  //db.run("DELETE FROM candidates");
-  //db.run("DELETE FROM Elections");
-  //db.run("DELETE FROM CandidateElections");
-  
-  updateEmbed();
+function updateProvinceMessage(message) {
+  let embed = new Discord.MessageEmbed();
+
+  embed.setTitle("Provinces");
+  embed.setColor("0xcc0000");
+  embed.setFooter(
+      "Provinces powered by our most humble Imperator"
+  );
+  embed.setThumbnail(
+      "https://cdn.discordapp.com/attachments/548918811391295489/776740280266784778/purpleDR.png"
+  );
+  embed.setAuthor(
+      "𝐈𝐌𝐏𝐄𝐑𝐀𝐓𝐎𝐑·𝐏𝐕𝐁𝐋𝐈𝐕𝐒",
+      "https://cdn.glitch.com/24cdd29f-170e-4ac8-9dc2-8abc1cbbaeaa%2Fimageedit_1_3956664875.png?v=1588186424473"
+  );
+
+  let msgs = [];
+  let sql2 = `SELECT * FROM Province`;
+  db.all(sql2, [], (err, rows) => {
+    if (err) {
+      throw err;
+    }
+    rows.forEach(row => {
+        let msg =
+            "income: "+
+            row.income +
+            "\n" +
+            "population: " +
+            row.population +
+            "\n" +
+            "influence: " +
+            row.influence +
+            "\n population growth: "+
+            row.population_growth
+            ;
+        msgs.push(msg);
+    });
+    if (msgs.length <= 25) {
+      msgs.forEach(msg => embed.addField(rows[msgs.indexOf(msg)].province, msg+"\n"+msgs.indexOf(msg)));
+      var secEmb = new Discord.MessageEmbed();
+
+      clientdc.guilds.cache.get(GuildID).channels.cache
+          .get("817410470700515338")
+          .messages.fetch({ around: "817410715018854410", limit: 1 })
+          .then(messages => messages.first().edit(embed));
+
+    } else {
+
+      var args2 = new Array();
+      var length = (msgs.length % 2 == 0) ? (msgs.length) : (msgs.length+1)
+
+      for (var i = length / 2; i <= length; i++) {
+        args2.push(msgs[i]);
+
+
+        msgs.splice(i,1);
+
+      }
+      for(var i = args2.length-1; i >= 0; i--){if(args2[i] == undefined){args2.pop()}}
+
+      var secEmb = new Discord.MessageEmbed();
+
+      secEmb.setTitle("Provinces");
+      secEmb.setColor("0xcc0000");
+      secEmb.setFooter(
+          "Senate Meeting discussions powered by our most humble Imperator"
+      );
+      secEmb.setThumbnail(
+          "https://cdn.discordapp.com/attachments/548918811391295489/776740280266784778/purpleDR.png"
+      );
+      secEmb.setAuthor(
+          "𝐈𝐌𝐏𝐄𝐑𝐀𝐓𝐎𝐑·𝐏𝐕𝐁𝐋𝐈𝐕𝐒",
+          "https://cdn.glitch.com/24cdd29f-170e-4ac8-9dc2-8abc1cbbaeaa%2Fimageedit_1_3956664875.png?v=1588186424473"
+      );
+      secEmb.setDescription("Motions to discuss in Senate meetings");
+
+      args2.forEach(msg => secEmb.addField("Provinces", msg+"\n"+parseInt(args2.indexOf(msg)+msgs.length,10), false));
+      msgs.forEach(msg2 => embed.addField("Provinces", msg2+"\n"+msgs.indexOf(msg2), false));
+      message.guild.channels.cache
+          .get("817410470700515338")
+          .messages.cache.get({ around: "817410715018854410", limit: 1 })
+          .then(messages => messages.first().edit(embed));
+      message.guild.channels.cache
+          .get("817410470700515338")
+          .messages.cache.get({ around: "817411093537619979", limit: 1 })
+          .then(messages => messages.first().edit(secEmb));
+    }
+
+  });
+}
+
+clientdc.on("ready", (interaction) => {
+  //Slash commands
+
+  clientdc.interactions.getCommands().then(console.log).catch(console.error);
+
+
+
+
+updateEmbed();
+
 
   db.all("SELECT * FROM candidates", [], (err, rows) => {
     if (err) {
@@ -276,31 +379,204 @@ clientdc.on("ready", () => {
       console.log("Month \n" + row.Month);
     });
   });
+
+
+  CronJob.schedule('0 19 * * SUN', () => {
+    clientdc.channels.cache
+        .get("549645921487421495").send("<@&577587377195974656>");},{
+    scheduled: true,
+    timezone: "Europe/Berlin"
+  });
+
+  CronJob.schedule('0 2 * * *', () => {
+    
+     provinceIncome()
+  },{
+    scheduled: true,
+    timezone: "Europe/Berlin"
+  });
   
+   CronJob.schedule('0 3 * * *', () => {
+    collectTaxes();
+     
+  },{
+    scheduled: true,
+    timezone: "Europe/Berlin"
+  }); 
   
-  CronJob.schedule('0 20 * * SUN', () => {
-  clientdc.channels.cache
-          .get("549645921487421495").send("<@&549645921487421495>");},{
-   scheduled: true,
-   timezone: "Europe/Berlin"
-});
+  CronJob.schedule('0 0 * * *', () => {
+    db.run("UPDATE Province SET Boosted = false");
+     
+  },{
+    scheduled: true,
+    timezone: "Europe/Berlin"
+  });
   
+  CronJob.schedule('0 23 * * SUN', () => {
+    db.run("DELETE FROM MOTIONS")},{
+    scheduled: true,
+    timezone: "Europe/Berlin"
+  });
+
+
+
 });
 
-async function SenateMeetingTimer(){
-  var senateDate = dateformat("fullDate");
-  var senateTime = dateformat(senateTime,"UTC:H:MM:ss:ll");
-  
-  if(senateDate != dateformat("fullDate") || senateTime != dateformat("UTC:HH")){
-    senateDate = dateformat("fullDate");
-    senateTime = dateformat("UTC:HH"); 
+clientdc.ws.on("INTERACTION_CREATE", async interaction => {
+  switch(interaction.data.name) {
+    case "ping":
+    if(interaction.member.roles.includes("548455006693752852")) {
+      clientdc.api.interactions(interaction.id, interaction.token).callback.post({
+        data: {
+          type: 4,
+          data: {
+            content: 'Based'
+          }
+        }
+      })
+    }else{
+      clientdc.api.interactions(interaction.id, interaction.token).callback.post({
+        data: {
+          type: 4,
+          data: {
+            content: 'Pleb'
+          }
+        }
+      })
+    }
+    break;
+
+    case "number":
+      var n = 0;
+      if(isNaN(parseInt(interaction.data.options[0].value)))
+      {
+        n = portunus.deromanize(interaction.data.options[0].value);
+      }else n = portunus.romanize(parseInt(interaction.data.options[0].value));
+
+      let emb = new Discord.MessageEmbed();
+      emb.setColor('#8f0713');
+      emb.setDescription(n);
+      emb.setTitle("𝐈𝐌𝐏𝐄𝐑𝐀𝐓𝐎𝐑·𝐏𝐕𝐁𝐋𝐈𝐕𝐒","https://cdn.glitch.com/24cdd29f-170e-4ac8-9dc2-8abc1cbbaeaa%2Fimageedit_1_3956664875.png?v=1588186424473");
+      emb.setFooter("Roman numeral conversion powered by our most humble Imperator");
+
+      clientdc.api.interactions(interaction.id, interaction.token).callback.post({
+        data: {
+          type: 4,
+          data: {
+            embeds: [emb]
+          }
+        }
+      })
+      break;
   }
-  console.log(senateTime);
-  
-    clientdc.channels.cache
-          .get("514135876909924354").send("<@&577587377195974656>");
-  
-    
+});
+
+
+function provinceIncome(){
+        db.all("SELECT * FROM Province JOIN Governor ON Province.Governor = gov_ID ORDER BY income DESC",[],(err,rows) => {
+            let totalIncomeAllProvincesBrutto = 0;
+            let totalIncomeAllProvincesNetto = 0;
+            let emb = new Discord.MessageEmbed();
+            let emb2 = new Discord.MessageEmbed();
+            let over25 = false;
+            emb.setColor("0x00008b");
+            emb.setFooter(dateformat());
+            emb.setThumbnail("https://cdn.discordapp.com/attachments/548918811391295489/776740280266784778/purpleDR.png");
+            emb.setAuthor("𝐈𝐌𝐏𝐄𝐑𝐀𝐓𝐎𝐑·𝐏𝐕𝐁𝐋𝐈𝐕𝐒","https://cdn.glitch.com/24cdd29f-170e-4ac8-9dc2-8abc1cbbaeaa%2Fimageedit_1_3956664875.png?v=158818642447");
+        
+            emb2.setColor("0x00008b");
+            emb2.setFooter(dateformat());
+            emb2.setThumbnail("https://cdn.discordapp.com/attachments/548918811391295489/776740280266784778/purpleDR.png");
+            emb.setAuthor("𝐈𝐌𝐏𝐄𝐑𝐀𝐓𝐎𝐑·𝐏𝐕𝐁𝐋𝐈𝐕𝐒","https://cdn.glitch.com/24cdd29f-170e-4ac8-9dc2-8abc1cbbaeaa%2Fimageedit_1_3956664875.png?v=158818642447");
+            for(let i = 0; i < rows.length; i++){
+                let incometax = rows[i].income;
+                if(i < 5){
+                    client.editUserBalance(GuildID, "700662464856981564", { cash: 0, bank: incometax*taxRateTop5}, "province income")
+                    totalIncomeAllProvincesBrutto += incometax;
+                    incometax *= (1 - taxRateTop5);
+                    incometax = rows[i].Boosted? incometax+incometax*0.01 : incometax;
+                    parseInt(rows[i].Admin) !== 0? client.editUserBalance(GuildID, rows[i].Admin, { cash: 0, bank: incometax*0.1}, "province admin income"):
+                    totalIncomeAllProvincesNetto += incometax;
+                    client.editUserBalance(GuildID, rows[i].DiscordID, { cash: 0, bank: incometax}, "province income")
+                }else{
+                    client.editUserBalance(GuildID, "700662464856981564", { cash: 0, bank: incometax*taxRate}, "province income")
+                    totalIncomeAllProvincesBrutto += incometax;
+                    incometax *= (1 - taxRate);
+                    incometax = rows[i].Boosted? incometax+incometax*0.01 : incometax;
+                    parseInt(rows[i].Admin) !== 0? client.editUserBalance(GuildID, rows[i].Admin, { cash: 0, bank: incometax*0.1}, "province admin income"):
+                    totalIncomeAllProvincesNetto += incometax;
+                    client.editUserBalance(GuildID, rows[i].DiscordID, { cash: 0, bank: incometax}, "province income")
+                }
+                //Discord Api restriction only 25 fields allowed
+                if(i < 25){
+                    emb.addField("Income: "+rows[i].province,"Income in denarii: "+incometax);   
+                }
+                else {
+                    emb2.addField("Income: "+rows[i].province,"Income in denarii: "+incometax);
+                    over25 = true;
+                }
+            }
+            emb.setTitle("total pre-tax: "+totalIncomeAllProvincesBrutto+"\n total post-tax: "+totalIncomeAllProvincesNetto)
+            clientdc.channels.cache.get('791427239601766482').send(emb);
+            
+            //clear boosts
+            db.run("UPDATE Province SET boosted = false");
+            //if secondary embed isnt empty send it
+            if(over25){
+                clientdc.channels.cache.get('791427239601766482').send(emb2);
+            }
+        })
+}
+
+function collectTaxes(){
+  //getting member count
+  let mem = clientdc.guilds.cache.get(GuildID).memberCount;
+  let tax = 0;
+
+  //request the leaderBoard through the API
+  client.getGuildLeaderboard(GuildID).then(bal => {
+    //go through every member
+    for(var i = 0; i< mem; i++){
+      let user = clientdc.guilds.cache.get(GuildID).members.cache.get(bal[i].user_id);
+      //check if he is still a member
+      if(user)
+      {
+        //check if he has the role Plebeian
+        if(user.roles.cache.get("548455163044560897")){
+          tax += bal[i].total*0.17;
+          if(bal[i].bank > bal[i].cash){
+            client.editUserBalance(GuildID, bal[i].user_id, { cash: 0, bank: -bal[i].total*0.17}, "taxes");
+          }else{
+            client.editUserBalance(GuildID, bal[i].user_id, { cash: -bal[i].total*0.17, bank: 0}, "taxes");
+          }
+          
+        }
+        else{
+          tax += bal[i].total*0.08;
+          if(bal[i].bank > bal[i].cash){
+            client.editUserBalance(GuildID, bal[i].user_id, { cash: 0, bank: -bal[i].total*0.08}, "taxes");
+          }else{
+            client.editUserBalance(GuildID, bal[i].user_id, { cash: -bal[i].total*0.08, bank: 0}, "taxes");
+          }
+
+        }
+        
+      }else{ 
+        tax += bal[i].total*0.17;
+        if(bal[i].bank > bal[i].cash){
+            client.editUserBalance(GuildID, bal[i].user_id, { cash: 0, bank: -bal[i].total*0.17}, "taxes");
+        }else{
+            client.editUserBalance(GuildID, bal[i].user_id, { cash: -bal[i].total*0.17, bank: 0}, "taxes");
+        }
+      }
+    }
+    //round the number upwards
+    tax = Math.ceil(tax);
+    addTransaction(tax,"Taxes");
+    client.editUserBalance(GuildID, "700662464856981564", { cash: 0, bank: tax}, "taxes")
+  });
+
+
 }
 
 //simple test query
@@ -322,58 +598,58 @@ db.all(sql, [], (err, rows) => {
 async function updateDate() {
   if (dateformat() != date) {
     date = new Date();
-    console.log(dateformat("isoDate"));
+    //console.log(dateformat("isoDate"));
     dates = dateformat("isoDate").split("-");
     time = dateformat(date, "longTime", true).split(":");
     if (dates[1].startsWith("0")) {
       dates[1] = dates[1].substring(1);
     }
-    console.log(dates[1] + dates[2]);
-    console.log(dateformat(date, "longTime", true));
-    console.log(time[0] + time[1]);
+    //console.log(dates[1] + dates[2]);
+    //console.log(dateformat(date, "longTime", true));
+    //console.log(time[0] + time[1]);
   }
 }
 
 let query =
-  `SELECT * FROM Birthdates WHERE Birthdate LIKE ` +
-  "'%" +
-  dates[1] +
-  dates[2] +
-  "'";
+    `SELECT * FROM Birthdates WHERE Birthdate LIKE ` +
+    "'%" +
+    dates[1] +
+    dates[2] +
+    "'";
 
 clientdc.on("messageReactionRemove",(reaction,user) => {
   if(user.id == '220590173962895360' && reaction.emoji.id === '640270832115122196')
-    {
-      
-      var available = false;
-      db.all('SELECT * FROM Generals WHERE DiscordID = '+reaction.message.author,[],(err,rows) =>{
-        if(err){throw err;}
-      
-        if(rows[0] != undefined)
-        {available = true; }
-        if(available){db.run('UPDATE Generals SET generals = generals-1 WHERE DiscordID = '+reaction.message.author.id);}
-             });
-    }
-  
+  {
+
+    var available = false;
+    db.all('SELECT * FROM Generals WHERE DiscordID = '+reaction.message.author,[],(err,rows) =>{
+      if(err){throw err;}
+
+      if(rows[0] != undefined)
+      {available = true; }
+      if(available){db.run('UPDATE Generals SET generals = generals-1 WHERE DiscordID = '+reaction.message.author.id);}
+    });
+  }
+
 });
 
 
 clientdc.on("messageReactionAdd",(reaction,user) => {
-  if(user.id == '220590173962895360' && reaction.emoji.id === '640270832115122196')
-    {
-      
-      var available = false;
-      db.all('SELECT * FROM Generals WHERE DiscordID = '+reaction.message.author,[],(err,rows) =>{
-        if(err){throw err;}
-      
-        if(rows[0] != undefined)
-        {available = true; }
-        if(available){db.run('UPDATE Generals SET generals = generals+1 WHERE DiscordID = '+reaction.message.author.id);}else{
-      db.run("INSERT INTO Generals(DiscordID,generals) VALUES('"+reaction.message.author.id+"',1)");  
-        }
-             });
-    }
-  
+  if(user.id === '220590173962895360' && reaction.emoji.id === '640270832115122196')
+  {
+
+    var available = false;
+    db.all('SELECT * FROM Generals WHERE DiscordID = '+reaction.message.author,[],(err,rows) =>{
+      if(err){throw err;}
+
+      if(rows[0] != undefined)
+      {available = true; }
+      if(available){db.run('UPDATE Generals SET generals = generals+1 WHERE DiscordID = '+reaction.message.author.id);}else{
+        db.run("INSERT INTO Generals(DiscordID,generals) VALUES('"+reaction.message.author.id+"',1)");
+      }
+    });
+  }
+
 });
 
 
@@ -389,12 +665,12 @@ clientdc.on("presenceUpdate", (oldPresence, newPresence) => {
       if (newPresence.userID == row.DiscordID && row.celebrated == 0) {
         db.run("UPDATE Birthdates SET celebrated = 1 WHERE bID = " + row.bID);
         clientdc.channels.cache
-          .get("514135876909924354")
-          .send(
-            "happy Birthday " +
-              newPresence.user.toString() +
-              " :partying_face: :confetti_ball: :tada: "
-          );
+            .get("514135876909924354")
+            .send(
+                "happy Birthday " +
+                newPresence.user.toString() +
+                " :partying_face: :confetti_ball: :tada: "
+            );
         //clientdc.channels.cache.get("514135876909924354").send("test");
       }
       //console.log(row.DiscordID);
@@ -428,797 +704,1092 @@ function getRole(mention, server) {
     return clientdc.guilds.cache.get(server).roles.cache.get(mention);
   }
 }
-
-/**function setRoleCollector(message,reactionEmoji)
-{
-  const filter = reaction => reaction.emoji.name === '🔴'; 
-              m.react("🔴");
-    const collector = message.createReactionCollector(filter, { max: 1000 });
-
-    collector.on('collect', (reaction,user) => {
-      if(!user.bot){
-      message.guild.members.cache.get(user.id).roles.add('703401102795604079');
-      }
-    }
-        
-      
-}**/
 const applyText = (canvas, text,fontsize) => {
-	const ctx = canvas.getContext('2d');
+  const ctx = canvas.getContext('2d');
 
-	// Declare a base size of the font
-	let fontSize = fontsize;
+  // Declare a base size of the font
+  let fontSize = fontsize;
 
-	do {
-		// Assign the font to the context and decrement it so it can be measured again
-		ctx.font = `${fontSize -= 5}px font-family: 'Pacifico', cursive;`;
-		// Compare pixel width of the text to the canvas minus the approximate avatar size
-	} while (ctx.measureText(text).width > canvas.width - 300);
+  do {
+    // Assign the font to the context and decrement it so it can be measured again
+    ctx.font = `${fontSize -= 1}px font-family: 'Pacifico', cursive;`;
+    // Compare pixel width of the text to the canvas minus the approximate avatar size
+  } while (ctx.measureText(text).width > canvas.width - 300);
 
-	// Return the result to use in the actual canvas
-	return ctx.font;
+  // Return the result to use in the actual canvas
+  return ctx.font;
 };
+
+function addTransaction(amount,reason){
+  db.run("INSERT INTO Treasury(amount,reason) VALUES("+amount+",'"+reason+"')");
+}
 
 var command = process.env.Prefix;
 clientdc.on("message", message => {
-  if (message.content === command + "clearE") {
-    let args = message.content.split(" ");
-    db.run("UPDATE CandidateElections SET votes = 0 WHERE Election IN (SELECT eID FROM Elections WHERE Month = 'generalprobe')");
-    db.run("DELETE FROM votercandidate WHERE candidate IN (SELECT candidate FROM candidateElections WHERE Election IN (SELECT eID FROM Elections WHERE Month = '"+args[1]+"'))");
+  if (message.content === command+"help") {
+    let emb = new Discord.MessageEmbed();
+    emb.setColor(message.member.displayHexColor);
+    emb.setThumbnail('https://cdn.discordapp.com/attachments/548918811391295489/776740280266784778/purpleDR.png');
+    emb.setFooter("Bot commands displayed by our most humble Imperator");
+    emb.setAuthor("Help commands","https://cdn.glitch.com/24cdd29f-170e-4ac8-9dc2-8abc1cbbaeaa%2Fimageedit_1_3956664875.png?v=1588186424473");
+
+    emb.addFields({ name: 'senate commands', value: 'motions:\n Displays all current standing motions \n-----------------\n smotion (motionID) or (motionnumber): \n Displays one particular motion\n-----------------\n motion (motion to be proposed): \n propose a motion \n----------------- \n deletemotion (motion id): \n deletes the motion with the motion id \n----------------- \n deleteallmotions: \n deletes all current motions'},
+      {name: 'provincial commands', value: 'provinces: \n lists all provinces \n-----------------\n showprovince (name of province): \n shows a particular province \n-----------------\n bump: if youre a censor you can bump it for extra income \n----------------- \n showlegions \n shows the current standing legions'},
+      {name: 'miscellaneous', value: 'quote (text): \n puts the text into a funny quote picture \n----------------- \n number (Roman numeral) or (number): \n converts a number to Roman numerals and vice versa \n-----------------\n challenge (contender a) (contender b): \n initiate a gladiator match \n----------------- \n bet (contender a) (contender b): \n initiate a gladiator battle with bets bet using the following Syntax after invoking the command: (contender) (amount) \n----------------- \n wiki \n pulls out a random fact \n ----------------- \n random (argument): \n generates a random string of text \n----------------- \n bible+(book) (chapter):(verse) \n quotes the appropriate part of the Bible'},
+      {name: 'mod commands', value: 'addgovernor (governor) (discordID): \n (Imperator only) adds a governor to the empire \n----------------- \n addprovince (province name) (governorID) \n (Imperator only) adds a new province to the empire \n ----------------- \n addresource (name of the province) :(resource) \n ((bot) mod only) adds a resource to an existing province \n ----------------- \n removeresource (province name) :(resource) \n ((bot) mod only)removes a resource from a province \n----------------- \n editincome (province) (new Income) \n ((bot) mod only) alters the income of a province \n----------------- \n registerCensor (DiscordID of the Censor) (province name): (mod and botMod only) sets up a new Censor \n----------------- \n addLegion (legionName) (province) (Location) \n (botmod only) adds a Legion to our Empire  \n----------------- \n alterLegion (value that needs altering) (new value) (Legionname) \n (Botmod only) change a certain value of a certain legion '}
+      );
+    message.channel.send(emb);
   }
-  
-  if (message.content === command + "clearDB") {
-    if(message.author.id === '325296044739133450'){
-    db.run("DELETE FROM candidates");
-    db.run("DELETE FROM Elections");
-    db.run("DELETE FROM CandidateElections");
-    db.run("DELETE FROM Voters");
-    db.run("DELETE FROM votercandidate");
-    message.channel.send("all right");
-  }
-  else {message.channel.send("sorry but you're not the Imperator "+"<@325296044739133450>")}
-  }
-  
-  if(message.content.toLowerCase().includes(" cor ") || message.content.toLowerCase().includes(" cock ") || message.content.toLowerCase().includes("byq") || message.content.toLowerCase().includes("byqerino") || message.content.toLowerCase().includes("corey") || message.content.toLowerCase().includes("naresh"))
-    {
-      if(!message.author.bot){
-     message.channel.send("I love cor feet (sorry for the spam)");
+
+ 
+
+  if(message.content.toLowerCase().includes(command+"rnd")){
+      let args = message.content.split(" ");
+      for(let i = 1; i <= args[1]; i++){
+          let emb = new Discord.MessageEmbed();
+          emb.setTitle("Random number");
+          emb.addField("number",Math.trunc(Math.random()*100));
+          message.channel.send(emb);
       }
-    }
+  }  
+    
+  if(message.content.toLowerCase().includes(command+"bump")){
+      let args = message.content.split(" ");
+      if (message.member.roles.cache.has('806244416515604571')) {
+              db.run("UPDATE Province SET boosted = true WHERE HasCensorOffice = true");
+              message.channel.send("successfully boosted provinces");  
+      }else{
+        message.channel.send("only Censors can boost a province");
+      }
+
+  }
   
+  if(message.content.toLowerCase().includes(command+"registercensoroffice")){
+      if (message.member.roles.cache.has('549712921450774556') || message.member.roles.cache.has('704023155487932457')) {
+          let args = message.content.split(" ");
+          //concatenate the whole Province name
+          let province;
+          for (var i = 1; i < args.length; i++) {
+            province += args[i]+" ";
+          }
+          db.run("UPDATE Province SET HasCensorOffice = 'true' WHERE province = '"+args[2]+"'");
+          message.channel.send("CensorOffice Built");
+      }else
+      {
+        message.channel.send("not authorized to run this command");
+      }
+  }
+  
+  
+  if(message.content.toLowerCase().includes(command+"showtreasury")){
+    let emb = new Discord.MessageEmbed();
+    emb.setColor("0x66023c");
+    emb.setFooter("Imperial treasury powered by our most humble Imperator");
+    emb.setAuthor("Imperial coffers","https://cdn.glitch.com/24cdd29f-170e-4ac8-9dc2-8abc1cbbaeaa%2Fimageedit_1_3956664875.png?v=1588186424473");
+
+    db.get("SELECT SUM(amount) AS amount FROM Treasury",[],(err,res) => {emb.setDescription(res.amount+" <:DNR:782312774083674163>"); message.channel.send(emb);});
+  }
+
+  if(message.content.toLowerCase().includes("provincom")){
+    if(message.member.roles.cache.has('546654987061821440') || message.member.roles.cache.has('565594839828398100') || message.member.roles.cache.has('704023155487932457')){
+        provinceIncome();
+    }else{
+        message.channel.send("Sorry, your not authorised to do that!");
+    }
+  }
+  
+  if(message.content.toLowerCase().includes("addtreasury")){
+    var args = message.content.split(" ");
+    addTransaction(args[1],args[2]);
+    message.channel.send("updated Treasury");
+  }
+
   if (message.content === command + "showDB") {
     if(message.author.id === '325296044739133450'){
-    
-    db.all("SELECT * FROM candidates", [], (err, rows) => {
-      if (err) {
-        throw err;
-      }
-      rows.forEach(row => {
-        console.log("cID \n" + row.cID);
-        console.log("DiscordID \n" + row.DiscordID);
-      });
-      
-    });
 
-    db.all("SELECT * FROM CandidateElections", [], (err, rows) => {
-      if (err) {
-        throw err;
-      }
-      rows.forEach(row => {
-        console.log("ceID \n" + row.ceID);
-        console.log("candidate \n" + row.candidate);
-        console.log("Election \n" + row.Election);
-        console.log("votes \n"+row.votes);
-        console.log("order \n"+row.number);
-      });
-    });
+      db.all("SELECT * FROM candidates", [], (err, rows) => {
+        if (err) {
+          throw err;
+        }
+        rows.forEach(row => {
+          console.log("cID \n" + row.cID);
+          console.log("DiscordID \n" + row.DiscordID);
+        });
 
-    db.all("SELECT * FROM Elections", [], (err, rows) => {
-      if (err) {
-        throw err;
-      }
-      rows.forEach(row => {
-        console.log("eID \n" + row.eID);
-        console.log("Title \n" + row.Title);
-        console.log("Month \n" + row.Month);
       });
-    });
-      
+
+      db.all("SELECT * FROM CandidateElections", [], (err, rows) => {
+        if (err) {
+          throw err;
+        }
+        rows.forEach(row => {
+          console.log("ceID \n" + row.ceID);
+          console.log("candidate \n" + row.candidate);
+          console.log("Election \n" + row.Election);
+          console.log("votes \n"+row.votes);
+          console.log("order \n"+row.number);
+        });
+      });
+
+      db.all("SELECT * FROM Elections", [], (err, rows) => {
+        if (err) {
+          throw err;
+        }
+        rows.forEach(row => {
+          console.log("eID \n" + row.eID);
+          console.log("Title \n" + row.Title);
+          console.log("Month \n" + row.Month);
+        });
+      });
+
       db.all("SELECT * FROM Voters", [], (err, rows) => {
-      if (err) {
-        throw err;
-      }
-      rows.forEach(row => {
-        console.log("vID \n" + row.vID);
-        console.log("discordID \n" + row.DiscordID);
-        
-      });
-        
+        if (err) {
+          throw err;
+        }
+        rows.forEach(row => {
+          console.log("vID \n" + row.vID);
+          console.log("discordID \n" + row.DiscordID);
+
+        });
+
         db.all("SELECT * FROM votercandidate", [], (err, rows) => {
-      if (err) {
-        throw err;
-      }
-      rows.forEach(row => {
-        console.log("vcID \n" + row.vcID);
-        console.log("voter \n" + row.voter);
-        console.log("candidate \n" + row.candidate);
-        
+          if (err) {
+            throw err;
+          }
+          rows.forEach(row => {
+            console.log("vcID \n" + row.vcID);
+            console.log("voter \n" + row.voter);
+            console.log("candidate \n" + row.candidate);
+
+          });
+        });
+
+        db.all("SELECT * FROM Generals", [], (err, rows) => {
+          if (err) {
+            throw err;
+          }
+          rows.forEach(row => {
+
+            console.log("general \n" + row.DiscordID);
+
+          });
+        });
       });
-    });
-      
-      db.all("SELECT * FROM Generals", [], (err, rows) => {
-      if (err) {
-        throw err;
-      }
-      rows.forEach(row => {
-        
-        console.log("general \n" + row.DiscordID);
-        
-      });
-         });
-    });
-      
-      
-  
-  }
+
+
+
+    }
     else {message.channel.send("sorry but you're not the Imperator "+"<@325296044739133450>")}
   }
-  
-  if(message.content.toLowerCase() === command+"lb"){
-    let emb = new Discord.MessageEmbed();
-      emb.setColor("0xe94606");
-    emb.setAuthor("Leaderboard for the most Generalissimo reactions",message.author.avatarURL());
-      emb.setFooter("General reactions powered by our most humble Imperator");
-   
-    db.all('SELECT * FROM Generals ORDER BY generals DESC',[],(err,rows) => {
-        if(err){throw err;}
-      rows.forEach(row => {if(row.DisordID != "220590173962895360"){emb.addField(clientdc.users.cache.get(row.DiscordID).username,row.generals+"\n"+message.guild.members.cache.get(row.DiscordID).toString(),false);}});
-        message.channel.send(emb);
-      
-      });
-    
+
+      if(message.content.toLowerCase().includes(command+"battle")){
+        let contenders = message.content.split(" : ");
+        if(contenders.length === 6) {
+          if (message.member.roles.cache.has('546654987061821440') || message.member.roles.cache.has('565594839828398100') || message.member.roles.cache.has('704023155487932457')) {
+            let contenders = message.content.split(" : ");
+            let attackers = contenders[0].split(" | ");
+            let defenders = contenders[1].split(" | ");
+            //split off the battle command
+            attackers[0] = attackers[0].substring(8);
+            let legionsA = new Array();
+            let nonLegionsA = new Array();
+            let legionsD = new Array();
+            let nonLegionsD = new Array();
+            let percentageOfArmies = [contenders[2], contenders[3]];
+            let defenseboni = [contenders[4], contenders[5]];
+            //check if Legions partake in Battle
+            for (let i = 0; i < attackers.length; i++) {
+              if (attackers[i].includes("Legio")) {
+                legionsA.push(attackers[i]);
+              } else {
+                nonLegionsA.push(attackers[i]);
+              }
+            }
+
+            for (let i = 0; i < defenders.length; i++) {
+              if (defenders[i].includes("Legio")) {
+                legionsD.push(defenders[i]);
+              } else {
+                nonLegionsD.push(defenders[i]);
+              }
+
+              //Queue the database entries starting with the attackers
+              let queryLegion = "SELECT * FROM LegionComposition JOIN Legion,units ON L_ID = Legion AND U_ID = LegionComposition.unit WHERE name = '" + legionsA[0] + "' ";
+              //append all the attacking legions first
+              for (let i = 1; i < legionsA.length; i++) {
+                queryLegion += "OR name = '" + legionsA[i] + "' "
+              }
+              db.all(queryLegion, [], (error, attackingLegions) => {
+                let queryNonLegions = "SELECT * FROM Factionunits JOIN Factions ON F_ID = faction WHERE Name = '" + nonLegionsA[0] + "' ";
+                for (let i = 1; i < nonLegionsA.length; i++) {
+                  queryNonLegions += "OR Name = '" + nonLegionsA[i] + "' "
+                }
+                db.all(queryNonLegions, [], (error2, attackingFactions) => {
+                  let queryLegionsD = "SELECT * FROM LegionComposition JOIN Legion,units ON L_ID = Legion AND U_ID = LegionComposition.unit WHERE name = '" + legionsD[0] + "' ";
+                  for (let i = 1; i < legionsD.length; i++) {
+                    queryLegionsD += "OR name = '" + legionsD[i] + "' "
+                  }
+                  db.all(queryLegionsD, [], (error2, defendingLegions) => {
+                    let queryNonLegionsD = "SELECT * FROM Factionunits JOIN Factions ON F_ID = faction WHERE Name = '" + nonLegionsD[0] + "' ";
+                    for (let i = 1; i < nonLegionsD.length; i++) {
+                      queryNonLegions += "OR Name = '" + nonLegionsD[i] + "' "
+                    }
+                    db.all(queryNonLegionsD, [], (error3, defendingFactions) => {
+                      var hp1 = 10000;
+                      var hp2 = 10000;
+                      let emb = new Discord.MessageEmbed();
+                      emb.setImage("https://1.bp.blogspot.com/-ZbMMWQO4toE/Vi1WyeZNqnI/AAAAAAAABKE/Htni5mZ--Xo/s1600/Roman%2BLegion.jpg");
+                      let a = "Attackers: ";
+                      if (attackingLegions != undefined) {
+                        if (attackingLegions[0] != undefined) {
+                          a += attackingLegions[0].name + " ";
+                        }
+                      }
+                      if (attackingFactions != undefined) {
+                        if (attackingFactions[0] != undefined) {
+                          a += attackingFactions[0].Name + " ";
+                        }
+                      }
+                      emb.addField(a, hp1, true);
+                      let d = "Defenders: ";
+                      if (defendingLegions != undefined) {
+                        if (defendingLegions[0] != undefined) {
+                          d += defendingLegions[0].name + " ";
+                        }
+                      }
+                      if (defendingFactions != undefined) {
+                        if (defendingFactions[0] != undefined) {
+                          d += defendingFactions[0].Name + " ";
+                        }
+                      }
+                      emb.addField(d, hp2, true);
+                      emb.setFooter("Battles powered by our most humble Imperator");
+                      emb.setColor("0xFFFFFF");
+                      message.channel.send(emb).then(res => {
+                        var cturn = false;
+
+                        //calculate the effective damage values based on number of cohorts
+                        let aLAttack = 0;
+                        let aLDefense = 0;
+                        let aLHealth = 0;
+                        for (let i = 0; i < attackingLegions.length; i++) {
+                          aLAttack += parseInt(attackingLegions[i].Attack) * parseInt(percentageOfArmies[0]);
+                          aLDefense += parseInt(attackingLegions[i].Defense) * parseInt(percentageOfArmies[0]);
+                          aLHealth += parseInt(attackingLegions[i].Health) * parseInt(percentageOfArmies[0]);
+                          dLDefense *= 1+parseFloat(defenseboni[0]);
+                        }
+
+                        let dLAttack = 0;
+                        let dLDefense = 0;
+                        let dLHealth = 0;
+                        for (let i = 0; i < defendingLegions.length; i++) {
+                          dLAttack += parseInt(defendingLegions[i].Attack * parseInt(percentageOfArmies[0]));
+                          dLDefense += parseInt(defendingLegions[i].Defense * parseInt(percentageOfArmies[0]));
+                          dLHealth += parseInt(defendingLegions[i].Health * parseInt(percentageOfArmies[0]));
+                          dLDefense *= 1+parseFloat(defenseboni[1]);
+                        }
+
+                        let aFAttack = 0;
+                        let aFDefense = 0;
+                        let aFHealth = 0;
+                        for (let i = 0; i < attackingFactions.length; i++) {
+                          aFAttack += parseInt(attackingFactions[i].Attack) * parseFloat(attackingFactions[i].percentage);
+                          aFDefense += parseInt(attackingFactions[i].Defense) * parseFloat(attackingFactions[i].percentage);
+                          aFHealth += parseInt(attackingFactions[i].Health) * parseFloat(attackingFactions[i].percentage);
+                          aFDefense *= 1+parseFloat(defenseboni[0]);
+                        }
+
+                        let dFAttack = 0;
+                        let dFDefense = 0;
+                        let dFHealth = 0;
+                        for (let i = 0; i < defendingFactions.length; i++) {
+                          dFAttack += parseInt(defendingFactions[i].Attack) * parseFloat(defendingFactions[i].percentage);
+                          dFDefense += parseInt(defendingFactions[i].Defense) * parseFloat(defendingFactions[i].percentage);
+                          dFHealth += parseInt(defendingFactions[i].Health) * parseFloat(defendingFactions[i].percentage);
+                          dFDefense *= 1+parseFloat(defenseboni[1]);
+                        }
+
+                        //console.log(dFAttack+" "+dFDefense+" "+dFHealth+":"+aLAttack+" "+aLDefense+" "+aLHealth+" "+defendingFactions[0].percentage)
+                        hp1 = Math.floor(10000 + (aLHealth + aFHealth));
+                        hp2 = Math.floor(10000 + (dLHealth + dFHealth));
+                        let int = setInterval(function (php1, php2) {
+
+
+                          if (cturn == true) {
+                            hp1 -= Math.abs(Math.floor(Math.random() * ((dFAttack + dLAttack)) - (aLDefense + aFDefense)));
+
+                            if (hp1 < 0) {
+                              hp1 = 0
+                            }
+                            let emb2 = new Discord.MessageEmbed();
+                            emb2.setImage("https://1.bp.blogspot.com/-ZbMMWQO4toE/Vi1WyeZNqnI/AAAAAAAABKE/Htni5mZ--Xo/s1600/Roman%2BLegion.jpg");
+                            emb2.addField(a, hp1, true);
+                            emb2.addField(d, hp2, true);
+                            emb2.setFooter("Battles powered by our most humble Imperator");
+                            emb2.setColor("0x8B0000");
+                            res.edit(emb2);
+                            cturn = false;
+                          } else {
+                            hp2 -= Math.abs(Math.floor(Math.random() * (aFAttack + aLAttack) - (dLDefense + dFDefense)))
+
+                            if (hp2 < 0) {
+                              hp2 = 0
+                            }
+                            let emb2 = new Discord.MessageEmbed();
+                            emb2.setImage("https://i.pinimg.com/originals/fa/94/71/fa94710c7832f410703bf600c903de9b.jpg");
+                            emb2.addField(a, hp1, true);
+                            emb2.addField(d, hp2, true);
+                            emb2.setFooter("Battles powered by our most humble Imperator");
+                            emb2.setColor("0x8B0000");
+                            res.edit(emb2);
+                            cturn = true;
+                          }
+                          ;
+                          if (hp1 == 0 || hp2 == 0) {
+                            clearInterval(int);
+                            let emb3 = new Discord.MessageEmbed();
+                            emb3.addField("Winner", hp1 == 0 ? d : a);
+                            emb3.setImage("https://digitalmapsoftheancientworld.files.wordpress.com/2019/02/2118.png");
+                            emb3.setFooter("Battles powered by our most humble Imperator");
+                            emb3.setColor("0xFFDF00");
+                            res.edit(emb3).catch(err => console.log(err))
+                          }
+                          ;
+                        }, 1500);
+                      })
+
+                    })
+                  })
+                })
+
+              })
+
+
+            }
+          } else {
+            message.channel.send("only a mod/gm can initiate a battle");
+          }
+        }else{
+          message.channel.send("invalid arguments");
+        }
   }
   
-  if(message.content.toLowerCase() === command+"general")
-    {
+  if (message.content.toLowerCase().includes(command+"editpopgrowth")){
+    //checks if user is a mod
+    if (message.member.roles.cache.has('546654987061821440') || message.member.roles.cache.has('565594839828398100') || message.member.roles.cache.has('704023155487932457')) {
+      let args = message.content.split(" ");
+      let prov = args[1];
+      //if the province name is multiple words long iterate through all the names
+      if(args.length > 3){
+        for(let i = 2; i < args.length-1; i++){
+          if(args[i])
+          {
+            prov += " "+args[i];
+          }
+        }
+      }
+
+      db.run("UPDATE Province SET population_growth = '"+args[args.length-1]+"' WHERE province = '"+prov+"'");
+      message.channel.send("population growth changed for province:"+prov+" the new population growth is:"+args[args.length-1])
+      //embed for logging purposes
       let emb = new Discord.MessageEmbed();
-      emb.setColor(message.member.displayHexColor);
+      emb.setColor("0x00008b");
+      emb.addField("Action:","population growth changed to "+args[args.length-1]+" in "+prov+"\n by: <@!"+message.author.id+">");
+      emb.setFooter(dateformat());
+      clientdc.channels.cache.get("791427239601766482").send(emb);
+      updateProvinceMessage(message);
+    }
+    else message.channel.send("Sorry, but only a mod can alter the income of a province");
+  }
+    
+  if (message.content.toLowerCase().includes(command+"editinfluence")){
+    //checks if user is a mod
+    if (message.member.roles.cache.has('546654987061821440') || message.member.roles.cache.has('565594839828398100') || message.member.roles.cache.has('704023155487932457')) {
+      let args = message.content.split(" ");
+      let prov = args[1];
+      //if the province name is multiple words long iterate through all the names
+      if(args.length > 3){
+        for(let i = 2; i < args.length-1; i++){
+          if(args[i])
+          {
+            prov += " "+args[i];
+          }
+        }
+      }
+
+      db.run("UPDATE Province SET influence = '"+args[args.length-1]+"' WHERE province = '"+prov+"'");
+      message.channel.send("influence changed for province:"+prov+" the new influence is:"+args[args.length-1])
+      //embed for logging purposes
+      let emb = new Discord.MessageEmbed();
+      emb.setColor("0x00008b");
+      emb.addField("Action:","influence changed to "+args[args.length-1]+" in "+prov+"\n by: <@!"+message.author.id+">");
+      emb.setFooter(dateformat());
+      clientdc.channels.cache.get("791427239601766482").send(emb);
+      updateProvinceMessage(message);
+    }
+    else message.channel.send("Sorry, but only a mod can alter the income of a province");
+  }
+  
+  if (message.content.toLowerCase().includes(command+"addlegion")) {
+    let args = message.content.split(":");
+    if(message.member.roles.cache.has('546654987061821440') || message.member.roles.cache.has('565594839828398100') ||    message.member.roles.cache.has('704023155487932457')){
+    
+    //remove the command from the string
+    let temp = args[0].split(" ");
+    let str = temp[0];
+    for (var i = 1; i < temp.length; i++) {
+      str += " "+temp[i];
+    }
+
+    db.run("INSERT INTO Legion(name,Province,Location) VALUES('"+str+"','"+args[1]+"','"+args[2]+"')");
+    message.channel.send("Legion successfully added");      
+          //embed for logging purposes
+      let emb = new Discord.MessageEmbed();
+      emb.setColor("0x00008b");
+      emb.addField("Action:","Legion :"+args[3]+" created");
+      emb.setFooter(dateformat());
+      clientdc.channels.cache.get("791427239601766482").send(emb);
+    }
+  }
+  
+  if(message.content.toLowerCase().includes(command+"alterlegion")){
+    if(message.member.roles.cache.has('546654987061821440') || message.member.roles.cache.has('565594839828398100') ||    message.member.roles.cache.has('704023155487932457')){
+      let args = message.content.split(" ");
+      let changedValue;
+      let legion;
+      if(args[3] != "Legio") {
+        changedValue = message.content.split("|")[1];
+        legion = message.content.split("|")[2];
+      }
+      else{
+        changedValue = args[2];
+        legion = args[3];
+        for(let i = 4; i < args.length; i++){legion += " "+args[i];}
+      }
+
+      db.run("UPDATE Legion SET "+args[1]+" = '"+changedValue+"' WHERE name = '"+legion+"'");
+      message.channel.send("Legion successfully edited");
+      //embed for logging purposes
+      let emb = new Discord.MessageEmbed();
+      emb.setColor("0x00008b");
+      emb.addField("Action:","Legion "+legion+" altered: changed "+args[1]+" to "+changedValue+"\n by: <@!"+message.author.id+">");
+      emb.setFooter(dateformat());
+      clientdc.channels.cache.get("791427239601766482").send(emb);
+      }
+  }
+  
+  
+  if(message.content.toLowerCase() === command+"showlegions"){
+      let emb = new Discord.MessageEmbed();
+      emb.setFooter("Legions presented by your humble Imperator");
+           emb.setThumbnail('https://cdn.discordapp.com/attachments/548918811391295489/776740280266784778/purpleDR.png');
+      emb.setTitle('Legions');
+      emb.setColor('#cd1121');
+      emb.setAuthor("𝐈𝐌𝐏𝐄𝐑𝐀𝐓𝐎𝐑·𝐏𝐕𝐁𝐋𝐈𝐕𝐒",'https://cdn.glitch.com/24cdd29f-170e-4ac8-9dc2-8abc1cbbaeaa%2Fimageedit_1_3956664875.png?v=1588186424473');
+      
+      db.all("SELECT * FROM Legion JOIN Province ON Legion.province = Province.prov_id",[],(err,rows) => {
+          //API restriction embeds can only have 25 elements
+          if(rows.length <= 25){
+              rows.forEach(row => {
+                emb.addField(row.name,"From Province: "+row.Province +"\n Legate: "+row.Legate+"\n Stationed in: "+row.Location);  
+              });
+              message.channel.send(emb);
+          }else{
+              let emb2 = new Discord.MessageEmbed();
+            emb.setFooter("Provinces presented by your humble Imperator");
+            emb.setThumbnail('https://cdn.discordapp.com/attachments/548918811391295489/776740280266784778/purpleDR.png');
+            emb.setTitle('Legions');
+            emb.setColor('#cd1121');
+            emb.setAuthor("𝐈𝐌𝐏𝐄𝐑𝐀𝐓𝐎𝐑·𝐏𝐕𝐁𝐋𝐈𝐕𝐒",'https://cdn.glitch.com/24cdd29f-170e-4ac8-9dc2-8abc1cbbaeaa%2Fimageedit_1_3956664875.png?v=1588186424473');
+              for(let i = 0; i < 26; i++){
+                  emb.addField(rows[i].name,"From Province: "+rows[i].province +"\n Legate: "+rows[i].Legate+"\n Stationed in: "+rows[i].Location);                 
+              }
+              for(let i = 26; i < 51; i++){
+                  emb2.addField(rows[i].name,"From Province: "+rows[i].province +"\n Legate: "+rows[i].Legate+"\n Stationed in: "+rows[i].Location);
+              }
+              message.channel.send(emb);
+              message.channel.send(emb2);
+          }
+          
+      });
       
       
+  }
+    
+    if(message.content.toLowerCase().includes(command+"legion")){
+      let args = message.content.split(" ");
+      let emb = new Discord.MessageEmbed();
+      emb.setFooter("Legions presented by your humble Imperator");
+      emb.setThumbnail('https://cdn.discordapp.com/attachments/548918811391295489/776740280266784778/purpleDR.png');
+      emb.setColor('#cd1121');
+      emb.setAuthor("𝐈𝐌𝐏𝐄𝐑𝐀𝐓𝐎𝐑·𝐏𝐕𝐁𝐋𝐈𝐕𝐒",'https://cdn.glitch.com/24cdd29f-170e-4ac8-9dc2-8abc1cbbaeaa%2Fimageedit_1_3956664875.png?v=1588186424473');
+      let inp = "";
+      for (i = 1; i < args.length-1; i++) {
+        inp += args[i] + " ";
+      }
+      //concatenate last word without a space
+      inp += args[args.length-1];
+      emb.setTitle(inp);
+      db.all("SELECT * FROM LegionComposition JOIN Legion,Units ON L_ID = Legion AND U_ID = LegionComposition.unit WHERE name = '"+inp+"'",[],(err,rows) => {
+          
+          if(rows[0] != undefined){
+            rows.forEach(row => {
+              emb.addField(row.Unit,"Size: "+row.size);
+              })
+            emb.setImage(rows[0].banner);
+            message.channel.send(emb);
+          }else{
+              message.channel.send("Legion not found");
+          }
+          
+      })
       
-      emb.setTitle(message.member.nickname,message.author.avatarURL());
-      emb.setFooter("General reactions powered by our most humble Imperator");
-      db.get('SELECT * FROM Generals WHERE DiscordID = '+message.author.id,[],(err,row) => {
-        if(err){throw err;}
-        if (row == undefined){emb.addField("Generals","0",true)}else{
+  }
+    
+  if(message.content.toLowerCase() === command+"provinces"){
+    let emb = new Discord.MessageEmbed();
+    emb.setFooter("Provinces presented by your humble Imperator");
+    emb.setThumbnail('https://cdn.discordapp.com/attachments/548918811391295489/776740280266784778/purpleDR.png');
+    emb.setTitle('Provinces');
+    emb.setImage('https://cdn.discordapp.com/attachments/790213824376471562/790884874991042560/unknown.png')
+    emb.setColor('#cd1121');
+    emb.setAuthor("𝐈𝐌𝐏𝐄𝐑𝐀𝐓𝐎𝐑·𝐏𝐕𝐁𝐋𝐈𝐕𝐒",'https://cdn.glitch.com/24cdd29f-170e-4ac8-9dc2-8abc1cbbaeaa%2Fimageedit_1_3956664875.png?v=1588186424473');
+
+    db.all("SELECT * FROM Province JOIN Governor ON Province.Governor = gov_ID",[],(err,rows) => {
+      rows.forEach((row) =>{
+        emb.addField(row.province,"<@"+row.DiscordID+">");})
+
+
+      message.channel.send(emb).then(m => {
+        m.react('⏮️');
+        m.react('⏭️');
+        const filter = (reaction, user) => {
+      if(reaction.emoji.name === '⏮️' && user.id === message.author.id){
+          return true             
+      } else if(reaction.emoji.name === '⏭️' && user.id === message.author.id){
+          return true
+      } else {
+          return false
+      }
+    };
+    //saves all possible options into an array
+        let currentpic = 0;
+        let pics = ["https://cdn.discordapp.com/attachments/795023380683554826/818516608112656384/unknown-2.png","https://cdn.discordapp.com/attachments/795023380683554826/796016004261478400/Map.png","https://cdn.discordapp.com/attachments/514135876909924354/813764720607625276/unknown.png"]  
+        const collector = m.createReactionCollector(filter, { time: 150000 });
+    
+        collector.on('collect', (reaction, user) => {
+            reaction.users.remove(user);
+          if(reaction.emoji.name === '⏭️'){
+                 currentpic++;
+                if(currentpic >= pics.length){
+                    currentpic = 0;
+                }
+              emb.setImage(pics[currentpic]);
+              m.edit(emb)
+          }
+          else{
+                currentpic--;
+                if(currentpic < 0){
+                    currentpic = pics.length-1;
+                }
+              emb.setImage(pics[currentpic]);
+              m.edit(emb)
+          }
+        });
+      })
+    });
+  }
+
+  if (message.content.toLowerCase().includes(command+"showprovince")){
+    let args = message.content.split(" ");
+    let emb = new Discord.MessageEmbed();
+    emb.setFooter("Provinces presented by your humble Imperator");
+    emb.setThumbnail('https://cdn.discordapp.com/attachments/680733248396984330/785230951998947328/unknown.png');
+    emb.setColor('#cd1121');
+    
+    let province = args[1]
+          if(args.length >= 3){
+
+            for (let i = 2; i < args.length; i++) {
+              province += " "+args[i];
+            }
+          }
+         
+          emb.setTitle(province);
+      db.all("SELECT * FROM Province ORDER BY income DESC",[],(err,order) => {      
+        db.all("SELECT resource, population, income, map, influence, population_growth, DiscordID, province.province AS pro FROM Province JOIN Resources,Governor ON prov_id =    Resources.province AND Governor.gov_ID = Province.Governor WHERE Province.province = '"+province+"'",[],(err,rows) => {
+    
+          if (err){console.log(err)}
+          if (rows[0] !== undefined) {
+            rows.forEach((row) => {
+            emb.addField("Resource", row.resource);
+          })
+            //problem with discord caching not picking up a particular user, hard coded for now
+            let id;
+            rows[0].DiscordID ? id = rows[0].DiscordID : id = "no" 
+            clientdc.guilds.cache.get('514135876909924352').members.fetch(id).then(u =>{
+            let av = u.user.displayAvatarURL();
+            emb.setAuthor(u.displayName,av);
+            let provinceOrder = 0;
+            for(let i = 0; i < order.length; i++){
+                provinceOrder++;
+                if(order[i].province == rows[0].pro){
+                    i = order.length
+                }
+            }
+            let actualTax = provinceOrder <= 5 ? 1 -taxRateTop5 : 1 - taxRate
+            emb.setDescription(rows[0].income+" <:DNR:782312774083674163> daily (untaxed) || "+Math.floor(rows[0].income*actualTax)+" <:DNR:782312774083674163> daily (taxed) \n 🧍 Population: "+rows[0].population+"\n Influence: "+rows[0].influence+" Population Growth: "+rows[0].population_growth)
+            rows[0].map != null ? emb.setImage(rows[0].map) : emb.setImage("https://cdn.discordapp.com/attachments/559418842430963723/775017785969475634/unknown.png")
+            message.channel.send(emb);
+            })
+          }else message.channel.send("not a valid province name");
+        });
+    });
+  }
+
+  if(message.content.toLowerCase().includes(command+"addgovernor")) {
+    let args = message.content.split(" ");
+    if (message.member.roles.cache.has('514143501697679361') || message.member.roles.cache.has('704023155487932457')) {
+      db.run("INSERT INTO Governor(governor,DiscordID) VALUES('"+args[1]+"','"+args[2]+"')")
+      message.channel.send("successfully registered Governor");
+      //embed for logging purposes
+      let emb = new Discord.MessageEmbed();
+      emb.setColor("0x00008b");
+      emb.addField("Action:","governor added: "+args[1]+"\n by: <@!"+message.author.id+">");
+      emb.setFooter(dateformat());
+      clientdc.channels.cache.get("791427239601766482").send(emb);
+    }
+    else message.channel.send("sorry, only the Imperator is allowed to do that");
+  }
+
+  if(message.content.toLowerCase().includes(command+"addprovince")){
+    let args = message.content.split(" ");
+    if (message.member.roles.cache.has('514143501697679361') || message.member.roles.cache.has('704023155487932457')) {
+      //check if Governor is already created if not he does nothing
+      db.get("SELECT * From Governor WHERE DiscordID = '"+args[args.length-1]+"'",[],(err,row) => {
+
+        //checks if the governor is already indexed
+        if(row) {
+          //checks if the name exceeds multiple lines, if that is the case then he concatenates the string accordingly
+          let province = args[1]
+          if(args.length > 4){
+
+            for (let i = 2; i < args.length-2; i++) {
+              province += " "+args[i];
+            }
+          }
+          db.run("INSERT INTO Province(province,Governor,income) VALUES('"+province+"','"+row.gov_ID +"','"+args[args.length-2]+"')")
+          message.channel.send("Province added successfully")
+          //embed for logging purposes
+          let emb = new Discord.MessageEmbed();
+          emb.setColor("0x00008b");
+          emb.addField("Action:","province "+province+"added with governor <@"+row.gov_ID+"> and income "+args[args.length-2]+"\n by: <@!"+message.author.id+">");
+          emb.setFooter(dateformat());
+          clientdc.channels.cache.get("791427239601766482").send(emb);
+        }else{message.channel.send("that governor is not assigned yet")}
+      })
+
+
+
+    }else message.channel.send("Sorry, but only the Imperator can proclaim a new province");
+  }
+
+  if (message.content.toLowerCase().includes(command+"editincome")){
+    //checks if user is a mod
+    if (message.member.roles.cache.has('546654987061821440') || message.member.roles.cache.has('565594839828398100') || message.member.roles.cache.has('704023155487932457')) {
+      let args = message.content.split(" ");
+      let prov = args[1];
+      //if the province name is multiple words long iterate through all the names
+      if(args.length > 3){
+        for(let i = 2; i < args.length-1; i++){
+          if(args[i])
+          {
+            prov += " "+args[i];
+          }
+        }
+      }
+
+      db.run("UPDATE Province SET income = '"+args[args.length-1]+"' WHERE province = '"+prov+"'");
+      message.channel.send("income changed for province:"+prov+" the new income is:"+args[args.length-1])
+      //embed for logging purposes
+      let emb = new Discord.MessageEmbed();
+      emb.setColor("0x00008b");
+      emb.addField("Action:","income changed to "+args[args.length-1]+" in "+prov+"\n by: <@!"+message.author.id+">");
+      emb.setFooter(dateformat());
+      clientdc.channels.cache.get("791427239601766482").send(emb);
+      updateProvinceMessage(message);
+    }
+    else message.channel.send("Sorry, but only a mod can alter the income of a province");
+  }
+  
+  if (message.content.toLowerCase().includes(command+"editpopulation")){
+    //checks if user is a mod
+    if (message.member.roles.cache.has('546654987061821440') || message.member.roles.cache.has('565594839828398100') || message.member.roles.cache.has('704023155487932457')) {
+      let args = message.content.split(" ");
+      let prov = args[1];
+      //if the province name is multiple words long iterate through all the names
+      if(args.length > 3){
+        for(let i = 2; i < args.length-1; i++){
+          if(args[i])
+          {
+            prov += " "+args[i];
+          }
+        }
+      }
+      
+      db.run("UPDATE Province SET population = '"+args[args.length-1]+"' WHERE province = '"+prov+"'");
+      message.channel.send("population changed for province:"+prov+" the new population is:"+args[args.length-1])
+      //embed for logging purposes
+      let emb = new Discord.MessageEmbed();
+      emb.setColor("0x00008b");
+      emb.addField("Action:","population changed to "+args[args.length-1]+" in "+prov+"\n by: <@!"+message.author.id+">");
+      emb.setFooter(dateformat());
+      clientdc.channels.cache.get("791427239601766482").send(emb);
+      updateProvinceMessage(message);
+    }
+    else message.channel.send("Sorry, but only a mod can alter the income of a province");
+  }
+  
+  if (message.content.toLowerCase().includes(command+"addresource")){
+    let args = message.content.split(" "); 
+    if(message.member.roles.cache.has('546654987061821440') || message.member.roles.cache.has('565594839828398100') || message.member.roles.cache.has('704023155487932457')) {
+      let temp = message.content.split(":")[0].split(" ");
+      let prov = args[1];
+      //if the province name is multiple words long iterate through all the names
+      for(let i = 2; i < temp.length; i++){
+          if(temp[i])
+          {
+            prov += " "+temp[i];
+          }
+      }
+
+
+
+      db.get("SELECT * From Province WHERE province = '"+prov+"'", [], (err, row) => {
+        if (row) {
+
+          let res = message.content.split(":")[1]
+
+
+
+          db.run("INSERT INTO Resources(resource,province,Level) VALUES('"+res+"','"+row.prov_id+"',0)")
+          message.channel.send("resource added successfully")
+
+
+          //embed for logging purposes
+          let emb = new Discord.MessageEmbed();
+          emb.setColor("0x00008b");
+          emb.addField("Action:","resource "+res+" added in "+prov+"\n by: <@!"+message.author.id+">");
+          emb.setFooter(dateformat());
+          clientdc.channels.cache.get("791427239601766482").send(emb);
+        }else message.channel.send("not a province")
+      })
+    } else message.channel.send("Sorry, but only mods can add a resource")
+  }
+
+  if (message.content.toLowerCase().includes(command+"removeresource")){
+    let args = message.content.split(" ");
+    if(message.member.roles.cache.has('546654987061821440') || message.member.roles.cache.has('565594839828398100') || message.member.roles.cache.has('704023155487932457')) {
+      let temp = message.content.split(":")[0].split(" ");
+      let prov = args[1];
+      //if the province name is multiple words long iterate through all the names
+      for(let i = 2; i < temp.length; i++){
+          if(temp[i])
+          {
+            prov += " "+temp[i];
+          }
+      }
+
+
+
+      db.get("SELECT * From Province WHERE province = '"+prov+"'", [], (err, row) => {
+        if (row) {
+
+          let res = message.content.split(":")[1]
+
+
+
+          db.run("DELETE FROM Resources WHERE province ='"+row.prov_id+"' AND resource LIKE '%"+res+"%'")
+          message.channel.send("resource removed successfully")
+          //embed for logging purposes
+          let emb = new Discord.MessageEmbed();
+          emb.setColor("0x00008b");
+          emb.addField("Action:","resource "+res+" removed in "+prov+"\n by: <@!"+message.author.id+">");
+          emb.setFooter(dateformat());
+          clientdc.channels.cache.get("791427239601766482").send(emb);
+        }else message.channel.send("not a province")
+      })
+    } else message.channel.send("Sorry, but only mods can add a resource")
+  }
+
+  if(message.content.toLowerCase() === command+"lb"){
+    let emb = new Discord.MessageEmbed();
+    emb.setColor("0xe94606");
+    emb.setAuthor("Leaderboard for the most Generalissimo reactions",message.author.avatarURL());
+    emb.setFooter("General reactions powered by our most humble Imperator");
+
+    db.all('SELECT * FROM Generals ORDER BY generals DESC',[],(err,rows) => {
+      if(err){throw err;}
+      rows.forEach(row => {
+        if(row.DiscordID != "220590173962895360" && clientdc.users.cache.get(row.DiscordID)){emb.addField(clientdc.guilds.cache.get("514135876909924352").members.cache.get(row.DiscordID).displayName,row.generals+"\n"+message.guild.members.cache.get(row.DiscordID).toString(),false);
+        }});
+      message.channel.send(emb);
+
+    });
+
+  }
+
+  if(message.content.toLowerCase() === command+"general")
+  {
+    let emb = new Discord.MessageEmbed();
+    emb.setColor(message.member.displayHexColor);
+
+
+
+    emb.setTitle(message.member.nickname,message.author.avatarURL());
+    emb.setFooter("General reactions powered by our most humble Imperator");
+    db.get('SELECT * FROM Generals WHERE DiscordID = '+message.author.id,[],(err,row) => {
+      if(err){throw err;}
+      if (row == undefined){emb.addField("Generals","0",true)}else{
         emb.addField("Generals",row.generals,true);
         emb.setAuthor(
-          message.member.nickname,
-          clientdc.users.cache.get(message.author.id).avatarURL()
+            message.member.nickname,
+            clientdc.users.cache.get(message.author.id).avatarURL()
         );
-        
-        
-        }
-        if(!message.member.nickname){
-          emb.setTitle(message.author.username,message.author.avatarURL());
-          emb.setAuthor(
-          message.author.username,
-          clientdc.users.cache.get(message.author.id).avatarURL()
+
+
+      }
+      if(!message.member.nickname){
+        emb.setTitle(message.author.username,message.author.avatarURL());
+        emb.setAuthor(
+            message.author.username,
+            clientdc.users.cache.get(message.author.id).avatarURL()
         );
-        }
-        message.channel.send(emb);
-      });
-      
-    }
-  
-  if(message.content.toLowerCase().includes(command+"tr"))
-    {
-      
-      var args = message.content.split(" ");
-      var arg = "";
-      for(var i = 1; i<args.length-1; i++){arg += " "+args[i];}
-      tr(arg,args[args.length-1]).then(t => {message.channel.send(t);
-                                            message.delete();});
-      
-    }
-  
+      }
+      message.channel.send(emb);
+    });
+
+  }
+
   if(message.content.toLowerCase().includes(command+"insertcandidate"))
-    {
-      var args = message.content.split(" ");
-      
-db.get(
-                "SELECT cID FROM candidates WHERE DiscordID = '" +
-                  args[1] +
-                  "';",
-                [],
-                (err, rowss) => { 
-                  if(rowss == undefined){db.run("INSERT INTO Candidates(DiscordID) VALUES('"+args[1]+"')");}
-                  let eID,cID;
-                    cID = rowss.cID;
-                    db.get("SELECT eID FROM Elections WHERE Month = '"+args[3]+"' AND Title = '"+args[2]+"'",[],(err, row)=> {
-                    eID = row.eID;
-                      db.run('INSERT INTO CandidateElections(candidate,Election,number) VALUES("' +cID +'","' +eID +'",'+args[4]+')')
-                    
-                    }); });
-      message.channel.send("candidate manually inserted");
-    }
+  {
+    var args = message.content.split(" ");
+
+    db.get(
+        "SELECT cID FROM candidates WHERE DiscordID = '" +
+        args[1] +
+        "';",
+        [],
+        (err, rowss) => {
+          if(rowss == undefined){db.run("INSERT INTO Candidates(DiscordID) VALUES('"+args[1]+"')");}
+          let eID,cID;
+          cID = rowss.cID;
+          db.get("SELECT eID FROM Elections WHERE Month = '"+args[3]+"' AND Title = '"+args[2]+"'",[],(err, row)=> {
+            eID = row.eID;
+            db.run('INSERT INTO CandidateElections(candidate,Election,number) VALUES("' +cID +'","' +eID +'",'+args[4]+')')
+
+          }); });
+    message.channel.send("candidate manually inserted");
+  }
   if(message.content.includes(command+"random"))
-    {
-     let args = message.content.split(" ");
-      let emb = new Discord.MessageEmbed();
-      emb.setColor(message.member.displayHexColor);
-      emb.setDescription(randomfacts.make(args[1]));
-      emb.setTitle("𝐈𝐌𝐏𝐄𝐑𝐀𝐓𝐎𝐑·𝐏𝐕𝐁𝐋𝐈𝐕𝐒","https://cdn.glitch.com/24cdd29f-170e-4ac8-9dc2-8abc1cbbaeaa%2Fimageedit_1_3956664875.png?v=1588186424473");
-      emb.setFooter("random facts powered by our most humble Imperator");
-      message.channel.send(emb);
-      
+  {
+    let statement = "";
+    let args = message.content.split(" ");
+    for (var i = 1; i < args.length; i++) {
+      statement += " "+args[i];
     }
-  
+
+    let emb = new Discord.MessageEmbed();
+    emb.setColor(message.member.displayHexColor);
+    emb.setDescription(randomfacts.make(statement));
+    emb.setTitle("𝐈𝐌𝐏𝐄𝐑𝐀𝐓𝐎𝐑·𝐏𝐕𝐁𝐋𝐈𝐕𝐒","https://cdn.glitch.com/24cdd29f-170e-4ac8-9dc2-8abc1cbbaeaa%2Fimageedit_1_3956664875.png?v=1588186424473");
+    emb.setFooter("random facts powered by our most humble Imperator");
+    message.channel.send(emb);
+
+  }
+
   if(message.content.toLowerCase().includes(command+"chart"))
+  {
+    let args = message.content.split(" ");
+    let tit = "";
+    let val = "t:";
+    for(let i = 1; i < args.length; i++)
     {
-      let args = message.content.split(" ");
-      let tit = "";
-      let val = "t:";
-      for(let i = 1; i < args.length; i++)
-        {
-          if(i % 2 == 0){val += args[i]+","}else{tit += args[i]+"|";}
-          
-        }
-      
-      console.log(tit+"\n"+val);
-      let pieChart = ImageCharts().cht('p3').chs('250x190') // 700px x 190px
-.chd(val) // 2 data points: 60 and 40
-.chl(tit).chtt("chart").toURL();
-      let attachment = new Discord.MessageAttachment(pieChart,"test.png");
-      let emb = new Discord.MessageEmbed();
-      emb.setImage(pieChart);
-      
-     message.channel.send(emb);
-      
+      if(i % 2 == 0){val += args[i]+","}else{tit += args[i]+"|";}
+
     }
-  
-    
+
+    console.log(tit+"\n"+val);
+    let pieChart = ImageCharts().cht('p3').chs('250x190') // 700px x 190px
+        .chd(val) // 2 data points: 60 and 40
+        .chl(tit).chtt("chart").toURL();
+    let attachment = new Discord.MessageAttachment(pieChart,"test.png");
+    let emb = new Discord.MessageEmbed();
+    emb.setImage(pieChart);
+
+    message.channel.send(emb);
+
+  }
+
+
   if(message.content.toLowerCase().includes(command+"wiki"))
-    {
-     
-      let emb = new Discord.MessageEmbed();
-      wikiFacts.getRandomFact().then(function(fact) {
-   emb.setDescription(fact);
-emb.setColor(message.member.displayHexColor);
-     
+  {
+
+    let emb = new Discord.MessageEmbed();
+    wikiFacts.getRandomFact().then(function(fact) {
+      emb.setDescription(fact);
+      emb.setColor(message.member.displayHexColor);
+
       emb.setTitle("𝐈𝐌𝐏𝐄𝐑𝐀𝐓𝐎𝐑·𝐏𝐕𝐁𝐋𝐈𝐕𝐒","https://cdn.glitch.com/24cdd29f-170e-4ac8-9dc2-8abc1cbbaeaa%2Fimageedit_1_3956664875.png?v=1588186424473");
       emb.setFooter("random facts powered by our most humble Imperator");
       message.channel.send(emb);
-      
-      
-      });
-      
-    }
-  
+
+
+    });
+
+  }
+
   if(message.content.includes(command+"number"))
+  {
+    var args = message.content.split(" ");
+
+    var n = 0;
+    if(isNaN(args[1]))
     {
-      var args = message.content.split(" ");
-      
-      var n = 0;
-      if(isNaN(args[1]))
-        {
-          n = portunus.deromanize(args[1]);
-        }else n = portunus.romanize(parseInt(args[1]));
-      
-      let emb = new Discord.MessageEmbed();
-      emb.setColor(message.member.displayHexColor);
-      emb.setDescription(n);
-      emb.setTitle("𝐈𝐌𝐏𝐄𝐑𝐀𝐓𝐎𝐑·𝐏𝐕𝐁𝐋𝐈𝐕𝐒","https://cdn.glitch.com/24cdd29f-170e-4ac8-9dc2-8abc1cbbaeaa%2Fimageedit_1_3956664875.png?v=1588186424473");
-      emb.setFooter("Roman numeral conversion powered by our most humble Imperator");
-      message.channel.send(emb);
-    }
-  
+      n = portunus.deromanize(args[1]);
+    }else n = portunus.romanize(parseInt(args[1]));
+
+    let emb = new Discord.MessageEmbed();
+    emb.setColor(message.member.displayHexColor);
+    emb.setDescription(n);
+    emb.setTitle("𝐈𝐌𝐏𝐄𝐑𝐀𝐓𝐎𝐑·𝐏𝐕𝐁𝐋𝐈𝐕𝐒","https://cdn.glitch.com/24cdd29f-170e-4ac8-9dc2-8abc1cbbaeaa%2Fimageedit_1_3956664875.png?v=1588186424473");
+    emb.setFooter("Roman numeral conversion powered by our most humble Imperator");
+    message.channel.send(emb);
+  }
+
   if(message.content.includes(command+"bible")){
     var args = message.content.split("+");
     var newargs = args[1].split(":");
     bible.getVerse(newargs[0]+":1",(err,data) => {
-      
+
       var title = data[0].title;
-      
-        
-        bible.getVerse(args[1],(err,datas) => {
-          if(datas[0].title == undefined){
+
+
+      bible.getVerse(args[1],(err,datas) => {
+        if(datas[0].title == undefined){
           title = data[0].title;
-            
-            var emb = new Discord.MessageEmbed();
-      emb.setTitle("SCRIPTVRA SACRA");
-      emb.setColor("0xe2b007");
-      emb.setAuthor("𝐈𝐌𝐏𝐄𝐑𝐀𝐓𝐎𝐑·𝐏𝐕𝐁𝐋𝐈𝐕𝐒","https://cdn.glitch.com/24cdd29f-170e-4ac8-9dc2-8abc1cbbaeaa%2Fimageedit_1_3956664875.png?v=1588186424473");
-      emb.setFooter("bible quotes powered by our most humble Imperator");
-      emb.setThumbnail("https://i.imgur.com/xGz7rVU.png");
-      
-      emb.addField(title+": \n"+args[1],datas[0].text,true);
-      message.channel.send(emb);
-          }else{
-      
-      var emb = new Discord.MessageEmbed();
-      emb.setTitle("SCRIPTVRA SACRA");
-      emb.setColor("0xe2b007");
-      emb.setAuthor("𝐈𝐌𝐏𝐄𝐑𝐀𝐓𝐎𝐑·𝐏𝐕𝐁𝐋𝐈𝐕𝐒","https://cdn.glitch.com/24cdd29f-170e-4ac8-9dc2-8abc1cbbaeaa%2Fimageedit_1_3956664875.png?v=1588186424473");
-      emb.setFooter("bible quotes powered by our most humble Imperator");
-      emb.setThumbnail("https://i.imgur.com/xGz7rVU.png");
-      
-      emb.addField(title+": \n"+args[1],datas[0].text,true);
-      message.channel.send(emb);
-          }
-    });
-        
+
+          var emb = new Discord.MessageEmbed();
+          emb.setTitle("SCRIPTVRA SACRA");
+          emb.setColor("0xe2b007");
+          emb.setAuthor("𝐈𝐌𝐏𝐄𝐑𝐀𝐓𝐎𝐑·𝐏𝐕𝐁𝐋𝐈𝐕𝐒","https://cdn.glitch.com/24cdd29f-170e-4ac8-9dc2-8abc1cbbaeaa%2Fimageedit_1_3956664875.png?v=1588186424473");
+          emb.setFooter("bible quotes powered by our most humble Imperator");
+          emb.setThumbnail("https://i.imgur.com/xGz7rVU.png");
+
+          emb.addField(title+": \n"+args[1],datas[0].text,true);
+          message.channel.send(emb);
+        }else{
+
+          var emb = new Discord.MessageEmbed();
+          emb.setTitle("SCRIPTVRA SACRA");
+          emb.setColor("0xe2b007");
+          emb.setAuthor("𝐈𝐌𝐏𝐄𝐑𝐀𝐓𝐎𝐑·𝐏𝐕𝐁𝐋𝐈𝐕𝐒","https://cdn.glitch.com/24cdd29f-170e-4ac8-9dc2-8abc1cbbaeaa%2Fimageedit_1_3956664875.png?v=1588186424473");
+          emb.setFooter("bible quotes powered by our most humble Imperator");
+          emb.setThumbnail("https://i.imgur.com/xGz7rVU.png");
+
+          emb.addField(title+": \n"+args[1],datas[0].text,true);
+          message.channel.send(emb);
+        }
       });
-    
-    
+
+    });
+
+
   }
   if(message.content.toLowerCase().includes(command+"quote"))
-    {
-      var args = message.content.split(" ");
-      var arg = "";
-      for(var i = 1; i<args.length; i++){arg += " "+args[i];}
-      
-      const canvas = can.createCanvas(700, 250);
-	const ctx = canvas.getContext('2d');
+  {
+    var args = message.content.split(" ");
+    var arg = "";
+    for(var i = 1; i<args.length; i++){arg += " "+args[i];}
 
-	const background =  new can.Image();
-      background.src = './Rome.jpg';
-      if(background != undefined){
-	//ctx.drawImage(background, 0, 0, canvas.width, canvas.height);
-      }
+    const canvas = can.createCanvas(700, 250);
+    const ctx = canvas.getContext('2d');
 
-	ctx.strokeStyle = '#ffffff';
-  
-	ctx.fillRect(0, 0, canvas.width, canvas.height);
-  ctx.strokeRect(0,0,canvas.width,canvas.height);
+    const background =  new can.Image();
+    background.src = './Rome.jpg';
+    if(background != undefined){
+      //ctx.drawImage(background, 0, 0, canvas.width, canvas.height);
+    }
 
-      // Assign the decided font to the canvas
-	ctx.font = applyText(canvas, arg,60);
-	ctx.fillStyle = '#ffffff';
-	ctx.fillText(arg, canvas.width / 3, canvas.height / 2);
-      
-      var author = message.guild.members.cache.get(message.author.id).displayName;
-      ctx.font = applyText(canvas,author,30);
-      
-     
-      ctx.fillText("- "+author+"\n  "+dateformat("longDate")+"\n          in: #"+message.channel.name, canvas.width / 2, canvas.height / 1.4);
-	  
-      // Pick up the pen
-	ctx.beginPath();
-      var gradient = ctx.createRadialGradient(165, 165, 0,
-                                            225, 225,100);
+    ctx.strokeStyle = '#ffffff';
+
+    ctx.fillRect(0, 0, canvas.width, canvas.height);
+    ctx.strokeRect(0,0,canvas.width,canvas.height);
+
+    // Assign the decided font to the canvas
+    ctx.font = applyText(canvas, arg,60);
+    ctx.fillStyle = '#ffffff';
+    ctx.fillText(arg, canvas.width / 3, canvas.height / 3.5);
+
+    var author = message.guild.members.cache.get(message.author.id).displayName;
+    ctx.font = applyText(canvas,author,15);
+
+    
+    ctx.fillText("- "+author+"-  \n"+dateformat("longDate"), canvas.width / 2, canvas.height / 1.1);
+
+    // Pick up the pen
+    ctx.beginPath();
+    var gradient = ctx.createRadialGradient(165, 165, 0,
+        225, 225,100);
 
     // Opaque white in the middle
     gradient.addColorStop(0, "transparent");
-gradient.addColorStop(1, "#000");
+    gradient.addColorStop(1, "#000");
 
     ctx.globalCompositeOperation = 'source-atop';
     ctx.fillStyle = gradient;
-	// Start the arc to form a circle
-	ctx.arc(125, 125, 100, 0, Math.PI * 2, true);
-	// Put the pen down
-	ctx.closePath();
-	// Clip off the region you drew on
-	ctx.clip();
+    // Start the arc to form a circle
+    ctx.arc(125, 125, 100, 0, Math.PI * 2, true);
+    // Put the pen down
+    ctx.closePath();
+    // Clip off the region you drew on
+    ctx.clip();
 
-	const avatar = new can.Image();
-      avatar.src = message.author.displayAvatarURL({ format: 'png' });
-      avatar.onload = () => {ctx.drawImage(avatar, 25, 25, 200, 200);
-	
+    const avatar = new can.Image();
+    avatar.src = message.author.displayAvatarURL({ format: 'png' });
+    avatar.onload = () => {ctx.drawImage(avatar, 25, 25, 200, 200);
 
-	const attachment = new Discord.MessageAttachment(canvas.toBuffer(), 'welcome-image.png');
 
-	message.channel.send(attachment);
+      const attachment = new Discord.MessageAttachment(canvas.toBuffer(), 'quote.png');
+
+      message.channel.send(attachment);
     }
-    }
-  if (message.content.toLowerCase().includes(command + "election")) {
-    let args = message.content.split(" ");
-    let maxVote;
-    switch(args[1])
-      {
-        case "consul":
-          maxVote = 2;
-          break;
-        case "praetor":
-          maxVote = 3;
-          break;
-        case "aedile":
-          maxVote = 2;
-          break;
-        case "quaestor":
-          maxVote = 4;
-          break;
-        case "tribune":
-          maxVote = 2;
-          break;
-          
-      }
-    
-    let emb = new Discord.MessageEmbed();
-    var lett = [
-      "0️⃣",
-      "1️⃣",
-      "2️⃣",
-      "3️⃣",
-      "4️⃣",
-      "5️⃣",
-      "6️⃣",
-      "7️⃣",
-      "8️⃣",
-      "9️⃣",
-      "🔟",
-      "🔢",
-      "#️⃣",
-      "*️⃣",
-      "⏏️",
-      "▶️",
-      "⏸",
-      "⏯",
-      "⏹",
-      "⏺",
-      "⏭",
-      "⏮",
-      "⏩",
-      "⏪",
-      "⏫",
-      "⏬"
-    ];
-
-    emb.setTitle(args[1] + " elections from: " + args[2]);
-    emb.setColor("0x66023c");
-    emb.setFooter("Elections powered by our most humble Imperator");
-    emb.setThumbnail(
-      "https://cdn.glitch.com/24cdd29f-170e-4ac8-9dc2-8abc1cbbaeaa%2Fimage0.png?v=1588186014686"
-    );
-    emb.setAuthor(
-      "𝐈𝐌𝐏𝐄𝐑𝐀𝐓𝐎𝐑·𝐏𝐕𝐁𝐋𝐈𝐕𝐒",
-      "https://cdn.glitch.com/24cdd29f-170e-4ac8-9dc2-8abc1cbbaeaa%2Fimageedit_1_3956664875.png?v=1588186424473"
-    );
-
-    let sql4 =
-      'SELECT * FROM Elections JOIN CandidateElections ON eID = Election JOIN Candidates ON candidate = cID WHERE Title = "' +
-      args[1] +
-      '" AND Month = "' +
-      args[2] +
-      '"';
-
-    let can = new Array();
-    db.parallelize(() => {
-    db.all(sql4, [], (err, rows) => {
-      if (err) {
-        throw err;
-        message.channel.send("sth went wrong");
-      }
-      
-      //message.guild.members.cache.get(row.cID).toString()+"\n votes: "+row.votes
-      
-      message.channel.send(emb).then(m => {
-        let filter = reaction => lett.includes(reaction.emoji.name);
-        let tit = "";
-        let val = "t:";
-for (i = 0; i < rows.length; i++) {
-        
-          emb.addField(
-            "Candidate",
-            lett[i]+":"+
-              message.guild.members.cache.get(rows[i].DiscordID).toString() +
-              "\n votes: " +
-              rows[i].votes,
-            true
-          );
-          let name = "";
-      if(message.guild.members.cache.get(rows[i].DiscordID).nickname != null){
-        name = message.guild.members.cache.get(rows[i].DiscordID).nickname}
-      else{
-       name = message.guild.members.cache.get(rows[i].DiscordID).user.username; 
-      }
-        val += parseInt(rows[i].votes)+",";
-          tit += i+"|";
+  }
   
-  let pieChart = ImageCharts().cht('p3').chs('250x190') // 700px x 190px
-.chd(val) // 2 data points: 60 and 40
-.chl(tit).chtt("chart").toURL();
-                emb.setImage(pieChart);
-  
-          m.edit(emb);
-          m.react(lett[i]);
-          can[i] = rows[i].DiscordID;
-        }
-
-        let collector = m.createReactionCollector(filter, { time: 86400000 });
-
-        collector.on("collect", (reaction, user) => {
-          if (!user.bot) {
-            db.parallelize(() => {
-            
-              reaction.users.remove(user);
-              //check the reaction, then find the user based by its ID in the database and update the vote count
-              if (lett.includes(reaction.emoji.name)  && lett.indexOf(reaction.emoji.name) < rows.length) {
-                let order = lett.indexOf(reaction.emoji.name)+1;
-                
-                db.get('SELECT * FROM Elections JOIN CandidateElections ON eID = Election JOIN Candidates ON candidate = cID WHERE Title = "' +args[1] +'" AND Month = "' +args[2] +'" AND number = '+order,[],(err,candidate) => {
-                
-                if(args[1] == "tribune" && clientdc.guilds.cache.get('514135876909924352').members.cache.get(user.id).roles.cache.get('548455163044560897') || args[1] != "tribune" && clientdc.guilds.cache.get('514135876909924352').members.cache.get(user.id).roles.cache.get('548455163044560897') || clientdc.guilds.cache.get('514135876909924352').members.cache.get(user.id).roles.cache.get('548455006693752852')){
-                  if (lett.indexOf(reaction.emoji.name) == candidate.number-1 && !user.bot) {
-                    
-                    db.get("SELECT COUNT() AS c FROM Voters JOIN votercandidate ON vID = voter WHERE Voters.DiscordID = '"+user.id+"' AND votercandidate.Election = '"+candidate.eID+"' AND candidate = '"+candidate.cID+"'",[],(err,count) => {
-                    db.get("SELECT * FROM Voters JOIN votercandidate ON vID = voter JOIN candidates ON cID = votercandidate.candidate JOIN CandidateElections ON cID = CandidateElections.candidate JOIN Elections ON CandidateElections.election = eID WHERE Voters.DiscordID = '"+user.id+"' AND CandidateElections.number = '"+candidate.number+"' AND Month = '"+args[2]+"' AND title = '"+args[1]+"'",[],(err,alreadyVoted) => {
-                      if(count.c != 0){db.run("UPDATE CandidateElections SET votes = votes-1 WHERE number = '"+candidate.number +"' AND election IN (SELECT eID FROM Elections WHERE title = '"+args[1]+"' AND Month = '"+args[2]+"')");
-                                       
-                                       //updates the embed with the new votes 
-              let emb2 = new Discord.MessageEmbed();
-              emb2.setTitle(args[1] + " elections from: " + args[2]);
-    emb2.setColor("0x66023c");
-    emb2.setFooter("Elections powered by our most humble Imperator");
-    emb2.setThumbnail("https://cdn.glitch.com/24cdd29f-170e-4ac8-9dc2-8abc1cbbaeaa%2Fimage0.png?v=1588186014686");
-    emb2.setAuthor("𝐈𝐌𝐏𝐄𝐑𝐀𝐓𝐎𝐑·𝐏𝐕𝐁𝐋𝐈𝐕𝐒","https://cdn.glitch.com/24cdd29f-170e-4ac8-9dc2-8abc1cbbaeaa%2Fimageedit_1_3956664875.png?v=1588186424473");
-
-              db.all('SELECT * FROM Elections JOIN CandidateElections ON eID = Election JOIN Candidates ON candidate = cID WHERE Title = "' +args[1] +'" AND Month = "' +args[2] +'"',[],(err,results) => {
-                let tit = "";
-      let val = "t:";
-              for(var j = 0; j < results.length; j++){
-                
-                emb2.addField(
-                  "Candidate",
-                  lett[j]+": "+
-                    message.guild.members.cache.get(results[j].DiscordID).toString() +
-                    "\n votes: " +
-                    results[j].votes,
-                  true
-                );
-                let name = "";
-      if(message.guild.members.cache.get(results[j].DiscordID).nickname != null){
-        name = message.guild.members.cache.get(results[j].DiscordID).nickname}
-      else{
-       name = message.guild.members.cache.get(results[j].DiscordID).user.username; 
-      }
-     
-          val += parseInt(results[j].votes)+",";
-          tit += j+"|";
-        
-              }
-               
-               let pieChart = ImageCharts().cht('p3').chs('250x190') // 700px x 190px
-.chd(val) // 2 data points: 60 and 40
-.chl(tit).chtt("Election results").toURL();
-                emb2.setImage(pieChart);
-                
-                m.edit(emb2);
-              });
-                                       
-                                       
-                                       db.run("DELETE FROM votercandidate WHERE vcID = '"+alreadyVoted.vcID+"'")
-                                                   }
-                      else {
-                    db.get("SELECT COUNT() AS count FROM Voters JOIN votercandidate ON vID = voter WHERE Voters.DiscordID = '"+user.id+"' AND votercandidate.Election = '"+candidate.eID+"'",[],(err,rowt) => {
-                     
-              
-                      if(rowt.count < maxVote || rowt.count == null){
-                       
-                  let cID;
-                  let vID;
-                        
-                        //updates the embed with the new votes 
-              let emb2 = new Discord.MessageEmbed();
-              emb2.setTitle(args[1] + " elections from: " + args[2]);
-    emb2.setColor("0x66023c");
-    emb2.setFooter("Elections powered by our most humble Imperator");
-    emb2.setThumbnail("https://cdn.glitch.com/24cdd29f-170e-4ac8-9dc2-8abc1cbbaeaa%2Fimage0.png?v=1588186014686");
-    emb2.setAuthor("𝐈𝐌𝐏𝐄𝐑𝐀𝐓𝐎𝐑·𝐏𝐕𝐁𝐋𝐈𝐕𝐒","https://cdn.glitch.com/24cdd29f-170e-4ac8-9dc2-8abc1cbbaeaa%2Fimageedit_1_3956664875.png?v=1588186424473");
-                        
-                      db.run("UPDATE CandidateElections SET votes = votes+1 WHERE number = "+candidate.number +" AND Election IN (SELECT eID FROM Elections WHERE Month ='"+args[2]+"' AND title = '"+args[1]+"')").all('SELECT * FROM Elections JOIN CandidateElections ON eID = Election JOIN Candidates ON candidate = cID WHERE Title = "' +args[1] +'" AND Month = "' +args[2] +'"',[],(err,results) => {
-                        let tit = "";
-      let val = "t:";
-              for(var j = 0; j < results.length; j++){
-                
-                emb2.addField(
-                  "Candidate",
-                  lett[j]+": "+
-                    message.guild.members.cache.get(results[j].DiscordID).toString() +
-                    "\n votes: " +
-                    results[j].votes,
-                  true
-                );
-              let name = "";
-      if(message.guild.members.cache.get(results[j].DiscordID).nickname != null){
-        name = message.guild.members.cache.get(results[j].DiscordID).nickname}
-      else{
-       name = message.guild.members.cache.get(results[j].DiscordID).user.username; 
-      }
-     
-          val += parseInt(results[j].votes)+",";
-          tit += j+"|";
-              }
-                        
-               let pieChart = ImageCharts().cht('p3').chs('250x190') // 700px x 190px
-.chd(val) // 2 data points: 60 and 40
-.chl(tit).chtt("Election results").toURL();
-                emb2.setImage(pieChart);
-                        
-                m.edit(emb2);
-              });
-                        
-                        db.get("SELECT * FROM Voters WHERE DiscordID = '"+user.id+"'",[],(err,rows) =>{
-                      //if a voter is already registered insert the m-n relationship votercandidate
-                    
-                      if(rows == undefined){
-                        db.run("INSERT INTO Voters(DiscordID) VALUES("+user.id+")");
-                        db.get("SELECT * FROM CandidateElections WHERE number = '"+candidate.number +"'",[],(err,row) =>{ 
-                          cID = row.candidate; 
-                          db.get("SELECT vID FROM VOTERS WHERE DiscordID = '"+user.id+"'",[],(err,r) => {
-                            vID = r.vID;
-                          db.run("INSERT INTO votercandidate(voter,candidate,Election) VALUES('"+vID+"','"+cID+"','"+candidate.eID+"')")});
-                        });
-                      }
-                      else db.get("SELECT * FROM CandidateElections WHERE number = '"+candidate.number+"'",[],(err,row) => {cID = row.candidate; 
-                          db.get("SELECT vID FROM VOTERS WHERE DiscordID = '"+user.id+"'",[],(err,r) => {
-                            vID = r.vID;
-                          db.run("INSERT INTO votercandidate(voter,candidate,Election) VALUES('"+vID+"','"+cID+"','"+candidate.eID+"')")});
-                          });
-                      
-                                                                                                              }); 
-                    
-                    
-                      }
-                      else { user.send("voted too many");
-                        
-                      }
-                      
-                      
-                      
-                   }); 
-                    }  
-                  });
-                    });
-                  }
-                }
-                });
-             
-              
-              
-            
-
-            
-          }
-            });
-          }
-          
-        });
-        
-        collector.on("dispose",(reaction,user) =>{
-          if(!user.bot){
-             for (i = 0; i < rows.length; i++) {
-            if (reaction.emoji.name == lett[i]) {
-            //db.run("UPDATE CandidateElection JOIN candidates ON candidate = cID SET votes = votes-1 WHERE DiscordID = '"+can[i]+"'");
-            }
-             }
-          }
-        });
-      });
-    });
-      });
-  }
-  if (message.content.toLowerCase().includes(command + "prepare")) {
-    let args = message.content.split(" ");
-    if (
-      args[1] == "consul" ||
-      "praetor" ||
-      "aedile" ||
-      "quaestor" ||
-      "tribune"
-    ) {
-      db.run("INSERT INTO Elections(Title,Month) VALUES('"+args[1]+"','"+args[2]+"')");
-    }else message.channel.send("not a real role");
-  }
-  if (message.content.toLowerCase().includes(command + "candidate")) {
-    let args = message.content.split(" ");
-    if (
-      args[1] == "consul" ||
-      "praetor" ||
-      "aedile" ||
-      "quaestor" ||
-      "tribune"
-    ) {
-      let query =
-        'INSERT INTO Elections(Title,Month) VALUES("' +
-        args[1] +
-        '","' +
-        args[2] +
-        '");';
-      db.all(query, [], err => {
-        if (err) {
-          message.channel.send("month already specified");
-          throw err;
-        }
-      else{
-      message.channel.send(args[1] + " Elections react here with 🔴").then(m => {
-        var order = 0;
-          const filter = (reaction, user) => reaction.emoji.name === "🔴";
-          m.react("🔴");
-          const collector = m.createReactionCollector(filter, { max: 1000 });
-
-          collector.on("collect", (reaction, user) => {
-            if (!user.bot) {
-              if(clientdc.guilds.cache.get('514135876909924352').members.cache.get(user.id).roles.cache.get('548455163044560897') && args[1] === "tribune" || args[1] != "tribune")
-                {
-              order++;
-              message.guild.members.cache
-                .get(user.id)
-                .roles.add("703401102795604079");
-              //try to insert a new candidate, if already existant the exception will abort the process
-              db.all(
-                'INSERT INTO candidates(DiscordID) VALUES("' + user.id + '")',
-                [],
-                err => {
-                  if (err) {
-                  }
-                
-              db.get(
-                "SELECT cID FROM candidates WHERE DiscordID = '" +
-                  user.id +
-                  "';",
-                [],
-                (err, rowss) => {
-                  if (err) {
-                    m.channel.send(
-                      "sorry but there was an error (probably wrong ID)"
-                    );
-                  } else {
-                    
-                    let eID,cID;
-                    cID = rowss.cID;
-                    db.get("SELECT eID FROM Elections WHERE Month = '"+args[2]+"' AND Title = '"+args[1]+"'",[],(err, row)=> {
-                    eID = row.eID;
-                      db.run('INSERT INTO CandidateElections(candidate,Election,number) VALUES("' +cID +'","' +eID +'",'+order+')')
-                    
-                    });
-                  }
-                });
-                  });
-                }else(user.send("sorry but only plebs can candidate"))
-            }
-                
-          });
-        collector.on("dispose",(reaction,user) => {
-          order--;
-          db.get(
-                "SELECT cID FROM candidates WHERE DiscordID = '" +
-                  user.id +
-                  "';",
-                [],
-                (err, rowss) => {
-          let eID,cID;
-                    cID = rowss.cID;
-                    db.get("SELECT eID FROM Elections WHERE Month = '"+args[2]+"' AND Title = '"+args[1]+"'",[],(err, row)=> {
-                    eID = row.eID;
-          db.run("DELETE FROM candidateElections WHERE cnadidate = "+cID+"AND Election ="+eID);
-                      });
-                });
-        });
-        
-        });
-      }
-        });
-      
-    } 
-             
-             else {
-      message.channel.send("invalid role");
-    }
-  }
-
   // If the message is "ping"
   if (message.content === "ping") {
     // Send "pong" to the same channel
     message.channel.send("Pong I guess");
-   if(clientdc.guilds.cache.get('514135876909924352').members.cache.get(message.author.id).roles.cache.get('548455163044560897')){
-     message.channel.send("Pleb");
-   }
+    if(clientdc.guilds.cache.get('514135876909924352').members.cache.get(message.author.id).roles.cache.get('548455163044560897')){
+      message.channel.send("Pleb");
+    }
     else message.channel.send("Based");
   }
   if (message.content.toLowerCase() === command + "imperialtree") {
     message.channel.send(
-      "https://cdn.discordapp.com/attachments/630588104184430643/705349480559411261/unknown.png"
+        "https://cdn.discordapp.com/attachments/514135876909924354/813757877251473408/dr_imp_fam_tree2.png"
+    );
+  }
+    
+  if (message.content.toLowerCase() === command + "imperialballs") {
+    message.channel.send(
+        "https://cdn.discordapp.com/attachments/514135876909924354/819616687317975120/dynasty.png"
+    );
+  }
+    
+  if (message.content.toLowerCase() === command + "retardballs") {
+    message.channel.send(
+       "https://cdn.discordapp.com/attachments/514135876909924354/821497674174955558/dynasty3_final.png"
     );
   }
 
@@ -1228,49 +1799,51 @@ for (i = 0; i < rows.length; i++) {
     embed.setTitle("Motion ID:" + args[1]);
     embed.setColor("0xcc0000");
     embed.setFooter(
-      "Senate Meeting discussions powered by our most humble Imperator"
+        "Senate Meeting discussions powered by our most humble Imperator"
     );
 
     let available = false;
+    if(args[1]){
     let sql2 = `SELECT * FROM Motions WHERE mID = ` + args[1];
     db.all(sql2, [], (err, rows) => {
       if (err) {
         throw err;
       }
       //search motion with Primary Key
-      
+
       rows.forEach(row => {
         available = true;
         if(row.motion.includes(".png") || row.motion.includes(".jpg") || row.motion.includes(".jpeg"))
+        {
+          if(!row.motion.startsWith("http"))
           {
-            if(!row.motion.startsWith("http"))
-              {
-                var args2 = row.motion.split("http");
-                embed.addField("Motion in question",args2[0],true);
-                embed.setImage("http"+args2[1]);
-              }else{
+            var args2 = row.motion.split("http");
+            embed.addField("Motion in question",args2[0],true);
+            embed.setImage("http"+args2[1]);
+          }else{
             embed.addField("Motion in question","Picture in question",true);
-            embed.setImage(row.motion);
-                embed.setAuthor(
-          "𝐈𝐌𝐏𝐄𝐑𝐀𝐓𝐎𝐑·𝐏𝐕𝐁𝐋𝐈𝐕𝐒",
-          clientdc.users.cache.get(row.creator).avatarURL()
-        );
-              }
-          }else {
-        
-        embed.addField(
-          "Motion in question",
-          row.motion +
-            "\n From:" +
-            message.guild.members.cache.get(row.creator).toString(),
-          true
-        );
-        console.log(row.motion);
-        embed.setAuthor(
-          "𝐈𝐌𝐏𝐄𝐑𝐀𝐓𝐎𝐑·𝐏𝐕𝐁𝐋𝐈𝐕𝐒",
-          clientdc.users.cache.get(row.creator).avatarURL()
-        );
+            let args3 = row.motion.split(" ");
+            embed.setImage(args3[0]);
+            embed.setAuthor(
+                "𝐈𝐌𝐏𝐄𝐑𝐀𝐓𝐎𝐑·𝐏𝐕𝐁𝐋𝐈𝐕𝐒",
+                clientdc.users.cache.get(row.creator).avatarURL()
+            );
           }
+        }else {
+
+          embed.addField(
+              "Motion in question",
+              row.motion +
+              "\n From:" +
+              "<@!"+row.creator+">",
+              true
+          );
+          console.log(row.motion);
+          embed.setAuthor(
+              "𝐈𝐌𝐏𝐄𝐑𝐀𝐓𝐎𝐑·𝐏𝐕𝐁𝐋𝐈𝐕𝐒",
+              clientdc.users.cache.get(row.creator).avatarURL()
+          );
+        }
       });
       //if no primary key is submitted as an argument the motion is searched after its position
       if (!available) {
@@ -1280,94 +1853,103 @@ for (i = 0; i < rows.length; i++) {
           var args = message.content.split(" ");
           var link = new Array();
           var creator = new Array();
-          rows.forEach(row => {mot.push(row.motion +"\n From:" +message.guild.members.cache.get(row.creator).toString()); link.push(row.motion); creator.push(row.creator)});
-          
+          rows.forEach(row => {mot.push(row.motion +"\n From:" +"<@!"+rows[args[1]].creator+">"); link.push(row.motion); creator.push(row.creator)});
+
           if(mot[args[1]].includes(".png") || mot[args[1]].includes(".jpg") || mot[args[1]].includes(".jpeg"))
           {
             if(!mot[args[1]].startsWith("http"))
-              {
-                
-                var args2 = link[args[1]].split("http");
-                embed.addField("Motion in question",args2[0],true);
-                embed.setImage("http"+args2[1]);
-                
-                embed.setAuthor(
-          "𝐈𝐌𝐏𝐄𝐑𝐀𝐓𝐎𝐑·𝐏𝐕𝐁𝐋𝐈𝐕𝐒",
-          clientdc.users.cache.get(creator[args[1]]).avatarURL()
-        );
-                message.channel.send(embed);
-              }else{
-            embed.addField("Motion in question","Picture in question",true);
-            embed.setImage(link[args[1]]);
-                
-                
-                embed.setAuthor(
-          "𝐈𝐌𝐏𝐄𝐑𝐀𝐓𝐎𝐑·𝐏𝐕𝐁𝐋𝐈𝐕𝐒",
-          clientdc.users.cache.get(creator[args[1]]).avatarURL()
-        );
-            message.channel.send(embed);
-              }
-          }else {
-          
-                           
-          if(mot.length >= 25)
             {
-          
-          var args2 = new Array();
-      var length = (mot.length % 2 == 0) ? (mot.length) : (mot.length+1)
-      
-        for (var i = length / 2; i <= length; i++) {
-          args2.push(mot[i]);
-          
-          
-          mot.splice(i,1);
-          
-        }
-  for(var i = args2.length-1; i >= 0; i--){if(args2[i] == undefined){args2.pop()}}
-          
-          if(mot[args[1]]) {embed.setTitle("Motion number:"+args[1])
-          embed.addField("Motion in question", mot[args[1]],false);} else if(args2[args[1]-mot.length]) {embed.addField("Motion in question", args2[args[1]-mot.length],false);} else{embed.addField("Motion in question", "no motion with such ID", false);}
+
+              var args2 = link[args[1]].split("http");
+              embed.addField("Motion in question",args2[0],true);
+              embed.setImage("http"+args2[1]);
+
               embed.setAuthor(
-          "𝐈𝐌𝐏𝐄𝐑𝐀𝐓𝐎𝐑·𝐏𝐕𝐁𝐋𝐈𝐕𝐒",
-          clientdc.users.cache.get(creator[args[1]]).avatarURL()
-        );
+                  "𝐈𝐌𝐏𝐄𝐑𝐀𝐓𝐎𝐑·𝐏𝐕𝐁𝐋𝐈𝐕𝐒",
+                  clientdc.users.cache.get(creator[args[1]]).avatarURL()
+              );
+              message.channel.send(embed);
+            }else{
+              embed.addField("Motion in question","Picture in question",true);
+              embed.setImage(link[args[1]]);
+
+
+              embed.setAuthor(
+                  "𝐈𝐌𝐏𝐄𝐑𝐀𝐓𝐎𝐑·𝐏𝐕𝐁𝐋𝐈𝐕𝐒",
+                  clientdc.users.cache.get(creator[args[1]]).avatarURL()
+              );
+              message.channel.send(embed);
             }
-          else {embed.addField("Motion in question", mot[args[1]],false); embed.setAuthor(
-          "𝐈𝐌𝐏𝐄𝐑𝐀𝐓𝐎𝐑·𝐏𝐕𝐁𝐋𝐈𝐕𝐒",
-          clientdc.users.cache.get(creator[args[1]]).avatarURL()
-        );}
-          
-          message.channel.send(embed);
+          }else {
+
+
+            if(mot.length >= 25)
+            {
+
+              var args2 = new Array();
+              var length = (mot.length % 2 == 0) ? (mot.length) : (mot.length+1)
+
+              for (var i = length / 2; i <= length; i++) {
+                args2.push(mot[i]);
+
+
+                mot.splice(i,1);
+
+              }
+              for(var i = args2.length-1; i >= 0; i--){if(args2[i] == undefined){args2.pop()}}
+
+              if(mot[args[1]]) {embed.setTitle("Motion number:"+args[1])
+                embed.addField("Motion in question", mot[args[1]],false);} else if(args2[args[1]-mot.length]) {embed.addField("Motion in question", args2[args[1]-mot.length],false);} else{embed.addField("Motion in question", "no motion with such ID", false);}
+              let avatarURL;
+                clientdc.users.fetch(creator[args[1]]).then(member => {
+                    avatarURL = member.avatarURL();
+                    embed.addField("Motion in question", mot[args[1]],false); embed.setAuthor(
+                "𝐈𝐌𝐏𝐄𝐑𝐀𝐓𝐎𝐑·𝐏𝐕𝐁𝐋𝐈𝐕𝐒",avatarURL);
+                message.channel.send(embed);
+                })
+            }
+            else {
+                let avatarURL;
+                clientdc.users.fetch(creator[args[1]]).then(member => {
+                    avatarURL = member.avatarURL();
+                    embed.addField("Motion in question", mot[args[1]],false); embed.setAuthor(
+                "𝐈𝐌𝐏𝐄𝐑𝐀𝐓𝐎𝐑·𝐏𝐕𝐁𝐋𝐈𝐕𝐒",avatarURL);
+                message.channel.send(embed);
+                })
+            }
+
+            
           }
         });
-        
-        
-        
-        
+
+
+
+
       }
-          
+
       if(available) message.channel.send(embed);
     });
+    }
   }
 
   if (message.content.toLowerCase() == command + "motions") {
     if (
-      message.member.roles.cache.has("543783180130320385") ||
-      message.member.roles.cache.has("550392133991923738")
+        message.member.roles.cache.has("543783180130320385") ||
+        message.member.roles.cache.has("550392133991923738")
     ) {
       let embed = new Discord.MessageEmbed();
 
       embed.setTitle("Motions");
       embed.setColor("0xcc0000");
       embed.setFooter(
-        "Senate Meeting discussions powered by our most humble Imperator"
+          "Senate Meeting discussions powered by our most humble Imperator"
       );
       embed.setThumbnail(
-        "https://cdn.glitch.com/24cdd29f-170e-4ac8-9dc2-8abc1cbbaeaa%2Fimage0.png?v=1588186014686"
+          "https://cdn.discordapp.com/attachments/548918811391295489/776740280266784778/purpleDR.png"
       );
       embed.setAuthor(
-        "𝐈𝐌𝐏𝐄𝐑𝐀𝐓𝐎𝐑·𝐏𝐕𝐁𝐋𝐈𝐕𝐒",
-        "https://cdn.glitch.com/24cdd29f-170e-4ac8-9dc2-8abc1cbbaeaa%2Fimageedit_1_3956664875.png?v=1588186424473"
+          "𝐈𝐌𝐏𝐄𝐑𝐀𝐓𝐎𝐑·𝐏𝐕𝐁𝐋𝐈𝐕𝐒",
+          "https://cdn.glitch.com/24cdd29f-170e-4ac8-9dc2-8abc1cbbaeaa%2Fimageedit_1_3956664875.png?v=1588186424473"
       );
       let msgs = new Array();
       let sql2 = `SELECT * FROM Motions;`;
@@ -1376,153 +1958,434 @@ for (i = 0; i < rows.length; i++) {
           throw err;
         }
         rows.forEach(row => {
-          //message.channel.send(row.motion);
-          if (message.guild.members.cache.get(row.creator) != undefined) {
             let msg =
-              row.motion +
-              "\n" +
-              "From:" +
-              message.guild.members.cache.get(row.creator).toString() +
-              "\n" +
-              "motion ID:" +
-              row.mID +
-              "";
+                row.motion +
+                "\n" +
+                "From:" +
+                "<@!"+ row.creator +">"+
+                "\n" +
+                "motion ID:" +
+                row.mID +
+                "";
             msgs.push(msg);
-          } else {
-            message.channel.send("im sorry but this is the wrong Server");
-          }
         });
-  
-         
-        
+
+
+
         if (msgs.length <= 25) {
-      msgs.forEach(msg => embed.addField("motions", msg+"\n"+msgs.indexOf(msg)));
-      message.guild.channels.cache
-        .get("705136080105767004")
-        .messages.fetch({ around: "705898782935613501", limit: 1 })
-        .then(messages => messages.first().edit(embed));
-    } else {
-        var secEmb = new Discord.MessageEmbed();
+          msgs.forEach(msg => embed.addField("motions", msg+"\n"+msgs.indexOf(msg)));
 
-        secEmb.setTitle("Motions second page");
-        secEmb.setColor("0xcc0000");
-        secEmb.setFooter(
-          "Senate Meeting discussions powered by our most humble Imperator"
-        );
-        secEmb.setThumbnail(
-          "https://cdn.glitch.com/24cdd29f-170e-4ac8-9dc2-8abc1cbbaeaa%2Fimage0.png?v=1588186014686"
-        );
-        secEmb.setAuthor(
-          "𝐈𝐌𝐏𝐄𝐑𝐀𝐓𝐎𝐑·𝐏𝐕𝐁𝐋𝐈𝐕𝐒",
-          "https://cdn.glitch.com/24cdd29f-170e-4ac8-9dc2-8abc1cbbaeaa%2Fimageedit_1_3956664875.png?v=1588186424473"
-        );
-        secEmb.setDescription("Motions to discuss in Senate meetings");
-      
-        var args2 = new Array();
-      var length = (msgs.length % 2 == 0) ? (msgs.length) : (msgs.length+1)
-      
-        for (var i = length / 2; i <= length; i++) {
-          args2.push(msgs[i]);
-          
-          
-          msgs.splice(i,1);
-          
+          message.channel.send(embed);
+        } else {
+          var secEmb = new Discord.MessageEmbed();
+
+          secEmb.setTitle("Motions second page");
+          secEmb.setColor("0xcc0000");
+          secEmb.setFooter(
+              "Senate Meeting discussions powered by our most humble Imperator"
+          );
+          secEmb.setThumbnail(
+              "https://cdn.discordapp.com/attachments/548918811391295489/776740280266784778/purpleDR.png"
+          );
+          secEmb.setAuthor(
+              "𝐈𝐌𝐏𝐄𝐑𝐀𝐓𝐎𝐑·𝐏𝐕𝐁𝐋𝐈𝐕𝐒",
+              "https://cdn.glitch.com/24cdd29f-170e-4ac8-9dc2-8abc1cbbaeaa%2Fimageedit_1_3956664875.png?v=1588186424473"
+          );
+          secEmb.setDescription("Motions to discuss in Senate meetings");
+
+          var args2 = new Array();
+          var length = (msgs.length % 2 == 0) ? (msgs.length) : (msgs.length+1)
+
+          for (var i = length / 2; i <= length; i++) {
+            args2.push(msgs[i]);
+
+
+            msgs.splice(i,1);
+
+          }
+          for(var i = args2.length-1; i >= 0; i--){if(args2[i] == undefined){args2.pop()}}
+          var secEmb = new Discord.MessageEmbed();
+
+          secEmb.setTitle("Motions");
+          secEmb.setColor("0xcc0000");
+          secEmb.setFooter(
+              "Senate Meeting discussions powered by our most humble Imperator"
+          );
+          secEmb.setThumbnail(
+              "https://cdn.discordapp.com/attachments/548918811391295489/776740280266784778/purpleDR.png"
+          );
+          secEmb.setAuthor(
+              "𝐈𝐌𝐏𝐄𝐑𝐀𝐓𝐎𝐑·𝐏𝐕𝐁𝐋𝐈𝐕𝐒",
+              "https://cdn.glitch.com/24cdd29f-170e-4ac8-9dc2-8abc1cbbaeaa%2Fimageedit_1_3956664875.png?v=1588186424473"
+          );
+          secEmb.setDescription("Motions to discuss in Senate meetings");
+
+          args2.forEach(msg => secEmb.addField("motion", msg+"/"+parseInt(args2.indexOf(msg)+msgs.length,10), false));
+          msgs.forEach(msg2 => embed.addField("motion", msg2+"/"+msgs.indexOf(msg2), false));
+          message.channel.send(embed);
+          message.channel.send(secEmb);
         }
-  for(var i = args2.length-1; i >= 0; i--){if(args2[i] == undefined){args2.pop()}}
-        var secEmb = new Discord.MessageEmbed();
 
-        secEmb.setTitle("Motions");
-        secEmb.setColor("0xcc0000");
-        secEmb.setFooter(
-          "Senate Meeting discussions powered by our most humble Imperator"
-        );
-        secEmb.setThumbnail(
-          "https://cdn.glitch.com/24cdd29f-170e-4ac8-9dc2-8abc1cbbaeaa%2Fimage0.png?v=1588186014686"
-        );
-        secEmb.setAuthor(
-          "𝐈𝐌𝐏𝐄𝐑𝐀𝐓𝐎𝐑·𝐏𝐕𝐁𝐋𝐈𝐕𝐒",
-          "https://cdn.glitch.com/24cdd29f-170e-4ac8-9dc2-8abc1cbbaeaa%2Fimageedit_1_3956664875.png?v=1588186424473"
-        );
-        secEmb.setDescription("Motions to discuss in Senate meetings");
-
-        args2.forEach(msg => secEmb.addField("motion", msg+"/"+parseInt(args2.indexOf(msg)+msgs.length,10), false));
-        msgs.forEach(msg2 => embed.addField("motion", msg2+"/"+msgs.indexOf(msg2), false));
-        message.channel.send(embed);
-        message.channel.send(secEmb);
-      }
-    
       });
     } else message.channel.send("not a Senator/Tribune broski");
   }
 
   if (message.content.toLowerCase().includes(command + "motion ")) {
     if (
-      message.member.roles.cache.has("543783180130320385") ||
-      message.member.roles.cache.has("550392133991923738")
+        message.member.roles.cache.has("543783180130320385") ||
+        message.member.roles.cache.has("550392133991923738")
     ) {
-      const answer = ["yes","no"];
-const filter = response => {return answer.includes(response.content.toLowerCase())};
+      const answer = ["yes"];
+      const filter = response => {return answer.includes(response.content.toLowerCase())};
       message.channel.send("do you really want to motion?").then(() => {
-	message.channel.awaitMessages(filter,{ max: 1, time: 3000, errors: ['time'] }).then( collected => {
-    if(collected === "yes"){
-      var args = message.content.split(" ");
-      console.log(
-        "INSERT INTO Motions(motion,creator) VALUES(" +
-          "'" +
-          args[1] +
-          "'" +
-          "," +
-          message.member.id +
-          ");"
-      );
-      let inp = "";
-      for (i = 1; i < args.length; i++) {
-        inp += args[i] + " ";
-      }
-      db.all(
-        "INSERT INTO Motions(motion,creator) VALUES(" +
-          '"' +
-          inp +
-          '"' +
-          "," +
-          "'" +
-          message.member.id +
-          "'" +
-          ");",
-        [],
-        (err, rows) => {
-          if (err) {
-            message.channel.send("sth went wrong");
-            console.log(err);
-          } else {
-            message.channel.send("duly noted");
-            updateEmbedMessage(message);
+        message.channel.awaitMessages(filter,{ max: 1, time: 3000, errors: ['time'] }).then( collected => {
+
+
+          var args = message.content.split(" ");
+          console.log(
+              "INSERT INTO Motions(motion,creator) VALUES(" +
+              "'" +
+              args +
+              "'" +
+              "," +
+              message.member.id +
+              ");"
+          );
+          let inp = "";
+          for (i = 1; i < args.length; i++) {
+            inp += args[i] + " ";
           }
-        }
-      );
-    } else {message.channel.send("Motion not noted")}
-    
-    })
-    .catch(collected => {
-			message.channel.send('ok then');
-		});
-  });
-      
-      
-  }
+          db.all(
+              "INSERT INTO Motions(motion,creator) VALUES(" +
+              '"' +
+              inp +
+              '"' +
+              "," +
+              "'" +
+              message.member.id +
+              "'" +
+              ");",
+              [],
+              (err, rows) => {
+                if (err) {
+                  message.channel.send("sth went wrong");
+                  console.log(err);
+                } else {
+                  message.channel.send("duly noted");
+                  updateEmbedMessage(message);
+                }
+              }
+          );
+
+
+        })
+            .catch(collected => {
+              message.channel.send('no motion noted');
+            });
+      });
+
+
+    }
     else {
       message.channel.send(
-        "you do not have any authority to propose motions, please turn to your corresponding Senator or Tribune (if you're a filthy Pleb)"
+          "you do not have any authority to propose motions, please turn to your corresponding Senator or Tribune (if you're a filthy Pleb)"
       );
+    }
+  }
+
+  if (message.content.toLowerCase().includes(command + "challenge" ) && message.channel.id == "557659811723083787") {
+    let args = message.content.split(" ");
+    if(args.length == 2){
+      let emb = new Discord.MessageEmbed();
+      emb.setImage("https://qph.fs.quoracdn.net/main-qimg-03cc5a7d16ec433984a39059446d5c4b");
+      emb.addField(message.author.username,"100",true);
+      emb.addField(args[1],"100",true);
+      emb.setFooter("Gladiator Matches powered by our most humble Imperator");
+      emb.setColor("0xFFFFFF");
+      message.channel.send(emb).then(res => {
+        var cturn = false;
+        var hp1 = 100;
+        var hp2 = 100;
+
+        let int = setInterval(function(php1, php2){
+          php1 = hp1;
+          php2 = hp2;
+
+
+
+          let num = Math.random();
+          if(cturn == true){hp1 -= Math.floor(Math.random() * 31);
+            if(hp1 < 0){hp1 = 0}
+            let emb2 = new Discord.MessageEmbed();
+            emb2.setImage("https://qph.fs.quoracdn.net/main-qimg-03cc5a7d16ec433984a39059446d5c4b");
+            emb2.addField(message.author.username,hp1,true);
+            emb2.addField(args[1],hp2,true);
+            emb2.setFooter("Gladiator Matches powered by our most humble Imperator");
+            emb2.setColor("0x8B0000");
+            res.edit(emb2);
+            cturn = false;
+          }else {hp2 -= Math.floor(Math.random() * 31)
+            if(hp2 < 0){hp2 = 0}
+            let emb2 = new Discord.MessageEmbed();
+            emb2.setImage("https://qph.fs.quoracdn.net/main-qimg-03cc5a7d16ec433984a39059446d5c4b");
+            emb2.addField(message.author.username,hp1,true);
+            emb2.addField(args[1],hp2,true);
+            emb2.setFooter("Gladiator Matches powered by our most humble Imperator");
+            emb2.setColor("0x8B0000");
+            res.edit(emb2);
+            cturn = true;
+          };
+          if(hp1 == 0 || hp2 == 0){clearInterval(int); let emb3 = new Discord.MessageEmbed(); emb3.addField("Winner",hp1 == 0 ? args[1] : message.author.username); emb3.setImage("https://www.history.com/.image/c_fill%2Ccs_srgb%2Cfl_progressive%2Ch_400%2Cq_auto:good%2Cw_620/MTU3ODc4NjAzNTMwOTA1MzEx/list-10-things-you-may-not-know-about-gladiators-2.jpg"); emb3.setFooter("Gladiator Matches powered by our most humble Imperator");
+            emb3.setColor("0xFFDF00");
+            res.edit(emb3).catch(err => console.log(err))};
+        },1500);
+
+
+      });
+    }else if(args.length == 3){
+      let emb = new Discord.MessageEmbed();
+      emb.setImage("https://qph.fs.quoracdn.net/main-qimg-03cc5a7d16ec433984a39059446d5c4b");
+      emb.addField(args[1],"100",true);
+      emb.addField(args[2],"100",true);
+      emb.setFooter("Gladiator Matches powered by our most humble Imperator");
+      emb.setColor("0xFFFFFF");
+      message.channel.send(emb).then(res => {
+        var cturn = false;
+        var hp1 = 100;
+        var hp2 = 100;
+
+        let int = setInterval(function(php1, php2){
+          php1 = hp1;
+          php2 = hp2;
+
+
+
+          let num = Math.random();
+          if(cturn == true){hp1 -= Math.floor(Math.random() * 31);
+            if(hp1 < 0){hp1 = 0}
+            let emb2 = new Discord.MessageEmbed();
+            emb2.setImage("https://qph.fs.quoracdn.net/main-qimg-03cc5a7d16ec433984a39059446d5c4b");
+            emb2.addField(args[1],hp1,true);
+            emb2.addField(args[2],hp2,true);
+            emb2.setFooter("Gladiator Matches powered by our most humble Imperator");
+            emb2.setColor("0x8B0000");
+            res.edit(emb2);
+            cturn = false;
+          }else {hp2 -= Math.floor(Math.random() * 31)
+            if(hp2 < 0){hp2 = 0}
+            let emb2 = new Discord.MessageEmbed();
+            emb2.setImage("https://qph.fs.quoracdn.net/main-qimg-03cc5a7d16ec433984a39059446d5c4b");
+            emb2.addField(args[1],hp1,true);
+            emb2.addField(args[2],hp2,true);
+            emb2.setFooter("Gladiator Matches powered by our most humble Imperator");
+            emb2.setColor("0x8B0000");
+            res.edit(emb2);
+            cturn = true;
+          };
+          if(hp1 == 0 || hp2 == 0){clearInterval(int); let emb3 = new Discord.MessageEmbed(); emb3.addField("Winner",hp1 == 0 ? args[2] : args[1]); emb3.setImage("https://www.history.com/.image/c_fill%2Ccs_srgb%2Cfl_progressive%2Ch_400%2Cq_auto:good%2Cw_620/MTU3ODc4NjAzNTMwOTA1MzEx/list-10-things-you-may-not-know-about-gladiators-2.jpg"); emb3.setFooter("Gladiator Matches powered by our most humble Imperator");
+            emb3.setColor("0xFFDF00");
+            res.edit(emb3).catch(err => console.log(err))};
+        },1500);
+
+
+      });
+
+    }else{message.channel.send("invalid parameters given")}
+  }
+
+  if (message.content.toLowerCase().includes(command + "bet" )) {
+    let args = message.content.split(" ");
+    if(args.length == 3 && args[1] != args[2] || args.length == 2 && args[1] != message.author.username){
+        if(!BattleAlreadyCommenced){
+            BattleAlreadyCommenced = true;
+            const filter = m => !m.author.bot;
+            message.channel.send("A gladiator battle will soon ensue");
+            const collector = message.channel.createMessageCollector(filter, { time: 40000 });
+            let bets = new arrayList;
+            collector.on('collect', m => {
+                let temp = m.content.split(" ");
+                client.getUserBalance(message.guild.id, m.author.id).then(c => {
+              
+         
+          
+                    if(!isNaN(temp[0]) && temp[1] == args[1] || temp[1] == args[2])
+                    {
+                        //take the absolute value since negative bets are not allowed
+                        let bet = Math.abs(temp[0]);
+                        if(bet <= 10000 && bet > 0 && bet != 0){
+                            if(c.cash >= bet){
+                            let st = bet+":"+temp[1]+":"+m.author.id;
+                            bets.add(st);
+                            client.editUserBalance(message.guild.id, m.author.id, { cash: -bet, bank: 0 }, "bet");
+                            client.editUserBalance(message.guild.id, "700662464856981564", { cash: 0, bank: (bet/2) }, "bet");
+                            message.channel.send("bet received")
+                            }
+                            else{
+                                message.channel.send("invalid bet not enough cash, you currently have "+c.cash+" <:DNR:782312774083674163>");
+                            }
+                        }else{
+                            message.channel.send("invalid bet: max bet of 10000 <:DNR:782312774083674163>");
+                        }
+                    }
+                    else
+                    {
+                        message.channel.send("invalid bet");
+                    }
+                })
+            });
+    
+            collector.on('end', collected => {
+        
+              message.channel.send("bets closed");
+        
+              if(args.length == 2){
+                let emb = new Discord.MessageEmbed();
+                emb.setImage("https://qph.fs.quoracdn.net/main-qimg-03cc5a7d16ec433984a39059446d5c4b");
+                emb.addField(message.author.username,"100",true);
+                emb.addField(args[1],"100",true);
+                emb.setFooter("Gladiator Matches powered by our most humble Imperator");
+                emb.setColor("0xFFFFFF");
+                message.channel.send(emb).then(res => {
+                  var cturn = Math.random() < 0.5? true: false;
+                  var hp1 = 100;
+                  var hp2 = 100;
+        
+                  let int = setInterval(function(php1, php2){
+                    php1 = hp1;
+                    php2 = hp2;
+        
+        
+        
+                    let num = Math.random();
+                    if(cturn == true){hp1 -= Math.floor(Math.random() * 31);
+                      if(hp1 < 0){hp1 = 0}
+                      let emb2 = new Discord.MessageEmbed();
+                      emb2.setImage("https://qph.fs.quoracdn.net/main-qimg-03cc5a7d16ec433984a39059446d5c4b");
+                      emb2.addField(message.author.username,hp1,true);
+                      emb2.addField(args[1],hp2,true);
+                      emb2.setFooter("Gladiator Matches powered by our most humble Imperator");
+                      emb2.setColor("0x8B0000");
+                      res.edit(emb2);
+                      cturn = false;
+                    }else {hp2 -= Math.floor(Math.random() * 31)
+                      if(hp2 < 0){hp2 = 0}
+                      let emb2 = new Discord.MessageEmbed();
+                      emb2.setImage("https://qph.fs.quoracdn.net/main-qimg-03cc5a7d16ec433984a39059446d5c4b");
+                      emb2.addField(message.author.username,hp1,true);
+                      emb2.addField(args[1],hp2,true);
+                      emb2.setFooter("Gladiator Matches powered by our most humble Imperator");
+                      emb2.setColor("0x8B0000");
+                      res.edit(emb2);
+                      cturn = true;
+                    };
+                    if(hp1 == 0 || hp2 == 0){clearInterval(int); let emb3 = new Discord.MessageEmbed(); emb3.addField("Winner",hp1 == 0 ? args[1] : message.author.username); emb3.setImage("https://www.history.com/.image/c_fill%2Ccs_srgb%2Cfl_progressive%2Ch_400%2Cq_auto:good%2Cw_620/MTU3ODc4NjAzNTMwOTA1MzEx/list-10-things-you-may-not-know-about-gladiators-2.jpg"); emb3.setFooter("Gladiator Matches powered by our most humble Imperator");
+                      emb3.setColor("0xFFDF00");
+                      res.edit(emb3)
+                      let winner;
+                      hp1 == 0 ? winner = args[1] : winner = message.author.username;
+                      let embed = new Discord.MessageEmbed();
+                      bets.forEach(c =>{
+        
+                        embed.setTitle("Winners");
+                        let t = c.split(":");
+        
+                        if(t[1] === winner){
+                            embed.addField("winner","<@"+t[2]+">"+" amount "+t[0]*1.85,false);
+                            
+                            client.editUserBalance(message.guild.id, t[2], { cash: t[0]*1.85, bank: 0 }, "bet");
+                        }
+        
+                      })
+                      BattleAlreadyCommenced = false;
+                      message.channel.send(embed);
+                    };
+                  },1500);
+        
+        
+                });
+              }else if(args.length == 3){
+                let emb = new Discord.MessageEmbed();
+                emb.setImage("https://qph.fs.quoracdn.net/main-qimg-03cc5a7d16ec433984a39059446d5c4b");
+                emb.addField(args[1],"100",true);
+                emb.addField(args[2],"100",true);
+                emb.setFooter("Gladiator Matches powered by our most humble Imperator");
+                emb.setColor("0xFFFFFF");
+                message.channel.send(emb).then(res => {
+                  var cturn = false;
+                  var hp1 = 100;
+                  var hp2 = 100;
+        
+                  let int = setInterval(function(php1, php2){
+                    php1 = hp1;
+                    php2 = hp2;
+        
+        
+        
+                    let num = Math.random();
+                    if(cturn == true){hp1 -= Math.floor(Math.random() * 31);
+                      if(hp1 < 0){hp1 = 0}
+                      let emb2 = new Discord.MessageEmbed();
+                      emb2.setImage("https://qph.fs.quoracdn.net/main-qimg-03cc5a7d16ec433984a39059446d5c4b");
+                      emb2.addField(args[1],hp1,true);
+                      emb2.addField(args[2],hp2,true);
+                      emb2.setFooter("Gladiator Matches powered by our most humble Imperator");
+                      emb2.setColor("0x8B0000");
+                      res.edit(emb2);
+                      cturn = false;
+                    }else {
+                      hp2 -= Math.floor(Math.random() * 31)
+                      if(hp2 < 0){hp2 = 0}
+                      let emb2 = new Discord.MessageEmbed();
+                      emb2.setImage("https://qph.fs.quoracdn.net/main-qimg-03cc5a7d16ec433984a39059446d5c4b");
+                      emb2.addField(args[1],hp1,true);
+                      emb2.addField(args[2],hp2,true);
+                      emb2.setFooter("Gladiator Matches powered by our most humble Imperator");
+                      emb2.setColor("0x8B0000");
+                      res.edit(emb2);
+                      cturn = true;
+                    };
+                    if(hp1 == 0 || hp2 == 0){clearInterval(int); let emb3 = new Discord.MessageEmbed(); emb3.addField("Winner",hp1 == 0 ? args[2] : args[1]); emb3.setImage("https://www.history.com/.image/c_fill%2Ccs_srgb%2Cfl_progressive%2Ch_400%2Cq_auto:good%2Cw_620/MTU3ODc4NjAzNTMwOTA1MzEx/list-10-things-you-may-not-know-about-gladiators-2.jpg"); emb3.setFooter("Gladiator Matches powered by our most humble Imperator");
+                      emb3.setColor("0xFFDF00");
+                      res.edit(emb3)
+                      let winner;
+                      hp1 == 0 ? winner = args[2] : winner = args[1];
+                      let embed = new Discord.MessageEmbed();
+                      bets.forEach(bet =>{
+        
+                        embed.setTitle("Winners");
+                        let t = bet.split(":");
+                        let winnings = Math.floor(t[0]*1.7);
+                        if(t[1] === winner){
+                            embed.addField("winner","<@"+t[2]+">"+" amount: "+winnings,false);
+                            
+                            client.editUserBalance(message.guild.id, t[2], { cash: winnings, bank: 0 }, "bet");
+                        }
+        
+                      })
+                      BattleAlreadyCommenced = false;
+                      message.channel.send(embed);
+                    };
+                  },1500);
+        
+        
+                });
+        
+              }else{message.channel.send("invalid parameters given")}
+            });
+        }else{
+            message.channel.send("A battle is currently occuring, concurrent battles are not allowed!");
+        }
+    }else{
+        message.channel.send("A Gladiator cant fight itself");
     }
   }
 
   if (message.content.toLowerCase().includes(command + "deletemotion")) {
     if (
-      message.member.roles.cache.has("649362430446796815") ||
-      message.member.roles.cache.has("565594839828398100") ||
-      message.member.roles.cache.has("514143501697679361") ||
-      message.member.roles.cache.has("546654987061821440")
+        message.member.roles.cache.has("649362430446796815") ||
+        message.member.roles.cache.has("565594839828398100") ||
+        message.member.roles.cache.has("514143501697679361") ||
+        message.member.roles.cache.has("546654987061821440")
     ) {
       var args = message.content.split(" ");
       db.all("DELETE FROM Motions WHERE mID =" + args[1], [], (err, rows) => {
@@ -1538,18 +2401,18 @@ const filter = response => {return answer.includes(response.content.toLowerCase(
     }
   }
 
-  if (message.content.toLowerCase().includes(command + "deleteallmotions")) {
+  if (message.content.toLowerCase().includes(command + "deleteallmotions") || message.content.toLowerCase().includes("ave imperator publius") && message.channel.id == 549645921487421495) {
     if (
-      message.member.roles.cache.has("649362430446796815") ||
-      message.member.roles.cache.has("565594839828398100") ||
-      message.member.roles.cache.has("514143501697679361") ||
-      message.member.roles.cache.has("546654987061821440")
+        message.member.roles.cache.has("649362430446796815") ||
+        message.member.roles.cache.has("565594839828398100") ||
+        message.member.roles.cache.has("514143501697679361") ||
+        message.member.roles.cache.has("546654987061821440")
     ) {
       db.all("DELETE FROM Motions", [], (err, rows) => {
         if (err) {
           message.channel.send("sth went wrong");
-          
-        } else message.channel.send("motions deleted");
+
+        } else message.channel.send("Ave Imperator Publius Augustus -motions deleted");
         updateEmbedMessage(message);
       });
     } else {
@@ -1567,22 +2430,22 @@ const filter = response => {return answer.includes(response.content.toLowerCase(
         var id = message.mentions.users.first().id;
 
         let add =
-          "INSERT INTO Birthdates(Birthdate,DiscordID,celebrated) VALUES(" +
-          bdate +
-          ",'" +
-          id +
-          "',0)";
+            "INSERT INTO Birthdates(Birthdate,DiscordID,celebrated) VALUES(" +
+            bdate +
+            ",'" +
+            id +
+            "',0)";
         db.run(add);
       }
       var userID = message.author.id;
       console.log(userID);
 
       let add =
-        "INSERT INTO Birthdates(Birthdate,DiscordID,celebrated) VALUES(" +
-        bdate +
-        "," +
-        userID +
-        ",0)";
+          "INSERT INTO Birthdates(Birthdate,DiscordID,celebrated) VALUES(" +
+          bdate +
+          "," +
+          userID +
+          ",0)";
 
       db.run(add);
 
@@ -1618,69 +2481,129 @@ const filter = response => {return answer.includes(response.content.toLowerCase(
   if (message.content.toLowerCase() === "?pray") {
     message.author.send("dont listen to Dyno Byzantium is Roman");
   }
+
 });
 
 clientdc.on("message", async message => {
-  if (!message.author.bot && message.author.id != "241349696856129539") {
-    if (message.content.toLowerCase().includes("istanbul")) {
-      message.channel.send("its Constantinople smh");
-    }
+      if (!message.author.bot && message.author.id != "241349696856129539") {
+        if (message.content.toLowerCase().includes("istanbul")) {
+          message.channel.send("its Constantinople smh");
+        }
 
-    if (message.channel.type === "dm") {
-      var args = message.content.split("-");
-     clientdc.channels.cache.get(args[0]).send(args[1]);
-    }
+        if (message.channel.type === "dm") {
+          var args = message.content.split("-");
+          clientdc.channels.cache.get(args[0]).send(args[1]);
+        }
 
-    if (
-      message.content.toLowerCase().includes("the general") ||
-      message.content.toLowerCase().includes("general")
-    ) {
-      message.channel.send("hail Apicius");
-      message.react("640270832115122196");
-    }
+        if (
+            message.content.toLowerCase().includes("the general") && message.channel.id == "543787717725519892"||
+            message.content.toLowerCase().includes("general") && message.channel.id == "543787717725519892"
+        ) {
+          message.channel.send("hail Apicius");
+          message.react("640270832115122196");
+        }
 
-    if (
-      message.content.toLowerCase().includes("hre ") ||
-      message.content.toLowerCase().includes("holy Roman Empire") ||
-      message.content.toLowerCase().includes("hre ")
-    ) {
-      message.channel.send("shame on you");
-    }
+        if (
+            message.content.toLowerCase().includes("hre ") && message.channel.id == "543787717725519892"||
+            message.content.toLowerCase().includes("holy Roman Empire") && message.channel.id == "543787717725519892"||
+            message.content.toLowerCase().includes("hre ") && message.channel.id == "543787717725519892"
+        ) {
+          message.channel.send("shame on you");
+        }
 
-    if (
-      message.content.toLowerCase().includes("Civil war") ||
-      message.content.toLowerCase().includes("civil war")
-    ) {
-      message.channel.send("yall know who won right :wink:");
-    }
+        if (
+            message.content.toLowerCase().includes("civil war") && message.channel.id == "543787717725519892"
+        ) {
+          message.channel.send("yall know who won right :wink:");
+        }
 
-    if (
-      message.content.toLowerCase().includes("imperator") ||
-      message.content.toLowerCase().includes("emperor")
-    ) {
-      var num = Math.random();
-      console.log(num);
-      if (num <= 0.8) {
-        message.channel.send(
-          "All hail the Imperator https://media.4teachers.de/images/thumbs/image_thumb.1146.jpg"
-        );
-      } else
-        message.channel.send(
-          "All hail the Imperator https://cdn.discordapp.com/attachments/543787157127561216/706809950327799848/waaw.png"
-        );
-      message.react("664229248944439301");
+        if (
+            message.content.toLowerCase().includes("imperator") && message.channel.id == "660253007916826625"||
+            message.content.toLowerCase().includes("emperor") && message.channel.id == "660253007916826625"
+        ) {
+          var num = Math.random();
+          
+          if (num <= 0.8) {
+            message.channel.send(
+                "All hail the Imperator https://media.4teachers.de/images/thumbs/image_thumb.1146.jpg"
+            );
+          } else
+            message.channel.send(
+                "All hail the Imperator https://cdn.discordapp.com/attachments/543787157127561216/706809950327799848/waaw.png"
+            );
+          message.react("664229248944439301");
+        }
+        if (
+            message.content.toLowerCase().includes("imperatrix") && message.channel.id == "660253007916826625"||
+            message.content.toLowerCase().includes("empress") && message.channel.id == "660253007916826625"
+        ) {
+          message.channel.send(
+              "All hail the Empress https://pbs.twimg.com/profile_images/837236794387234816/megbmYw2_400x400.jpg"
+          );
+          message.react("636456201273475113");
+        }
+
+        if (
+            message.content.toLowerCase().includes("boo") && message.channel.id == "543787717725519892"
+        ) {
+          message.channel.send(
+              "https://cdn.discordapp.com/attachments/536547184448110602/741412013430931467/IMG-20200807-WA0082.jpg"
+          );
+
+        }
+
+        if (message.content.toLowerCase().includes("canis") && message.channel.id == "543787717725519892") {
+          message.channel.send(
+              "https://lh3.googleusercontent.com/pw/ACtC-3ei9pLdPL1wJ3B7FtjbDyEsNHlUQeE8eCITVyQ8uUf_BxaAJaaG3LChL2mMoKjoKh_Zk35cQS9J2CdLjpqB91hOoqS_1Zvf09O4gvnafBjf_YM-kMoswDQMPH66ZI0eVd-TIlAInxWfHYBrNjadAfqG=w963-h1286-no?authuser=0"
+          );
+
+        }
+
+
+        if (message.content.toLowerCase().includes("carthago")){
+          message.channel.send("Carthago Delenda Est!");
+
+        }
+
+        if (message.content.startsWith("!suggest")){
+          client.editUserBalance(GuildID, message.author.id, { cash: 0, bank: -300}, "suggesting a motion")
+
+        }
+
+        if (message.content.toLowerCase().includes("lorenzo")){
+          message.react("808652176280125480");
+
+        }
+       if(message.content.toLowerCase().includes(command+"russia")){
+          let args = message.content.split(" ")
+          if(args[1].includes("+")){
+            let prob = args[1].split("+");
+            message.channel.send(parseInt((Math.random()*prob[0])+parseInt(prob[1])));
+          }
+          else{
+            message.channel.send(parseInt(Math.random()*args[1]))
+          }
+      }
+        if (message.content.toLowerCase().startsWith("!") && message.channel.id == "630588104184430643"){
+          message.channel.send("bad boy!!");
+          message.channel.bulkDelete(2);
+
+        }
+        
+        if(message.author.id === '559471648361676810'){
+            //message.react('771454776336449556');
+        }
+        
+        if (!message.content.toLowerCase().startsWith("!") && message.channel.id == "819602635966513172"){
+            if(!message.member.roles.cache.has("805067937211351040")){
+                message.channel.bulkDelete(1);
+            }
+        }
+      }
     }
-    if (
-      message.content.toLowerCase().includes("imperatrix") ||
-      message.content.toLowerCase().includes("empress")
-    ) {
-      message.channel.send(
-        "All hail the Empress https://pbs.twimg.com/profile_images/837236794387234816/megbmYw2_400x400.jpg"
-      );
-      message.react("636456201273475113");
-    }
-  }
-});
+);
+
+
 
 clientdc.on("messageUpdate", message => {
   if (!message.author.bot) {

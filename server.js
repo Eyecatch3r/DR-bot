@@ -17,6 +17,7 @@ const GuildID = "514135876909924352";
 const Tree = require("treeify");
 var CronJob = require('node-cron');
 const ImageCharts = require('image-charts');
+const ms = require('ms');
 //init sqlite API
 const dbFile = "./DR.db";
 const exists = fs.existsSync(dbFile);
@@ -339,7 +340,6 @@ function updateProvinceMessage(message) {
 
 clientdc.on("ready", (interaction) => {
   //Slash commands
-
   clientdc.interactions.getCommands().then(console.log).catch(console.error);
 
 
@@ -468,8 +468,105 @@ clientdc.ws.on("INTERACTION_CREATE", async interaction => {
         }
       })
       break;
+    case "mute":
+      if(interaction.member.roles.includes("549712921450774556") && interaction.member.roles.includes("546654987061821440")) {
+        const target = interaction.data.options[0];
+        if (target) {
+
+
+          let muteRole = clientdc.guilds.cache.get(interaction.guild_id).roles.cache.find(role => role.name === 'Imprisoned');
+
+          let member = clientdc.guilds.cache.get(interaction.guild_id).members.cache.get(target.value);
+
+
+
+          member.roles.add(muteRole.id);
+          let emb = new Discord.MessageEmbed();
+          emb.setColor('#8f0713');
+          emb.setDescription(`<@${member.user.id}> has been muted for ${ms(ms(interaction.data.options[1].value))}`);
+          emb.setTitle("𝐈𝐌𝐏𝐄𝐑𝐀𝐓𝐎𝐑·𝐏𝐕𝐁𝐋𝐈𝐕𝐒","https://cdn.glitch.com/24cdd29f-170e-4ac8-9dc2-8abc1cbbaeaa%2Fimageedit_1_3956664875.png?v=1588186424473");
+          emb.setFooter("Muting powered by our most humble Imperator");
+
+          clientdc.api.interactions(interaction.id, interaction.token).callback.post({
+            data: {
+              type: 4,
+              data: {
+                embeds: [emb]
+              }
+            }
+          })
+          setTimeout(function () {
+            member.roles.remove(muteRole.id);
+
+          }, ms(interaction.data.options[1].value));
+        } else {
+          let emb = new Discord.MessageEmbed();
+          emb.setColor('#8f0713');
+          emb.setDescription("Cant find member");
+          emb.setTitle("𝐈𝐌𝐏𝐄𝐑𝐀𝐓𝐎𝐑·𝐏𝐕𝐁𝐋𝐈𝐕𝐒","https://cdn.glitch.com/24cdd29f-170e-4ac8-9dc2-8abc1cbbaeaa%2Fimageedit_1_3956664875.png?v=1588186424473");
+          emb.setFooter("Muting powered by our most humble Imperator");
+
+          clientdc.api.interactions(interaction.id, interaction.token).callback.post({
+            data: {
+              type: 4,
+              data: {
+                embeds: [emb]
+              }
+            }
+          })
+        }
+      }else{
+        let emb = new Discord.MessageEmbed();
+        emb.setColor('#8f0713');
+        emb.setDescription("You do not have the permission to mute a user");
+        emb.setTitle("𝐈𝐌𝐏𝐄𝐑𝐀𝐓𝐎𝐑·𝐏𝐕𝐁𝐋𝐈𝐕𝐒","https://cdn.glitch.com/24cdd29f-170e-4ac8-9dc2-8abc1cbbaeaa%2Fimageedit_1_3956664875.png?v=1588186424473");
+        emb.setFooter("Muting powered by our most humble Imperator");
+
+        clientdc.api.interactions(interaction.id, interaction.token).callback.post({
+          data: {
+            type: 4,
+            data: {
+              embeds: [emb]
+            }
+          }
+        })
+      }
+      break;
+
+    case "unmute":
+      if(interaction.member.roles.includes("549712921450774556") && interaction.member.roles.includes("546654987061821440")) {
+        const target = interaction.data.options[0];
+        if (target) {
+
+
+          let muteRole = clientdc.guilds.cache.get(interaction.guild_id).roles.cache.find(role => role.name === 'Imprisoned');
+
+          let member = clientdc.guilds.cache.get(interaction.guild_id).members.cache.get(target.value);
+
+
+
+          member.roles.remove(muteRole.id);
+          let emb = new Discord.MessageEmbed();
+          emb.setColor('#8f0713');
+          emb.setDescription(`<@${member.user.id}> has been unmuted`);
+          emb.setTitle("𝐈𝐌𝐏𝐄𝐑𝐀𝐓𝐎𝐑·𝐏𝐕𝐁𝐋𝐈𝐕𝐒","https://cdn.glitch.com/24cdd29f-170e-4ac8-9dc2-8abc1cbbaeaa%2Fimageedit_1_3956664875.png?v=1588186424473");
+          emb.setFooter("Muting powered by our most humble Imperator");
+
+          clientdc.api.interactions(interaction.id, interaction.token).callback.post({
+            data: {
+              type: 4,
+              data: {
+                embeds: [emb]
+              }
+            }
+          })
+
+      }
+
+
   }
-});
+      break;
+}});
 
 
 function provinceIncome(){

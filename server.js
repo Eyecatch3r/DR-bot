@@ -20,6 +20,8 @@ const ms = require('ms');
 const { GoogleSpreadsheet } = require("google-spreadsheet");
 const doc = new GoogleSpreadsheet('1Mci7KdAbGP3s_VWzzTCvLT3wEDN7XbO_zoRrHr0_Lfw');
 
+
+
 doc.useServiceAccountAuth({
   client_email: "dr-bot@dr-bot-313315.iam.gserviceaccount.com",
   private_key: "-----BEGIN PRIVATE KEY-----\nMIIEvAIBADANBgkqhkiG9w0BAQEFAASCBKYwggSiAgEAAoIBAQD5hHjK2Lw0MDtE\ns4XCKFRP8gfRXquD4xBZDZoScRWWHrV0jo5ar38SjocO2MoTib0TMOiq9lg4/qfo\nd7sloOB6jUuH5EAspN9K3G2PQmU/a8b+00ROUd7mqYmy3BplEE/Hx1CUqBIfcsl0\nX+JafHW9l7/5Oaf0pX9c/pmKMNJi6l0cC/o4QM1Gtqmi3D5GAe19xQW3wCrvRmpE\nRBk4Bwt3yeD6oKoORX9ac5771QeCbP47GtohTF2s4bayeohdlfz5Sv7SrFGQiiE9\nMmHfNffbIY0XyV/WZNh5vuVi3B2IACGUsoPn4mm+UCDBF2ZGZC97ZVZfrFPYPXc2\n7tiNZOQpAgMBAAECggEAec5ijVu6nJuDA2nD/WFkr1ZO3LWjcxHQtDiAo0oTKKK7\nIDhLZBfSJ8PuSKAqHdmatJimrHbv4HroiwKQGLFthEYfvin97g1aeBgdX9cgyBIc\nJeAKs1UiRGY1M1xhgj6xQ6yYOMnHdxS5JZd9T4D8lV5UOB0eUb7M6x/a4mws+F3L\n647w0jBKBMhMvDtJWjwXcPa2pI3vvneAJJfAos9GqLhW0KM6f3chKI8EkTlCYzXf\n+SBnXFJK+ywAkqH5PGWIzvgTKGAugqMtF3C3DmIVuBOQbbFm/7H9ae8XSuTTKSR1\nezMkdn+Q/MCoIte9r8js9WNV/vA8/zmGdLtUZE1StQKBgQD+0iJVnOi9mmVPNUt4\nBlAz0txYoLUOJOt4MX6t0L2YvybUwCOazBSCwxWBknCyeNnoFQjrqHr8j5fpWUdL\n5BxSW2xN2tq2kHgqZpCtx9kx7vVmkiGKmbxqZy8BxYH6CKbYsORoxm1TUydgEpPY\ni5nePNorHGXFiO7x3MejTzrpHwKBgQD6rA4k2Y6E/HgBa5bDVwov7M9gtAJVCBIf\n8lU5pOKU9fRPK9pb4sHozjG4XRg4/tmg5BvNQkXRguL7UDva7BYPHVjByLvXdHdV\nIlRrKZryJ6nIK+CXgrq2jY+ZaBNUqyEfmoMXnuyxoEDvUeUEyp7xIf2z9maiq6ij\noPRQ3BzhtwKBgB/pErGj76Vmw08S/ntuVvbWbg+POH0n9HDdyd5caJHLRkKYOR02\nd08UvQm32/MNnUQp9i8ErzoXhU+MhZgkXcOWfU6WnJMGLnYo1+9bOoC9Su/oVtjz\nfZvZhhJzuF4mXTZ/mGrihmhL3n9ydB9HBCLHfg6uBLSi/EE/g6SY1GjDAoGAfpa0\n7dcQKgh1cgIrOKqT8m/cqjE9nENfI9L1Rw8FfcRXhEPZGd4BntfCNCCPQvkwXhfU\nEmwNZih7B/8UuxHOcgOX9wSwF7YxLUUQ7K0uGmv9SaEe4mSadeY3RnlQicmCCLu2\nyA7x6SHMqQ7qYOkSKyPHQ0KDwlJ972Qw/USrMTECgYBFaXCjbmy5JfPiVmawUdod\nuBgtUzAjmQHusyY6ZABLnBqqg4AkfpZu+642RwsWIZghkwTdR1C1fXHBmxo6TBL5\n1uNzEGrnuEyl9vy1vFfcjuERPGauNYM1F2cQ0m+TuNjEDU6mxO9BzKRsNEQ7OrqD\nF/eBdUnQpaDL0xbV4U92VA==\n-----END PRIVATE KEY-----\n",
@@ -41,6 +43,7 @@ const discordBot = require("./bot");
 const Discord = require("discord.js");
 const clientdc = new Discord.Client();
 const interactions = require("discord-slash-commands-client");
+const disbut = require('discord-buttons')(clientdc);
 //global variables
 var BattleAlreadyCommenced = false;
 var taxRate = 0.6; 
@@ -461,6 +464,23 @@ clientdc.on("ready", (interaction) => {
 
 });
 
+function createProvinceEmbed(picURL) {
+  let provinces = new Discord.MessageEmbed();
+  provinces.setFooter("Provinces presented by your humble Imperator");
+  provinces.setThumbnail('https://cdn.discordapp.com/attachments/548918811391295489/776740280266784778/purpleDR.png');
+  provinces.setTitle('Provinces');
+  provinces.setImage(picURL);
+  provinces.setColor('#cd1121');
+  provinces.setAuthor("𝐈𝐌𝐏𝐄𝐑𝐀𝐓𝐎𝐑·𝐏𝐕𝐁𝐋𝐈𝐕𝐒", 'https://cdn.glitch.com/24cdd29f-170e-4ac8-9dc2-8abc1cbbaeaa%2Fimageedit_1_3956664875.png?v=1588186424473');
+
+  db.all("SELECT * FROM Province JOIN Governor ON Province.Governor = gov_ID",[],(err,rows) => {
+    rows.forEach((row) => {
+      provinces.addField(row.province, "<@" + row.DiscordID + ">");
+    })
+  });
+  return provinces;
+  }
+
 clientdc.ws.on("INTERACTION_CREATE", async interaction => {
   switch(interaction.data.name) {
     case "ping":
@@ -728,17 +748,9 @@ clientdc.ws.on("INTERACTION_CREATE", async interaction => {
       });
       break;
     case "provinces":
-      let provinces = new Discord.MessageEmbed();
-      provinces.setFooter("Provinces presented by your humble Imperator");
-      provinces.setThumbnail('https://cdn.discordapp.com/attachments/548918811391295489/776740280266784778/purpleDR.png');
-      provinces.setTitle('Provinces');
-      provinces.setImage('https://cdn.discordapp.com/attachments/548918811391295489/846080867138011156/unknown.png')
-      provinces.setColor('#cd1121');
-      provinces.setAuthor("𝐈𝐌𝐏𝐄𝐑𝐀𝐓𝐎𝐑·𝐏𝐕𝐁𝐋𝐈𝐕𝐒",'https://cdn.glitch.com/24cdd29f-170e-4ac8-9dc2-8abc1cbbaeaa%2Fimageedit_1_3956664875.png?v=1588186424473');
 
-      db.all("SELECT * FROM Province JOIN Governor ON Province.Governor = gov_ID",[],(err,rows) => {
-        rows.forEach((row) =>{
-          provinces.addField(row.province,"<@"+row.DiscordID+">");})
+      let provinces = createProvinceEmbed("https://cdn.discordapp.com/attachments/548918811391295489/846080867138011156/unknown.png");
+
 
 
         clientdc.api.interactions(interaction.id, interaction.token).callback.post({
@@ -786,7 +798,7 @@ clientdc.ws.on("INTERACTION_CREATE", async interaction => {
             }
           });
         })
-      });
+
       break;
     default:
       break;
@@ -900,6 +912,66 @@ function collectTaxes(){
 
 }
 
+clientdc.on('clickButton', async (button) => {
+  if (button.id === 'faction_map') {
+    let provinces = createProvinceEmbed("https://cdn.discordapp.com/attachments/771315528471806032/845960254520557598/unknown.png");
+    let factionButton = new disbut.MessageButton()
+        .setStyle('red') //default: blurple
+        .setLabel('Faction Map') //default: NO_LABEL_PROVIDED
+        .setID('faction_map') //note: if you use the style "url" you must provide url using .setURL('https://example.com')
+    let provinceButton = new disbut.MessageButton()
+        .setStyle('red')
+        .setLabel('Province Map')
+        .setID('province_map')
+
+    let cultureButton = new disbut.MessageButton()
+        .setStyle('red')
+        .setLabel('Culture Map')
+        .setID('culture_map')
+
+    await button.message.edit({embed: provinces, buttons: [factionButton,provinceButton,cultureButton]});
+  }
+  else
+  if (button.id === 'province_map') {
+    let provinces = createProvinceEmbed("https://cdn.discordapp.com/attachments/771315528471806032/845960254520557598/unknown.png");
+    let factionButton = new disbut.MessageButton()
+        .setStyle('red')
+        .setLabel('Faction Map')
+        .setID('faction_map')
+
+    let provinceButton = new disbut.MessageButton()
+        .setStyle('red')
+        .setLabel('Province Map')
+        .setID('province_map')
+
+    let cultureButton = new disbut.MessageButton()
+        .setStyle('red')
+        .setLabel('Culture Map')
+        .setID('culture_map')
+
+    await button.message.edit({embed: provinces, buttons: [factionButton,provinceButton,cultureButton]});
+  }
+  else
+    if (button.id === 'province_map') {
+      let provinces = createProvinceEmbed("https://cdn.discordapp.com/attachments/514135876909924354/813764720607625276/unknown.png");
+      let factionButton = new disbut.MessageButton()
+          .setStyle('red')
+          .setLabel('Faction Map')
+          .setID('faction_map')
+
+      let provinceButton = new disbut.MessageButton()
+          .setStyle('red')
+          .setLabel('Province Map')
+          .setID('province_map')
+
+      let cultureButton = new disbut.MessageButton()
+          .setStyle('red')
+          .setLabel('Culture Map')
+          .setID('culture_map')
+
+      await button.message.edit({embed: provinces, buttons: [factionButton, provinceButton, cultureButton]});
+    }
+});
 //simple test query
 let sql = `SELECT * FROM Birthdates;`;
 
@@ -1569,20 +1641,22 @@ clientdc.on("message", message => {
   }
     
   if(message.content.toLowerCase() === command+"provinces"){
-    let emb = new Discord.MessageEmbed();
-    emb.setFooter("Provinces presented by your humble Imperator");
-    emb.setThumbnail('https://cdn.discordapp.com/attachments/548918811391295489/776740280266784778/purpleDR.png');
-    emb.setTitle('Provinces');
-    emb.setImage('https://cdn.discordapp.com/attachments/548918811391295489/846080867138011156/unknown.png')
-    emb.setColor('#cd1121');
-    emb.setAuthor("𝐈𝐌𝐏𝐄𝐑𝐀𝐓𝐎𝐑·𝐏𝐕𝐁𝐋𝐈𝐕𝐒",'https://cdn.glitch.com/24cdd29f-170e-4ac8-9dc2-8abc1cbbaeaa%2Fimageedit_1_3956664875.png?v=1588186424473');
+    let emb = createProvinceEmbed("https://cdn.discordapp.com/attachments/548918811391295489/846080867138011156/unknown.png");
+    let factionButton = new disbut.MessageButton()
+        .setStyle('red') //default: blurple
+        .setLabel('Faction Map') //default: NO_LABEL_PROVIDED
+        .setID('faction_map') //note: if you use the style "url" you must provide url using .setURL('https://example.com')
+    let provinceButton = new disbut.MessageButton()
+        .setStyle('red')
+        .setLabel('Province Map')
+        .setID('province_map')
 
-    db.all("SELECT * FROM Province JOIN Governor ON Province.Governor = gov_ID",[],(err,rows) => {
-      rows.forEach((row) =>{
-        emb.addField(row.province,"<@"+row.DiscordID+">");})
+    let cultureButton = new disbut.MessageButton()
+        .setStyle('red')
+        .setLabel('Culture Map')
+        .setID('culture_map')
 
-
-      message.channel.send(emb).then(m => {
+      message.channel.send('', { buttons: [factionButton,provinceButton,cultureButton], embed: emb }).then(m => {
         m.react('⏮️');
         m.react('⏭️');
         const filter = (reaction, user) => {
@@ -1619,7 +1693,7 @@ clientdc.on("message", message => {
           }
         });
       })
-    });
+
   }
 
   if (message.content.toLowerCase().includes(command+"showprovince")){

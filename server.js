@@ -13,13 +13,12 @@ const can = require("canvas");
 const { Client } = require('unb-api');
 const client = new Client('eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJhcHBfaWQiOiI3Mjg5NjU5MTQ0NzY4MDY2ODUiLCJpYXQiOjE1OTM4Njk0MTd9._E6dCtkLswWgDySTPihh32Al9tvHPxFuxqY_eBk8waQ');
 const GuildID = "514135876909924352";
-const Tree = require("treeify");
 var CronJob = require('node-cron');
 const ImageCharts = require('image-charts');
 const ms = require('ms');
 const { GoogleSpreadsheet } = require("google-spreadsheet");
 const doc = new GoogleSpreadsheet('1Mci7KdAbGP3s_VWzzTCvLT3wEDN7XbO_zoRrHr0_Lfw');
-
+const db2 = require('better-sqlite3-with-prebuilds')('DR.db', {timeout: 5000});
 
 
 doc.useServiceAccountAuth({
@@ -374,11 +373,95 @@ function updateProvinceMessage() {
 
 clientdc.on("ready", (interaction) => {
   //Slash commands
+  clientdc.interactions
+      .createCommand({
+        name: "mute",
+        description: "Mutes a member (Botmod only)",
+        options: [
+          {
+            name: "member",
+            required: "true",
+            description: "member to mute",
+            type: 6
+          },
+          {
+            name: "duration",
+            required: "true",
+            description: "for how long you want to mute",
+            type: 3
+          },
+          {
+            name: "reason",
+            required: "false",
+            description: "optional: reason for the mute",
+            type: 3
+          }
+        ]
+      },"514135876909924352")
+      .then(console.log)
+      .catch(console.error);
+  console.log(interaction);
 
 
+  clientdc.interactions
+      .createCommand({
+        name: "showprovince",
+        description: "Displays info about a province",
+        options: [
+          {
+            name: "Province",
+            description: "The name of the Province",
+            required: "true",
+            type: 3
+          }
+        ]
+      })
+      .then(console.log)
+      .catch(console.error);
+  console.log(interaction);
 
+  clientdc.interactions
+      .createCommand({
+        name: "provinces",
+        description: "Shows the province overview"
+      })
+      .then(console.log)
+      .catch(console.error);
+  console.log(interaction);
 
+  clientdc.interactions
+      .createCommand({
+        name: "unmute",
+        description: "Unmutes a member (Botmod only)",
+        options: [
+          {
+            name: "member",
+            required: "true",
+            description: "member to unmute",
+            type: 6
+          }
+        ]
+      },"514135876909924352")
+      .then(console.log)
+      .catch(console.error);
+  console.log(interaction);
 
+  clientdc.interactions
+      .createCommand({
+        name: "ban",
+        description: "Bans a member (Botmod only)",
+        options: [
+          {
+            name: "member",
+            required: "true",
+            description: "member to ban",
+            type: 6
+          }
+        ]
+      },"514135876909924352")
+      .then(console.log)
+      .catch(console.error);
+  console.log(interaction);
   updateEmbed();
 
 
@@ -466,19 +549,23 @@ clientdc.on("ready", (interaction) => {
 
 function createProvinceEmbed(picURL) {
   let provinces = new Discord.MessageEmbed();
+  provinces.setDescription('Provinces of the Empire');
   provinces.setFooter("Provinces presented by your humble Imperator");
   provinces.setThumbnail('https://cdn.discordapp.com/attachments/548918811391295489/776740280266784778/purpleDR.png');
   provinces.setTitle('Provinces');
   provinces.setImage(picURL);
   provinces.setColor('#cd1121');
   provinces.setAuthor("𝐈𝐌𝐏𝐄𝐑𝐀𝐓𝐎𝐑·𝐏𝐕𝐁𝐋𝐈𝐕𝐒", 'https://cdn.glitch.com/24cdd29f-170e-4ac8-9dc2-8abc1cbbaeaa%2Fimageedit_1_3956664875.png?v=1588186424473');
-
-  db.all("SELECT * FROM Province JOIN Governor ON Province.Governor = gov_ID",[],(err,rows) => {
+  let statement = db2.prepare("SELECT * FROM Province JOIN Governor ON Province.Governor = gov_ID")
+  rows = statement.all();
     rows.forEach((row) => {
       provinces.addField(row.province, "<@" + row.DiscordID + ">");
     })
-  });
+
+
   return provinces;
+
+
   }
 
 clientdc.ws.on("INTERACTION_CREATE", async interaction => {
@@ -698,8 +785,15 @@ clientdc.ws.on("INTERACTION_CREATE", async interaction => {
       embP.setThumbnail('https://cdn.discordapp.com/attachments/548918811391295489/846080867138011156/unknown.png');
       embP.setColor('#cd1121');
 
-      let province = interaction.data.options[0].value;
-
+      let provinceName = interaction.data.options[0].value;
+      //capitalize every first Letter
+      provinceName = provinceName.toLowerCase();
+      provinceWords = provinceName.split(" ");
+      let province = "";
+      provinceWords.forEach(p => {
+        province += p[0].toUpperCase() + p.substring(1);+ " "
+      });
+      console.log(province);
       embP.setTitle(province);
       //to Calculate income Brackets we fetch the list of all Provinces to determine its order
       db.all("SELECT * FROM Province ORDER BY income DESC",[],(err,order) => {
@@ -750,6 +844,19 @@ clientdc.ws.on("INTERACTION_CREATE", async interaction => {
     case "provinces":
 
       let provinces = createProvinceEmbed("https://cdn.discordapp.com/attachments/548918811391295489/846080867138011156/unknown.png");
+      let factionButton = new disbut.MessageButton()
+          .setStyle('red') //default: blurple
+          .setLabel('Faction Map') //default: NO_LABEL_PROVIDED
+          .setID('faction_map') //note: if you use the style "url" you must provide url using .setURL('https://example.com')
+      let provinceButton = new disbut.MessageButton()
+          .setStyle('red')
+          .setLabel('Province Map')
+          .setID('province_map')
+
+      let cultureButton = new disbut.MessageButton()
+          .setStyle('red')
+          .setLabel('Culture Map')
+          .setID('culture_map')
 
 
 
@@ -757,46 +864,10 @@ clientdc.ws.on("INTERACTION_CREATE", async interaction => {
           data: {
             type: 4,
             data: {
-              embeds: [provinces]
+              embeds: [provinces],
+              buttons: [cultureButton,factionButton,provinceButton]
             }
           }
-        }).then(m => {
-          m = interaction.fetchReply()
-          m.react('⏮️');
-          m.react('⏭️');
-          const filter = (reaction, user) => {
-            if(reaction.emoji.name === '⏮️' && user.id === message.author.id){
-              return true
-            } else if(reaction.emoji.name === '⏭️' && user.id === message.author.id){
-              return true
-            } else {
-              return false
-            }
-          };
-          //saves all possible options into an array
-          let currentpic = 0;
-          let pics = ["https://cdn.discordapp.com/attachments/548918811391295489/846080867138011156/unknown.png","https://cdn.discordapp.com/attachments/771315528471806032/845960254520557598/unknown.png","https://cdn.discordapp.com/attachments/514135876909924354/813764720607625276/unknown.png"]
-          const collector = m.createReactionCollector(filter, { time: 150000 });
-
-          collector.on('collect', (reaction, user) => {
-            reaction.users.remove(user);
-            if(reaction.emoji.name === '⏭️'){
-              currentpic++;
-              if(currentpic >= pics.length){
-                currentpic = 0;
-              }
-              provinces.setImage(pics[currentpic]);
-              m.edit(provinces)
-            }
-            else{
-              currentpic--;
-              if(currentpic < 0){
-                currentpic = pics.length-1;
-              }
-              provinces.setImage(pics[currentpic]);
-              m.edit(provinces)
-            }
-          });
         })
 
       break;
@@ -933,7 +1004,7 @@ clientdc.on('clickButton', async (button) => {
   }
   else
   if (button.id === 'province_map') {
-    let provinces = createProvinceEmbed("https://cdn.discordapp.com/attachments/771315528471806032/845960254520557598/unknown.png");
+    let provinces = createProvinceEmbed("https://cdn.discordapp.com/attachments/548918811391295489/846080867138011156/unknown.png");
     let factionButton = new disbut.MessageButton()
         .setStyle('red')
         .setLabel('Faction Map')
@@ -952,7 +1023,7 @@ clientdc.on('clickButton', async (button) => {
     await button.message.edit({embed: provinces, buttons: [factionButton,provinceButton,cultureButton]});
   }
   else
-    if (button.id === 'province_map') {
+    if (button.id === 'culture_map') {
       let provinces = createProvinceEmbed("https://cdn.discordapp.com/attachments/514135876909924354/813764720607625276/unknown.png");
       let factionButton = new disbut.MessageButton()
           .setStyle('red')
@@ -1703,15 +1774,18 @@ clientdc.on("message", message => {
     emb.setThumbnail('https://cdn.discordapp.com/attachments/680733248396984330/785230951998947328/unknown.png');
     emb.setColor('#cd1121');
     
-    let province = args[1]
+    let province = args[1].toLowerCase();
+    province = province[0].toUpperCase() + province.substring(1);
           if(args.length >= 3){
 
             for (let i = 2; i < args.length; i++) {
-              province += " "+args[i];
+              word = args[i];
+              province += " "+word[0].toUpperCase() + word.substring(1);
             }
           }
          
           emb.setTitle(province);
+
       db.all("SELECT * FROM Province ORDER BY income DESC",[],(err,order) => {      
         db.all("SELECT resource, population, income, map, population_growth, DiscordID, province.province AS pro FROM Province JOIN Resources,Governor ON prov_id =    Resources.province AND Governor.gov_ID = Province.Governor WHERE Province.province = '"+province+"'",[],(err,rows) => {
     

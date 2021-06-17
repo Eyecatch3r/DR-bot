@@ -431,3 +431,58 @@ clientdc.interactions
       .then(console.log)
       .catch(console.error);
   console.log(interaction);
+
+clientdc.interactions
+    .createCommand({
+      name: "mute",
+      description: "Mutes a member (Botmod only)",
+      options: [
+        {
+          name: "member",
+          required: "true",
+          description: "member to mute",
+          type: 6
+        },
+        {
+          name: "duration",
+          required: "true",
+          description: "for how long you want to mute",
+          type: 3
+        },
+        {
+          name: "reason",
+          required: "false",
+          description: "optional: reason for the mute",
+          type: 3
+        }
+      ]
+    },"514135876909924352")
+    .then(console.log)
+    .catch(console.error);
+console.log(interaction);
+
+clientdc.interactions
+    .createCommand({
+      name: "showprovince",
+      description: "Shows the province overview",
+      options: [
+        {
+          name: "Province",
+          description: "The name of the Province",
+          required: "true",
+          type: 3
+        }
+      ]
+    })
+    .then(console.log)
+    .catch(console.error);
+console.log(interaction);
+
+clientdc.interactions
+    .createCommand({
+      name: "provinces",
+      description: "lists all provinces"
+    })
+    .then(console.log)
+    .catch(console.error);
+console.log(interaction);

@@ -9,10 +9,12 @@ const bible = require("bible-english");
 const app = express();
 let portunus = require('romans');
 const http = require("http");
+require('dotenv').config()
 const can = require("canvas");
 const { Client } = require('unb-api');
 const client = new Client('eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJhcHBfaWQiOiI3Mjg5NjU5MTQ0NzY4MDY2ODUiLCJpYXQiOjE1OTM4Njk0MTd9._E6dCtkLswWgDySTPihh32Al9tvHPxFuxqY_eBk8waQ');
 const GuildID = "514135876909924352";
+const Tree = require("treeify");
 var CronJob = require('node-cron');
 const ImageCharts = require('image-charts');
 const ms = require('ms');
@@ -28,7 +30,6 @@ doc.useServiceAccountAuth({
 });
 //init sqlite API
 const dbFile = "./DR.db";
-const exists = fs.existsSync(dbFile);
 const sqlite3 = require("sqlite3").verbose();
 const db = new sqlite3.Database(dbFile);
 const randomfacts = require('@dpmcmlxxvi/randomfacts');
@@ -38,20 +39,18 @@ tr.key = 'trnsl.1.1.20200515T222139Z.a68c11f6ccb16bd4.b2bb25b5f6b3c103701bbe0015
 tr.engine = 'yandex';
 app.use("/assets", assets);
 const arrayList = require("arraylist");
-const discordBot = require("./bot");
 const Discord = require("discord.js");
 const clientdc = new Discord.Client();
 const interactions = require("discord-slash-commands-client");
 const disbut = require('discord-buttons')(clientdc);
 //global variables
-var BattleAlreadyCommenced = false;
-var taxRate = 0.6; 
-var taxRateTop5 = 0.65;
+let BattleAlreadyCommenced = false;
+let taxRate = 0.6;
+let taxRateTop5 = 0.65;
 
 clientdc.login(process.env.DISCORD_TOKEN);
 app.use(require("./guides"));
 
-var MotionListChannel;
 
 //register Slash interactions with the client
 
@@ -62,10 +61,10 @@ clientdc.interactions = new interactions.Client(
 
 //compare dates with the current date
 const dateformat = require("dateformat");
-var date = new Date();
+let date = new Date();
 //console.log(dateformat("isoDate"));
-var dates = dateformat("isoDate").split("-");
-var time = dateformat(date, "longTime", true).split(":");
+let dates = dateformat("isoDate").split("-");
+let time = dateformat(date, "longTime", true).split(":");
 if (dates[1].startsWith("0")) {
   dates[1] = dates[1].substring(1);
 }
@@ -97,7 +96,7 @@ async function updateProvinceIncome(){
 }
 
 function updateEmbed() {
-  var mainEmb = new Discord.MessageEmbed();
+  const mainEmb = new Discord.MessageEmbed();
 
   mainEmb.setTitle("Motions");
   mainEmb.setColor("0xcc0000");
@@ -113,7 +112,7 @@ function updateEmbed() {
   );
   mainEmb.setDescription("Motions to discuss in Senate meetings");
 
-  let msgs = new Array();
+  let msgs = [];
   let sql2 = 'SELECT * FROM Motions';
   db.all(sql2, [], (err, rows) => {
     if (err) {
@@ -140,14 +139,14 @@ function updateEmbed() {
     if (msgs.length <= 25) {
       msgs.forEach(msg => mainEmb.addField(msg));
     } else {
-      var args2 = new Array();
-      for (var i = msgs.length; i > msgs.length / 2; i--) {
+      const args2 = [];
+      for (let i = msgs.length; i > msgs.length / 2; i--) {
         args2.push(msgs[i]);
         msgs.pop();
       }
       msgs.forEach(msg => mainEmb.addField(msg));
 
-      var secEmb = new Discord.MessageEmbed();
+      const secEmb = new Discord.MessageEmbed();
 
       secEmb.setTitle("Motions");
       secEmb.setColor("0xcc0000");
@@ -193,7 +192,7 @@ function updateEmbedMessage(message) {
     }
     rows.forEach(row => {
       //message.channel.send(row.motion);
-      if (message.guild.members.cache.get(row.creator) != undefined) {
+      if (message.guild.members.cache.get(row.creator) !== undefined) {
         let msg =
             row.motion +
             "\n" +
@@ -237,8 +236,8 @@ function updateEmbedMessage(message) {
           .then(messages => messages.first().edit(secEmb));
     } else {
 
-      var args2 = new Array();
-      var length = (msgs.length % 2 == 0) ? (msgs.length) : (msgs.length+1)
+      const args2 = new Array();
+      const length = (msgs.length % 2 === 0) ? (msgs.length) : (msgs.length + 1);
 
       for (var i = length / 2; i <= length; i++) {
         args2.push(msgs[i]);
@@ -247,7 +246,7 @@ function updateEmbedMessage(message) {
         msgs.splice(i,1);
 
       }
-      for(var i = args2.length-1; i >= 0; i--){if(args2[i] == undefined){args2.pop()}}
+      for(var i = args2.length-1; i >= 0; i--){if(args2[i] === undefined){args2.pop()}}
 
       var secEmb = new Discord.MessageEmbed();
 
@@ -265,7 +264,7 @@ function updateEmbedMessage(message) {
       );
       secEmb.setDescription("Motions to discuss in Senate meetings");
 
-      args2.forEach(msg => secEmb.addField("motion", msg+"/"+parseInt(args2.indexOf(msg)+msgs.length,10), false));
+      args2.forEach(msg => secEmb.addField("motion", msg+"/"+parseInt(args2.indexOf(msg) + msgs.length, 10), false));
       msgs.forEach(msg2 => embed.addField("motion", msg2+"/"+msgs.indexOf(msg2), false));
       message.guild.channels.cache
           .get("705136080105767004")
@@ -328,8 +327,8 @@ function updateProvinceMessage() {
 
     } else {
 
-      var args2 = new Array();
-      var length = (msgs.length % 2 == 0) ? (msgs.length) : (msgs.length+1)
+      const args2 = new Array();
+      const length = (msgs.length % 2 == 0) ? (msgs.length) : (msgs.length + 1);
 
       for (var i = length / 2; i <= length; i++) {
         args2.push(msgs[i]);
@@ -338,7 +337,7 @@ function updateProvinceMessage() {
         msgs.splice(i,1);
 
       }
-      for(var i = args2.length-1; i >= 0; i--){if(args2[i] == undefined){args2.pop()}}
+      for(var i = args2.length-1; i >= 0; i--){if(args2[i] === undefined){args2.pop()}}
 
       var secEmb = new Discord.MessageEmbed();
 
@@ -356,7 +355,7 @@ function updateProvinceMessage() {
       );
       secEmb.setDescription("Motions to discuss in Senate meetings");
 
-      args2.forEach(msg => secEmb.addField("Provinces", msg+"\n"+parseInt(args2.indexOf(msg)+msgs.length,10), false));
+      args2.forEach(msg => secEmb.addField("Provinces", msg+"\n"+parseInt(args2.indexOf(msg) + msgs.length, 10), false));
       msgs.forEach(msg2 => embed.addField("Provinces", msg2+"\n"+msgs.indexOf(msg2), false));
       clientdc.guilds.cache.get("514135876909924352").channels.cache
           .get("817410470700515338")
@@ -373,95 +372,10 @@ function updateProvinceMessage() {
 
 clientdc.on("ready", (interaction) => {
   //Slash commands
-  clientdc.interactions
-      .createCommand({
-        name: "mute",
-        description: "Mutes a member (Botmod only)",
-        options: [
-          {
-            name: "member",
-            required: "true",
-            description: "member to mute",
-            type: 6
-          },
-          {
-            name: "duration",
-            required: "true",
-            description: "for how long you want to mute",
-            type: 3
-          },
-          {
-            name: "reason",
-            required: "false",
-            description: "optional: reason for the mute",
-            type: 3
-          }
-        ]
-      },"514135876909924352")
-      .then(console.log)
-      .catch(console.error);
-  console.log(interaction);
 
 
-  clientdc.interactions
-      .createCommand({
-        name: "showprovince",
-        description: "Displays info about a province",
-        options: [
-          {
-            name: "Province",
-            description: "The name of the Province",
-            required: "true",
-            type: 3
-          }
-        ]
-      })
-      .then(console.log)
-      .catch(console.error);
-  console.log(interaction);
 
-  clientdc.interactions
-      .createCommand({
-        name: "provinces",
-        description: "Shows the province overview"
-      })
-      .then(console.log)
-      .catch(console.error);
-  console.log(interaction);
 
-  clientdc.interactions
-      .createCommand({
-        name: "unmute",
-        description: "Unmutes a member (Botmod only)",
-        options: [
-          {
-            name: "member",
-            required: "true",
-            description: "member to unmute",
-            type: 6
-          }
-        ]
-      },"514135876909924352")
-      .then(console.log)
-      .catch(console.error);
-  console.log(interaction);
-
-  clientdc.interactions
-      .createCommand({
-        name: "ban",
-        description: "Bans a member (Botmod only)",
-        options: [
-          {
-            name: "member",
-            required: "true",
-            description: "member to ban",
-            type: 6
-          }
-        ]
-      },"514135876909924352")
-      .then(console.log)
-      .catch(console.error);
-  console.log(interaction);
   updateEmbed();
 
 
@@ -593,7 +507,7 @@ clientdc.ws.on("INTERACTION_CREATE", async interaction => {
     break;
 
     case "number":
-      var n = 0;
+      let n = 0;
       if(isNaN(parseInt(interaction.data.options[0].value)))
       {
         n = portunus.deromanize(interaction.data.options[0].value);
@@ -791,8 +705,9 @@ clientdc.ws.on("INTERACTION_CREATE", async interaction => {
       provinceWords = provinceName.split(" ");
       let province = "";
       provinceWords.forEach(p => {
-        province += p[0].toUpperCase() + p.substring(1);+ " "
+        province += p[0].toUpperCase() + p.substring(1)+" "
       });
+      province = province.trim();
       console.log(province);
       embP.setTitle(province);
       //to Calculate income Brackets we fetch the list of all Provinces to determine its order
@@ -800,7 +715,7 @@ clientdc.ws.on("INTERACTION_CREATE", async interaction => {
         db.all("SELECT resource, population, income, map, population_growth, DiscordID, province.province AS pro FROM Province JOIN Resources,Governor ON prov_id =    Resources.province AND Governor.gov_ID = Province.Governor WHERE Province.province = '"+province+"'",[],(err,rows) => {
 
           if (err){console.log(err)}
-          if (rows[0] !== undefined) {
+          if (rows[0]) {
             rows.forEach((row) => {
               embP.addField("Resource", row.resource);
             })
@@ -813,7 +728,7 @@ clientdc.ws.on("INTERACTION_CREATE", async interaction => {
               let provinceOrder = 0;
               for(let i = 0; i < order.length; i++){
                 provinceOrder++;
-                if(order[i].province == rows[0].pro){
+                if(order[i].province === rows[0].pro){
                   i = order.length;
                 }
               }
@@ -843,7 +758,7 @@ clientdc.ws.on("INTERACTION_CREATE", async interaction => {
       break;
     case "provinces":
 
-      let provinces = createProvinceEmbed("https://cdn.discordapp.com/attachments/548918811391295489/846080867138011156/unknown.png");
+      let provinces = createProvinceEmbed("https://cdn.discordapp.com/attachments/548918811391295489/856238924305661952/unknown.png");
       let factionButton = new disbut.MessageButton()
           .setStyle('red') //default: blurple
           .setLabel('Faction Map') //default: NO_LABEL_PROVIDED
@@ -871,6 +786,116 @@ clientdc.ws.on("INTERACTION_CREATE", async interaction => {
         })
 
       break;
+    case "unban":
+      if(interaction.member.roles.includes("549712921450774556") || interaction.member.roles.includes("546654987061821440")) {
+        const target = interaction.data.options[0];
+        if (target) {
+
+          let members = clientdc.guilds.cache.get(interaction.guild_id).members;
+            members.unban(target.value).then(unban => {
+
+
+              let emb = new Discord.MessageEmbed();
+              emb.setColor('#8f0713');
+              emb.setDescription(`<@${target.value.id}> has been pardoned in the name of the Imperator`);
+              emb.setTitle("𝐈𝐌𝐏𝐄𝐑𝐀𝐓𝐎𝐑·𝐏𝐕𝐁𝐋𝐈𝐕𝐒", "https://cdn.glitch.com/24cdd29f-170e-4ac8-9dc2-8abc1cbbaeaa%2Fimageedit_1_3956664875.png?v=1588186424473");
+              emb.setFooter("unbanning powered by our most humble Imperator");
+              clientdc.api.interactions(interaction.id, interaction.token).callback.post({
+                data: {
+                  type: 4,
+                  data: {
+                    embeds: [emb]
+                  }
+                }
+              })
+            }).catch(err => {clientdc.api.interactions(interaction.id, interaction.token).callback.post({
+              data: {
+                type: 4,
+                data: {
+                  content: "Cannot unban this user"
+                }
+              }
+            })
+              console.log(err);
+            });
+
+        }
+
+
+      }
+      break;
+    case "kick":
+      if(interaction.member.roles.includes("549712921450774556") || interaction.member.roles.includes("546654987061821440")) {
+        const target = interaction.data.options[0];
+        if (target) {
+
+          let member = clientdc.guilds.cache.get(interaction.guild_id).members.cache.get(interaction.data.options[0].value);
+
+
+
+
+
+          if(interaction.data.options[1]){
+            member.kick(target.value, { reason: interaction.data.options[1].value}).then(ban => {
+              let messageEmbed = new Discord.MessageEmbed();
+              messageEmbed.setColor('#8f0713');
+              messageEmbed.setDescription(`<@${member.id}> has been sent to Germania to fend off Barbarians in the name of the Imperator`);
+              messageEmbed.setTitle("𝐈𝐌𝐏𝐄𝐑𝐀𝐓𝐎𝐑·𝐏𝐕𝐁𝐋𝐈𝐕𝐒", "https://cdn.glitch.com/24cdd29f-170e-4ac8-9dc2-8abc1cbbaeaa%2Fimageedit_1_3956664875.png?v=1588186424473");
+              messageEmbed.setImage("https://i.pinimg.com/originals/22/b7/c9/22b7c9ed82e411d5c66037e820427622.jpg");
+              messageEmbed.setFooter("kicking powered by our most humble Imperator");
+
+              clientdc.api.interactions(interaction.id, interaction.token).callback.post({
+                data: {
+                  type: 4,
+                  data: {
+                    embeds: [messageEmbed]
+                  }
+                }
+              })}).catch(err => {
+              clientdc.api.interactions(interaction.id, interaction.token).callback.post({
+                data: {
+                  type: 4,
+                  data: {
+                    content: "Cannot kick this user"
+                  }
+                }
+              })
+              console.log(err);
+            });
+          } else {
+            member.kick().then(ban => {
+              let messageEmbed = new Discord.MessageEmbed();
+              messageEmbed.setColor('#8f0713');
+              messageEmbed.setDescription(`<@${member.id}> has been sent to Germania to fend off Barbarians in the name of the Imperator`);
+              messageEmbed.setTitle("𝐈𝐌𝐏𝐄𝐑𝐀𝐓𝐎𝐑·𝐏𝐕𝐁𝐋𝐈𝐕𝐒", "https://cdn.glitch.com/24cdd29f-170e-4ac8-9dc2-8abc1cbbaeaa%2Fimageedit_1_3956664875.png?v=1588186424473");
+              messageEmbed.setImage("https://i.pinimg.com/originals/22/b7/c9/22b7c9ed82e411d5c66037e820427622.jpg");
+              messageEmbed.setFooter("kicking powered by our most humble Imperator");
+
+              clientdc.api.interactions(interaction.id, interaction.token).callback.post({
+                data: {
+                  type: 4,
+                  data: {
+                    embeds: [messageEmbed]
+                  }
+                }
+              })
+            }).catch(err => {
+                clientdc.api.interactions(interaction.id, interaction.token).callback.post({
+                data: {
+                  type: 4,
+                  data: {
+                    content: "Cannot kick this user"
+                  }
+                }
+              })
+              console.log(err);
+            });
+          }
+        }
+
+
+      }
+          break;
     default:
       break;
   }});
@@ -940,7 +965,7 @@ function collectTaxes(){
   //request the leaderBoard through the API
   client.getGuildLeaderboard(GuildID).then(bal => {
     //go through every member
-    for(var i = 0; i< mem; i++){
+    for(let i = 0; i< mem; i++){
       let user = clientdc.guilds.cache.get(GuildID).members.cache.get(bal[i].user_id);
       //check if he is still a member
       if(user)
@@ -985,7 +1010,7 @@ function collectTaxes(){
 
 clientdc.on('clickButton', async (button) => {
   if (button.id === 'faction_map') {
-    let provinces = createProvinceEmbed("https://cdn.discordapp.com/attachments/771315528471806032/845960254520557598/unknown.png");
+    let provinces = createProvinceEmbed("https://cdn.discordapp.com/attachments/548918811391295489/856238924305661952/unknown.png");
     let factionButton = new disbut.MessageButton()
         .setStyle('red') //default: blurple
         .setLabel('Faction Map') //default: NO_LABEL_PROVIDED
@@ -1004,7 +1029,7 @@ clientdc.on('clickButton', async (button) => {
   }
   else
   if (button.id === 'province_map') {
-    let provinces = createProvinceEmbed("https://cdn.discordapp.com/attachments/548918811391295489/846080867138011156/unknown.png");
+    let provinces = createProvinceEmbed("https://cdn.discordapp.com/attachments/548918811391295489/856238924305661952/unknown.png");
     let factionButton = new disbut.MessageButton()
         .setStyle('red')
         .setLabel('Faction Map')
@@ -1024,7 +1049,7 @@ clientdc.on('clickButton', async (button) => {
   }
   else
     if (button.id === 'culture_map') {
-      let provinces = createProvinceEmbed("https://cdn.discordapp.com/attachments/514135876909924354/813764720607625276/unknown.png");
+      let provinces = createProvinceEmbed("https://cdn.discordapp.com/attachments/548918811391295489/856238924305661952/unknown.pngg");
       let factionButton = new disbut.MessageButton()
           .setStyle('red')
           .setLabel('Faction Map')
@@ -1060,7 +1085,7 @@ db.all(sql, [], (err, rows) => {
 
 
 async function updateDate() {
-  if (dateformat() != date) {
+  if (dateformat() !== date) {
     date = new Date();
     //console.log(dateformat("isoDate"));
     dates = dateformat("isoDate").split("-");
@@ -1082,14 +1107,14 @@ let query =
     "'";
 
 clientdc.on("messageReactionRemove",(reaction,user) => {
-  if(user.id == '220590173962895360' && reaction.emoji.id === '640270832115122196')
+  if(user.id === '220590173962895360' && reaction.emoji.id === '640270832115122196')
   {
 
-    var available = false;
+    let available = false;
     db.all('SELECT * FROM Generals WHERE DiscordID = '+reaction.message.author,[],(err,rows) =>{
       if(err){throw err;}
 
-      if(rows[0] != undefined)
+      if(rows[0] !== undefined)
       {available = true; }
       if(available){db.run('UPDATE Generals SET generals = generals-1 WHERE DiscordID = '+reaction.message.author.id);}
     });
@@ -1102,11 +1127,11 @@ clientdc.on("messageReactionAdd",(reaction,user) => {
   if(user.id === '220590173962895360' && reaction.emoji.id === '640270832115122196')
   {
 
-    var available = false;
+    let available = false;
     db.all('SELECT * FROM Generals WHERE DiscordID = '+reaction.message.author,[],(err,rows) =>{
       if(err){throw err;}
 
-      if(rows[0] != undefined)
+      if(rows[0] !== undefined)
       {available = true; }
       if(available){db.run('UPDATE Generals SET generals = generals+1 WHERE DiscordID = '+reaction.message.author.id);}else{
         db.run("INSERT INTO Generals(DiscordID,generals) VALUES('"+reaction.message.author.id+"',1)");
@@ -1126,7 +1151,7 @@ clientdc.on("presenceUpdate", (oldPresence, newPresence) => {
     }
     rows.forEach(row => {
       updateDate();
-      if (newPresence.userID == row.DiscordID && row.celebrated == 0) {
+      if (newPresence.userID === row.DiscordID && row.celebrated === 0) {
         db.run("UPDATE Birthdates SET celebrated = 1 WHERE bID = " + row.bID);
         clientdc.channels.cache
             .get("514135876909924354")
@@ -1188,7 +1213,7 @@ function addTransaction(amount,reason){
   db.run("INSERT INTO Treasury(amount,reason) VALUES("+amount+",'"+reason+"')");
 }
 
-var command = process.env.Prefix;
+const command = process.env.Prefix;
 clientdc.on("message", message => {
   if (message.content === command+"help") {
     let emb = new Discord.MessageEmbed();
@@ -1355,10 +1380,10 @@ clientdc.on("message", message => {
             let defenders = contenders[1].split(" | ");
             //split off the battle command
             attackers[0] = attackers[0].substring(8);
-            let legionsA = new Array();
-            let nonLegionsA = new Array();
-            let legionsD = new Array();
-            let nonLegionsD = new Array();
+            let legionsA = [];
+            let nonLegionsA = [];
+            let legionsD = [];
+            let nonLegionsD = [];
             let percentageOfArmies = [contenders[2], contenders[3]];
             let defenseboni = [contenders[4], contenders[5]];
             //check if Legions partake in Battle
@@ -1399,30 +1424,30 @@ clientdc.on("message", message => {
                       queryNonLegions += "OR Name = '" + nonLegionsD[i] + "' "
                     }
                     db.all(queryNonLegionsD, [], (error3, defendingFactions) => {
-                      var hp1 = 10000;
-                      var hp2 = 10000;
+                      let hp1 = 10000;
+                      let hp2 = 10000;
                       let emb = new Discord.MessageEmbed();
                       emb.setImage("https://1.bp.blogspot.com/-ZbMMWQO4toE/Vi1WyeZNqnI/AAAAAAAABKE/Htni5mZ--Xo/s1600/Roman%2BLegion.jpg");
                       let a = "Attackers: ";
-                      if (attackingLegions != undefined) {
-                        if (attackingLegions[0] != undefined) {
+                      if (attackingLegions !== undefined) {
+                        if (attackingLegions[0] !== undefined) {
                           a += attackingLegions[0].name + " ";
                         }
                       }
-                      if (attackingFactions != undefined) {
-                        if (attackingFactions[0] != undefined) {
+                      if (attackingFactions !== undefined) {
+                        if (attackingFactions[0] !== undefined) {
                           a += attackingFactions[0].Name + " ";
                         }
                       }
                       emb.addField(a, hp1, true);
                       let d = "Defenders: ";
-                      if (defendingLegions != undefined) {
-                        if (defendingLegions[0] != undefined) {
+                      if (defendingLegions !== undefined) {
+                        if (defendingLegions[0] !== undefined) {
                           d += defendingLegions[0].name + " ";
                         }
                       }
-                      if (defendingFactions != undefined) {
-                        if (defendingFactions[0] != undefined) {
+                      if (defendingFactions !== undefined) {
+                        if (defendingFactions[0] !== undefined) {
                           d += defendingFactions[0].Name + " ";
                         }
                       }
@@ -1430,7 +1455,7 @@ clientdc.on("message", message => {
                       emb.setFooter("Battles powered by our most humble Imperator");
                       emb.setColor("0xFFFFFF");
                       message.channel.send(emb).then(res => {
-                        var cturn = false;
+                        let cturn = false;
 
                         //calculate the effective damage values based on number of cohorts
                         let aLAttack = 0;
@@ -1477,10 +1502,10 @@ clientdc.on("message", message => {
                         //console.log(dFAttack+" "+dFDefense+" "+dFHealth+":"+aLAttack+" "+aLDefense+" "+aLHealth+" "+defendingFactions[0].percentage)
                         hp1 = Math.floor(10000 + (aLHealth + aFHealth));
                         hp2 = Math.floor(10000 + (dLHealth + dFHealth));
-                        let int = setInterval(function (php1, php2) {
+                        let int = setInterval(function () {
 
 
-                          if (cturn == true) {
+                          if (cturn === true) {
                             hp1 -= Math.abs(Math.floor(Math.random() * ((dFAttack + dLAttack)) - (aLDefense + aFDefense)));
 
                             if (hp1 < 0) {
@@ -1509,17 +1534,17 @@ clientdc.on("message", message => {
                             res.edit(emb2);
                             cturn = true;
                           }
-                          ;
-                          if (hp1 == 0 || hp2 == 0) {
+
+                          if (hp1 === 0 || hp2 === 0) {
                             clearInterval(int);
                             let emb3 = new Discord.MessageEmbed();
-                            emb3.addField("Winner", hp1 == 0 ? d : a);
+                            emb3.addField("Winner", hp1 === 0 ? d : a);
                             emb3.setImage("https://digitalmapsoftheancientworld.files.wordpress.com/2019/02/2118.png");
                             emb3.setFooter("Battles powered by our most humble Imperator");
                             emb3.setColor("0xFFDF00");
                             res.edit(emb3).catch(err => console.log(err))
                           }
-                          ;
+
                         }, 1500);
                       })
 
@@ -1622,7 +1647,7 @@ clientdc.on("message", message => {
       let args = message.content.split(" ");
       let changedValue;
       let legion;
-      if(args[3] != "Legio") {
+      if(args[3] !== "Legio") {
         changedValue = message.content.split("|")[1];
         legion = message.content.split("|")[2];
       }
@@ -1697,7 +1722,7 @@ clientdc.on("message", message => {
       emb.setTitle(inp);
       db.all("SELECT * FROM LegionComposition JOIN Legion,Units ON L_ID = Legion AND U_ID = LegionComposition.unit WHERE name = '"+inp+"'",[],(err,rows) => {
           
-          if(rows[0] != undefined){
+          if(rows[0] !== undefined){
             rows.forEach(row => {
               emb.addField(row.Unit,"Size: "+row.size);
               })
@@ -1712,7 +1737,7 @@ clientdc.on("message", message => {
   }
     
   if(message.content.toLowerCase() === command+"provinces"){
-    let emb = createProvinceEmbed("https://cdn.discordapp.com/attachments/548918811391295489/846080867138011156/unknown.png");
+    let emb = createProvinceEmbed("https://cdn.discordapp.com/attachments/548918811391295489/856238924305661952/unknown.png");
     let factionButton = new disbut.MessageButton()
         .setStyle('red') //default: blurple
         .setLabel('Faction Map') //default: NO_LABEL_PROVIDED
@@ -1733,11 +1758,7 @@ clientdc.on("message", message => {
         const filter = (reaction, user) => {
       if(reaction.emoji.name === '⏮️' && user.id === message.author.id){
           return true             
-      } else if(reaction.emoji.name === '⏭️' && user.id === message.author.id){
-          return true
-      } else {
-          return false
-      }
+      } else return reaction.emoji.name === '⏭️' && user.id === message.author.id;
     };
     //saves all possible options into an array
         let currentpic = 0;
@@ -1803,7 +1824,7 @@ clientdc.on("message", message => {
             let provinceOrder = 0;
             for(let i = 0; i < order.length; i++){
                 provinceOrder++;
-                if(order[i].province == rows[0].pro){
+                if(order[i].province === rows[0].pro){
                     i = order.length
                 }
             }
@@ -2001,7 +2022,7 @@ clientdc.on("message", message => {
     db.all('SELECT * FROM Generals ORDER BY generals DESC',[],(err,rows) => {
       if(err){throw err;}
       rows.forEach(row => {
-        if(row.DiscordID != "220590173962895360" && clientdc.users.cache.get(row.DiscordID)){emb.addField(clientdc.guilds.cache.get("514135876909924352").members.cache.get(row.DiscordID).displayName,row.generals+"\n"+message.guild.members.cache.get(row.DiscordID).toString(),false);
+        if(row.DiscordID !== "220590173962895360" && clientdc.users.cache.get(row.DiscordID)){emb.addField(clientdc.guilds.cache.get("514135876909924352").members.cache.get(row.DiscordID).displayName,row.generals+"\n"+message.guild.members.cache.get(row.DiscordID).toString(),false);
         }});
       message.channel.send(emb);
 
@@ -2020,7 +2041,7 @@ clientdc.on("message", message => {
     emb.setFooter("General reactions powered by our most humble Imperator");
     db.get('SELECT * FROM Generals WHERE DiscordID = '+message.author.id,[],(err,row) => {
       if(err){throw err;}
-      if (row == undefined){emb.addField("Generals","0",true)}else{
+      if (row === undefined){emb.addField("Generals","0",true)}else{
         emb.addField("Generals",row.generals,true);
         emb.setAuthor(
             message.member.nickname,
@@ -2051,7 +2072,7 @@ clientdc.on("message", message => {
         "';",
         [],
         (err, rowss) => {
-          if(rowss == undefined){db.run("INSERT INTO Candidates(DiscordID) VALUES('"+args[1]+"')");}
+          if(rowss === undefined){db.run("INSERT INTO Candidates(DiscordID) VALUES('"+args[1]+"')");}
           let eID,cID;
           cID = rowss.cID;
           db.get("SELECT eID FROM Elections WHERE Month = '"+args[3]+"' AND Title = '"+args[2]+"'",[],(err, row)=> {
@@ -2085,7 +2106,7 @@ clientdc.on("message", message => {
     let val = "t:";
     for(let i = 1; i < args.length; i++)
     {
-      if(i % 2 == 0){val += args[i]+","}else{tit += args[i]+"|";}
+      if(i % 2 === 0){val += args[i]+","}else{tit += args[i]+"|";}
 
     }
 
@@ -2123,7 +2144,7 @@ clientdc.on("message", message => {
   {
     var args = message.content.split(" ");
 
-    var n = 0;
+    let n = 0;
     if(isNaN(args[1]))
     {
       n = portunus.deromanize(args[1]);
@@ -2139,14 +2160,14 @@ clientdc.on("message", message => {
 
   if(message.content.includes(command+"bible")){
     var args = message.content.split("+");
-    var newargs = args[1].split(":");
+    const newargs = args[1].split(":");
     bible.getVerse(newargs[0]+":1",(err,data) => {
 
-      var title = data[0].title;
+      let title = data[0].title;
 
 
       bible.getVerse(args[1],(err,datas) => {
-        if(datas[0].title == undefined){
+        if(datas[0].title === undefined){
           title = data[0].title;
 
           var emb = new Discord.MessageEmbed();
@@ -2179,7 +2200,7 @@ clientdc.on("message", message => {
   if(message.content.toLowerCase().includes(command+"quote"))
   {
     var args = message.content.split(" ");
-    var arg = "";
+    let arg = "";
     for(var i = 1; i<args.length; i++){arg += " "+args[i];}
 
     const canvas = can.createCanvas(700, 250);
@@ -2187,7 +2208,7 @@ clientdc.on("message", message => {
 
     const background =  new can.Image();
     background.src = './Rome.jpg';
-    if(background != undefined){
+    if(true){
       //ctx.drawImage(background, 0, 0, canvas.width, canvas.height);
     }
 
@@ -2201,7 +2222,7 @@ clientdc.on("message", message => {
     ctx.fillStyle = '#ffffff';
     ctx.fillText(arg, canvas.width / 3, canvas.height / 3.5);
 
-    var author = message.guild.members.cache.get(message.author.id).displayName;
+    const author = message.guild.members.cache.get(message.author.id).displayName;
     ctx.font = applyText(canvas,author,15);
 
     
@@ -2209,8 +2230,8 @@ clientdc.on("message", message => {
 
     // Pick up the pen
     ctx.beginPath();
-    var gradient = ctx.createRadialGradient(165, 165, 0,
-        225, 225,100);
+    const gradient = ctx.createRadialGradient(165, 165, 0,
+        225, 225, 100);
 
     // Opaque white in the middle
     gradient.addColorStop(0, "transparent");
@@ -2287,7 +2308,7 @@ clientdc.on("message", message => {
         {
           if(!row.motion.startsWith("http"))
           {
-            var args2 = row.motion.split("http");
+            const args2 = row.motion.split("http");
             embed.addField("Motion in question",args2[0],true);
             embed.setImage("http"+args2[1]);
           }else{
@@ -2318,11 +2339,11 @@ clientdc.on("message", message => {
       //if no primary key is submitted as an argument the motion is searched after its position
       if (!available) {
         let availablenumber = false;
-        var mot = new Array();
+        const mot = new Array();
         db.all('SELECT * FROM Motions',[],(err,rows) => {
-          var args = message.content.split(" ");
-          var link = new Array();
-          var creator = new Array();
+          const args = message.content.split(" ");
+          const link = new Array();
+          const creator = new Array();
           rows.forEach(row => {mot.push(row.motion +"\n From:" +"<@!"+rows[args[1]].creator+">"); link.push(row.motion); creator.push(row.creator)});
 
           if(mot[args[1]].includes(".png") || mot[args[1]].includes(".jpg") || mot[args[1]].includes(".jpeg"))
@@ -2356,8 +2377,8 @@ clientdc.on("message", message => {
             if(mot.length >= 25)
             {
 
-              var args2 = new Array();
-              var length = (mot.length % 2 == 0) ? (mot.length) : (mot.length+1)
+              var args2 = [];
+              const length = (mot.length % 2 == 0) ? (mot.length) : (mot.length + 1);
 
               for (var i = length / 2; i <= length; i++) {
                 args2.push(mot[i]);
@@ -2366,7 +2387,7 @@ clientdc.on("message", message => {
                 mot.splice(i,1);
 
               }
-              for(var i = args2.length-1; i >= 0; i--){if(args2[i] == undefined){args2.pop()}}
+              for(var i = args2.length-1; i >= 0; i--){if(args2[i] === undefined){args2.pop()}}
 
               if(mot[args[1]]) {embed.setTitle("Motion number:"+args[1])
                 embed.addField("Motion in question", mot[args[1]],false);} else if(args2[args[1]-mot.length]) {embed.addField("Motion in question", args2[args[1]-mot.length],false);} else{embed.addField("Motion in question", "no motion with such ID", false);}
@@ -2402,7 +2423,7 @@ clientdc.on("message", message => {
     }
   }
 
-  if (message.content.toLowerCase() == command + "motions") {
+  if (message.content.toLowerCase() === command + "motions") {
     if (
         message.member.roles.cache.has("543783180130320385") ||
         message.member.roles.cache.has("550392133991923738")
@@ -2421,7 +2442,7 @@ clientdc.on("message", message => {
           "𝐈𝐌𝐏𝐄𝐑𝐀𝐓𝐎𝐑·𝐏𝐕𝐁𝐋𝐈𝐕𝐒",
           "https://cdn.glitch.com/24cdd29f-170e-4ac8-9dc2-8abc1cbbaeaa%2Fimageedit_1_3956664875.png?v=1588186424473"
       );
-      let msgs = new Array();
+      let msgs = [];
       let sql2 = `SELECT * FROM Motions;`;
       db.all(sql2, [], (err, rows) => {
         if (err) {
@@ -2463,8 +2484,8 @@ clientdc.on("message", message => {
           );
           secEmb.setDescription("Motions to discuss in Senate meetings");
 
-          var args2 = new Array();
-          var length = (msgs.length % 2 == 0) ? (msgs.length) : (msgs.length+1)
+          const args2 = new Array();
+          const length = (msgs.length % 2 == 0) ? (msgs.length) : (msgs.length + 1);
 
           for (var i = length / 2; i <= length; i++) {
             args2.push(msgs[i]);
@@ -2473,7 +2494,7 @@ clientdc.on("message", message => {
             msgs.splice(i,1);
 
           }
-          for(var i = args2.length-1; i >= 0; i--){if(args2[i] == undefined){args2.pop()}}
+          for(var i = args2.length-1; i >= 0; i--){if(args2[i] === undefined){args2.pop()}}
           var secEmb = new Discord.MessageEmbed();
 
           secEmb.setTitle("Motions");
@@ -2490,7 +2511,7 @@ clientdc.on("message", message => {
           );
           secEmb.setDescription("Motions to discuss in Senate meetings");
 
-          args2.forEach(msg => secEmb.addField("motion", msg+"/"+parseInt(args2.indexOf(msg)+msgs.length,10), false));
+          args2.forEach(msg => secEmb.addField("motion", msg+"/"+parseInt(args2.indexOf(msg) + msgs.length, 10), false));
           msgs.forEach(msg2 => embed.addField("motion", msg2+"/"+msgs.indexOf(msg2), false));
           message.channel.send(embed);
           message.channel.send(secEmb);
@@ -2511,7 +2532,7 @@ clientdc.on("message", message => {
         message.channel.awaitMessages(filter,{ max: 1, time: 3000, errors: ['time'] }).then( collected => {
 
 
-          var args = message.content.split(" ");
+          const args = message.content.split(" ");
           console.log(
               "INSERT INTO Motions(motion,creator) VALUES(" +
               "'" +
@@ -2555,9 +2576,9 @@ clientdc.on("message", message => {
     }
   }
 
-  if (message.content.toLowerCase().includes(command + "challenge" ) && message.channel.id == "557659811723083787") {
+  if (message.content.toLowerCase().includes(command + "challenge" ) && message.channel.id === "557659811723083787") {
     let args = message.content.split(" ");
-    if(args.length == 2){
+    if(args.length === 2){
       let emb = new Discord.MessageEmbed();
       emb.setImage("https://qph.fs.quoracdn.net/main-qimg-03cc5a7d16ec433984a39059446d5c4b");
       emb.addField(message.author.username,"100",true);
@@ -2565,18 +2586,15 @@ clientdc.on("message", message => {
       emb.setFooter("Gladiator Matches powered by our most humble Imperator");
       emb.setColor("0xFFFFFF");
       message.channel.send(emb).then(res => {
-        var cturn = false;
-        var hp1 = 100;
-        var hp2 = 100;
+        let cturn = false;
+        let hp1 = 100;
+        let hp2 = 100;
 
         let int = setInterval(function(php1, php2){
-          php1 = hp1;
-          php2 = hp2;
-
 
 
           let num = Math.random();
-          if(cturn == true){hp1 -= Math.floor(Math.random() * 31);
+          if(cturn === true){hp1 -= Math.floor(Math.random() * 31);
             if(hp1 < 0){hp1 = 0}
             let emb2 = new Discord.MessageEmbed();
             emb2.setImage("https://qph.fs.quoracdn.net/main-qimg-03cc5a7d16ec433984a39059446d5c4b");
@@ -2596,15 +2614,15 @@ clientdc.on("message", message => {
             emb2.setColor("0x8B0000");
             res.edit(emb2);
             cturn = true;
-          };
-          if(hp1 == 0 || hp2 == 0){clearInterval(int); let emb3 = new Discord.MessageEmbed(); emb3.addField("Winner",hp1 == 0 ? args[1] : message.author.username); emb3.setImage("https://www.history.com/.image/c_fill%2Ccs_srgb%2Cfl_progressive%2Ch_400%2Cq_auto:good%2Cw_620/MTU3ODc4NjAzNTMwOTA1MzEx/list-10-things-you-may-not-know-about-gladiators-2.jpg"); emb3.setFooter("Gladiator Matches powered by our most humble Imperator");
+          }
+          if(hp1 === 0 || hp2 === 0){clearInterval(int); let emb3 = new Discord.MessageEmbed(); emb3.addField("Winner",hp1 === 0 ? args[1] : message.author.username); emb3.setImage("https://www.history.com/.image/c_fill%2Ccs_srgb%2Cfl_progressive%2Ch_400%2Cq_auto:good%2Cw_620/MTU3ODc4NjAzNTMwOTA1MzEx/list-10-things-you-may-not-know-about-gladiators-2.jpg"); emb3.setFooter("Gladiator Matches powered by our most humble Imperator");
             emb3.setColor("0xFFDF00");
-            res.edit(emb3).catch(err => console.log(err))};
+            res.edit(emb3).catch(err => console.log(err))}
         },1500);
 
 
       });
-    }else if(args.length == 3){
+    }else if(args.length === 3){
       let emb = new Discord.MessageEmbed();
       emb.setImage("https://qph.fs.quoracdn.net/main-qimg-03cc5a7d16ec433984a39059446d5c4b");
       emb.addField(args[1],"100",true);
@@ -2612,18 +2630,15 @@ clientdc.on("message", message => {
       emb.setFooter("Gladiator Matches powered by our most humble Imperator");
       emb.setColor("0xFFFFFF");
       message.channel.send(emb).then(res => {
-        var cturn = false;
-        var hp1 = 100;
-        var hp2 = 100;
+        let cturn = false;
+        let hp1 = 100;
+        let hp2 = 100;
 
         let int = setInterval(function(php1, php2){
-          php1 = hp1;
-          php2 = hp2;
 
 
-
-          let num = Math.random();
-          if(cturn == true){hp1 -= Math.floor(Math.random() * 31);
+          const num = Math.random();
+          if(cturn === true){hp1 -= Math.floor(Math.random() * 31);
             if(hp1 < 0){hp1 = 0}
             let emb2 = new Discord.MessageEmbed();
             emb2.setImage("https://qph.fs.quoracdn.net/main-qimg-03cc5a7d16ec433984a39059446d5c4b");
@@ -2643,10 +2658,10 @@ clientdc.on("message", message => {
             emb2.setColor("0x8B0000");
             res.edit(emb2);
             cturn = true;
-          };
-          if(hp1 == 0 || hp2 == 0){clearInterval(int); let emb3 = new Discord.MessageEmbed(); emb3.addField("Winner",hp1 == 0 ? args[2] : args[1]); emb3.setImage("https://www.history.com/.image/c_fill%2Ccs_srgb%2Cfl_progressive%2Ch_400%2Cq_auto:good%2Cw_620/MTU3ODc4NjAzNTMwOTA1MzEx/list-10-things-you-may-not-know-about-gladiators-2.jpg"); emb3.setFooter("Gladiator Matches powered by our most humble Imperator");
+          }
+          if(hp1 === 0 || hp2 === 0){clearInterval(int); let emb3 = new Discord.MessageEmbed(); emb3.addField("Winner",hp1 === 0 ? args[2] : args[1]); emb3.setImage("https://www.history.com/.image/c_fill%2Ccs_srgb%2Cfl_progressive%2Ch_400%2Cq_auto:good%2Cw_620/MTU3ODc4NjAzNTMwOTA1MzEx/list-10-things-you-may-not-know-about-gladiators-2.jpg"); emb3.setFooter("Gladiator Matches powered by our most humble Imperator");
             emb3.setColor("0xFFDF00");
-            res.edit(emb3).catch(err => console.log(err))};
+            res.edit(emb3).catch(err => console.log(err))}
         },1500);
 
 
@@ -2657,7 +2672,7 @@ clientdc.on("message", message => {
 
   if (message.content.toLowerCase().includes(command + "bet" )) {
     let args = message.content.split(" ");
-    if(args.length == 3 && args[1] != args[2] || args.length == 2 && args[1] != message.author.username){
+    if(args.length === 3 && args[1] !== args[2] || args.length === 2 && args[1] !== message.author.username){
         if(!BattleAlreadyCommenced){
             BattleAlreadyCommenced = true;
             const filter = m => !m.author.bot;
@@ -2670,11 +2685,11 @@ clientdc.on("message", message => {
               
          
           
-                    if(!isNaN(temp[0]) && temp[1] == args[1] || temp[1] == args[2])
+                    if(!isNaN(temp[0]) && temp[1] === args[1] || temp[1] === args[2])
                     {
                         //take the absolute value since negative bets are not allowed
                         let bet = Math.abs(temp[0]);
-                        if(bet <= 10000 && bet > 0 && bet != 0){
+                        if(bet <= 10000 && bet > 0 && bet !== 0){
                             if(c.cash >= bet){
                             let st = bet+":"+temp[1]+":"+m.author.id;
                             bets.add(st);
@@ -2700,7 +2715,7 @@ clientdc.on("message", message => {
         
               message.channel.send("bets closed");
         
-              if(args.length == 2){
+              if(args.length === 2){
                 let emb = new Discord.MessageEmbed();
                 emb.setImage("https://qph.fs.quoracdn.net/main-qimg-03cc5a7d16ec433984a39059446d5c4b");
                 emb.addField(message.author.username,"100",true);
@@ -2708,18 +2723,15 @@ clientdc.on("message", message => {
                 emb.setFooter("Gladiator Matches powered by our most humble Imperator");
                 emb.setColor("0xFFFFFF");
                 message.channel.send(emb).then(res => {
-                  var cturn = Math.random() < 0.5? true: false;
-                  var hp1 = 100;
-                  var hp2 = 100;
-        
+                  let cturn = Math.random() < 0.5;
+                  let hp1 = 100;
+                  let hp2 = 100;
+
                   let int = setInterval(function(php1, php2){
-                    php1 = hp1;
-                    php2 = hp2;
-        
-        
-        
+
+
                     let num = Math.random();
-                    if(cturn == true){hp1 -= Math.floor(Math.random() * 31);
+                    if(cturn === true){hp1 -= Math.floor(Math.random() * 31);
                       if(hp1 < 0){hp1 = 0}
                       let emb2 = new Discord.MessageEmbed();
                       emb2.setImage("https://qph.fs.quoracdn.net/main-qimg-03cc5a7d16ec433984a39059446d5c4b");
@@ -2739,12 +2751,12 @@ clientdc.on("message", message => {
                       emb2.setColor("0x8B0000");
                       res.edit(emb2);
                       cturn = true;
-                    };
-                    if(hp1 == 0 || hp2 == 0){clearInterval(int); let emb3 = new Discord.MessageEmbed(); emb3.addField("Winner",hp1 == 0 ? args[1] : message.author.username); emb3.setImage("https://www.history.com/.image/c_fill%2Ccs_srgb%2Cfl_progressive%2Ch_400%2Cq_auto:good%2Cw_620/MTU3ODc4NjAzNTMwOTA1MzEx/list-10-things-you-may-not-know-about-gladiators-2.jpg"); emb3.setFooter("Gladiator Matches powered by our most humble Imperator");
+                    }
+                    if(hp1 === 0 || hp2 === 0){clearInterval(int); let emb3 = new Discord.MessageEmbed(); emb3.addField("Winner",hp1 === 0 ? args[1] : message.author.username); emb3.setImage("https://www.history.com/.image/c_fill%2Ccs_srgb%2Cfl_progressive%2Ch_400%2Cq_auto:good%2Cw_620/MTU3ODc4NjAzNTMwOTA1MzEx/list-10-things-you-may-not-know-about-gladiators-2.jpg"); emb3.setFooter("Gladiator Matches powered by our most humble Imperator");
                       emb3.setColor("0xFFDF00");
                       res.edit(emb3)
                       let winner;
-                      hp1 == 0 ? winner = args[1] : winner = message.author.username;
+                      hp1 === 0 ? winner = args[1] : winner = message.author.username;
                       let embed = new Discord.MessageEmbed();
                       bets.forEach(c =>{
         
@@ -2760,12 +2772,12 @@ clientdc.on("message", message => {
                       })
                       BattleAlreadyCommenced = false;
                       message.channel.send(embed);
-                    };
+                    }
                   },1500);
         
         
                 });
-              }else if(args.length == 3){
+              }else if(args.length === 3){
                 let emb = new Discord.MessageEmbed();
                 emb.setImage("https://qph.fs.quoracdn.net/main-qimg-03cc5a7d16ec433984a39059446d5c4b");
                 emb.addField(args[1],"100",true);
@@ -2773,18 +2785,15 @@ clientdc.on("message", message => {
                 emb.setFooter("Gladiator Matches powered by our most humble Imperator");
                 emb.setColor("0xFFFFFF");
                 message.channel.send(emb).then(res => {
-                  var cturn = false;
-                  var hp1 = 100;
-                  var hp2 = 100;
-        
+                  let cturn = false;
+                  let hp1 = 100;
+                  let hp2 = 100;
+
                   let int = setInterval(function(php1, php2){
-                    php1 = hp1;
-                    php2 = hp2;
-        
-        
-        
+
+
                     let num = Math.random();
-                    if(cturn == true){hp1 -= Math.floor(Math.random() * 31);
+                    if(cturn === true){hp1 -= Math.floor(Math.random() * 31);
                       if(hp1 < 0){hp1 = 0}
                       let emb2 = new Discord.MessageEmbed();
                       emb2.setImage("https://qph.fs.quoracdn.net/main-qimg-03cc5a7d16ec433984a39059446d5c4b");
@@ -2805,12 +2814,12 @@ clientdc.on("message", message => {
                       emb2.setColor("0x8B0000");
                       res.edit(emb2);
                       cturn = true;
-                    };
-                    if(hp1 == 0 || hp2 == 0){clearInterval(int); let emb3 = new Discord.MessageEmbed(); emb3.addField("Winner",hp1 == 0 ? args[2] : args[1]); emb3.setImage("https://www.history.com/.image/c_fill%2Ccs_srgb%2Cfl_progressive%2Ch_400%2Cq_auto:good%2Cw_620/MTU3ODc4NjAzNTMwOTA1MzEx/list-10-things-you-may-not-know-about-gladiators-2.jpg"); emb3.setFooter("Gladiator Matches powered by our most humble Imperator");
+                    }
+                    if(hp1 === 0 || hp2 === 0){clearInterval(int); let emb3 = new Discord.MessageEmbed(); emb3.addField("Winner",hp1 === 0 ? args[2] : args[1]); emb3.setImage("https://www.history.com/.image/c_fill%2Ccs_srgb%2Cfl_progressive%2Ch_400%2Cq_auto:good%2Cw_620/MTU3ODc4NjAzNTMwOTA1MzEx/list-10-things-you-may-not-know-about-gladiators-2.jpg"); emb3.setFooter("Gladiator Matches powered by our most humble Imperator");
                       emb3.setColor("0xFFDF00");
                       res.edit(emb3)
                       let winner;
-                      hp1 == 0 ? winner = args[2] : winner = args[1];
+                      hp1 === 0 ? winner = args[2] : winner = args[1];
                       let embed = new Discord.MessageEmbed();
                       bets.forEach(bet =>{
         
@@ -2826,7 +2835,7 @@ clientdc.on("message", message => {
                       })
                       BattleAlreadyCommenced = false;
                       message.channel.send(embed);
-                    };
+                    }
                   },1500);
         
         
@@ -2863,7 +2872,7 @@ clientdc.on("message", message => {
     }
   }
 
-  if (message.content.toLowerCase().includes(command + "deleteallmotions") || message.content.toLowerCase().includes("ave imperator publius") && message.channel.id == 549645921487421495) {
+  if (message.content.toLowerCase().includes(command + "deleteallmotions") || message.content.toLowerCase().includes("ave imperator publius") && message.channel.id === 549645921487421495) {
     if (
         message.member.roles.cache.has("649362430446796815") ||
         message.member.roles.cache.has("565594839828398100") ||
@@ -2899,7 +2908,7 @@ clientdc.on("message", message => {
             "',0)";
         db.run(add);
       }
-      var userID = message.author.id;
+      const userID = message.author.id;
       console.log(userID);
 
       let add =
@@ -2925,7 +2934,7 @@ clientdc.on("message", message => {
   if (message.content.toLowerCase().includes(command + "addroles")) {
     let args = message.content.split(" ");
     let role = getRole(args[1], message.guild.id);
-    let ment = new Array();
+    let ment = [];
     if (role) {
       console.log(args[1]);
       for (var i = 2; i < args.length; i++) {
@@ -2947,7 +2956,7 @@ clientdc.on("message", message => {
 });
 
 clientdc.on("message", async message => {
-      if (!message.author.bot && message.author.id != "241349696856129539") {
+      if (!message.author.bot && message.author.id !== "241349696856129539") {
         if (message.content.toLowerCase().includes("istanbul")) {
           message.channel.send("its Constantinople smh");
         }
@@ -2959,33 +2968,33 @@ clientdc.on("message", async message => {
         }
 
         if (
-            message.content.toLowerCase().includes("the general") && message.channel.id == "543787717725519892"||
-            message.content.toLowerCase().includes("general") && message.channel.id == "543787717725519892"
+            message.content.toLowerCase().includes("the general") && message.channel.id === "543787717725519892"||
+            message.content.toLowerCase().includes("general") && message.channel.id === "543787717725519892"
         ) {
           message.channel.send("hail Apicius");
           message.react("640270832115122196");
         }
 
         if (
-            message.content.toLowerCase().includes("hre ") && message.channel.id == "543787717725519892"||
-            message.content.toLowerCase().includes("holy Roman Empire") && message.channel.id == "543787717725519892"||
-            message.content.toLowerCase().includes("hre ") && message.channel.id == "543787717725519892"
+            message.content.toLowerCase().includes("hre ") && message.channel.id === "543787717725519892"||
+            message.content.toLowerCase().includes("holy Roman Empire") && message.channel.id === "543787717725519892"||
+            message.content.toLowerCase().includes("hre ") && message.channel.id === "543787717725519892"
         ) {
           message.channel.send("shame on you");
         }
 
         if (
-            message.content.toLowerCase().includes("civil war") && message.channel.id == "543787717725519892"
+            message.content.toLowerCase().includes("civil war") && message.channel.id === "543787717725519892"
         ) {
           message.channel.send("yall know who won right :wink:");
         }
 
         if (
-            message.content.toLowerCase().includes("imperator") && message.channel.id == "660253007916826625"||
-            message.content.toLowerCase().includes("emperor") && message.channel.id == "660253007916826625"
+            message.content.toLowerCase().includes("imperator") && message.channel.id === "660253007916826625"||
+            message.content.toLowerCase().includes("emperor") && message.channel.id === "660253007916826625"
         ) {
-          var num = Math.random();
-          
+          const num = Math.random();
+
           if (num <= 0.8) {
             message.channel.send(
                 "All hail the Imperator https://media.4teachers.de/images/thumbs/image_thumb.1146.jpg"
@@ -2997,8 +3006,8 @@ clientdc.on("message", async message => {
           message.react("664229248944439301");
         }
         if (
-            message.content.toLowerCase().includes("imperatrix") && message.channel.id == "660253007916826625"||
-            message.content.toLowerCase().includes("empress") && message.channel.id == "660253007916826625"
+            message.content.toLowerCase().includes("imperatrix") && message.channel.id === "660253007916826625"||
+            message.content.toLowerCase().includes("empress") && message.channel.id === "660253007916826625"
         ) {
           message.channel.send(
               "All hail the Empress https://pbs.twimg.com/profile_images/837236794387234816/megbmYw2_400x400.jpg"
@@ -3007,7 +3016,7 @@ clientdc.on("message", async message => {
         }
 
         if (
-            message.content.toLowerCase().includes("boo") && message.channel.id == "543787717725519892"
+            message.content.toLowerCase().includes("boo") && message.channel.id === "543787717725519892"
         ) {
           message.channel.send(
               "https://cdn.discordapp.com/attachments/536547184448110602/741412013430931467/IMG-20200807-WA0082.jpg"
@@ -3015,7 +3024,7 @@ clientdc.on("message", async message => {
 
         }
 
-        if (message.content.toLowerCase().includes("canis") && message.channel.id == "543787717725519892") {
+        if (message.content.toLowerCase().includes("canis") && message.channel.id === "543787717725519892") {
           message.channel.send(
               "https://lh3.googleusercontent.com/pw/ACtC-3ei9pLdPL1wJ3B7FtjbDyEsNHlUQeE8eCITVyQ8uUf_BxaAJaaG3LChL2mMoKjoKh_Zk35cQS9J2CdLjpqB91hOoqS_1Zvf09O4gvnafBjf_YM-kMoswDQMPH66ZI0eVd-TIlAInxWfHYBrNjadAfqG=w963-h1286-no?authuser=0"
           );
@@ -3041,13 +3050,13 @@ clientdc.on("message", async message => {
           let args = message.content.split(" ")
           if(args[1].includes("+")){
             let prob = args[1].split("+");
-            message.channel.send(parseInt((Math.random()*prob[0])+parseInt(prob[1])));
+            message.channel.send(parseInt((Math.random() * prob[0]) + parseInt(prob[1])));
           }
           else{
             message.channel.send(parseInt(Math.random()*args[1]))
           }
       }
-        if (message.content.toLowerCase().startsWith("!") && message.channel.id == "630588104184430643"){
+        if (message.content.toLowerCase().startsWith("!") && message.channel.id === "630588104184430643"){
           message.channel.send("bad boy!!");
           message.channel.bulkDelete(2);
 
@@ -3057,7 +3066,7 @@ clientdc.on("message", async message => {
             //message.react('771454776336449556');
         }
         
-        if (!message.content.toLowerCase().startsWith("!") && message.channel.id == "819602635966513172"){
+        if (!message.content.toLowerCase().startsWith("!") && message.channel.id === "819602635966513172"){
             if(!message.member.roles.cache.has("805067937211351040")){
                 message.channel.bulkDelete(1);
             }

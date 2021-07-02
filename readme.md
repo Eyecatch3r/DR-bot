@@ -24,6 +24,7 @@ this is the official Discord Romanum bot
 
 **Battle System v1.0**
 - added initial combat system mechanic
+
 **Miscellaneous**
 - added Slash commands
 - added Ping slash command

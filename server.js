@@ -482,41 +482,97 @@ function createProvinceEmbed(picURL) {
 
   }
 
+function createEmbedSingleProvince(u, provinceName) {
+
+  provinceName = provinceName.toLowerCase();
+  provinceWords = provinceName.split(" ");
+  let province = "";
+  provinceWords.forEach(p => {
+    province += p[0].toUpperCase() + p.substring(1)+" "
+  });
+  province = province.trim();
+  console.log(province);
+
+  let embP = new Discord.MessageEmbed();
+  embP.setTitle(province);
+  embP.setFooter("Provinces presented by your humble Imperator");
+  embP.setThumbnail('https://cdn.discordapp.com/attachments/548918811391295489/846080867138011156/unknown.png');
+  embP.setColor('#cd1121');
+
+  //to Calculate income Brackets we fetch the list of all Provinces to determine its order
+  db.all("SELECT * FROM Province ORDER BY income DESC",[],(err,order) => {
+    db.all("SELECT resource, population, income, map, population_growth, DiscordID, province.province AS pro FROM Province JOIN Resources,Governor ON prov_id =    Resources.province AND Governor.gov_ID = Province.Governor WHERE Province.province = '"+province+"'",[],(err,rows) => {
+
+      if (err) {
+        console.log(err)
+      }
+      if (rows[0]) {
+        rows.forEach((row) => {
+          embP.addField("Resource", row.resource);
+        })
+
+        if(u.displayAvatarURL()){
+          let av = u.displayAvatarURL();
+          embP.setAuthor(u.username, av);
+        } else {
+          let av = u.user.displayAvatarURL();
+          embP.setAuthor(u.displayName, av);
+        }
+
+
+
+        let provinceOrder = 0;
+        for (let i = 0; i < order.length; i++) {
+          provinceOrder++;
+          if (order[i].province === rows[0].pro) {
+            i = order.length;
+          }
+        }
+        let actualTax = provinceOrder <= 5 ? 1 - taxRateTop5 : 1 - taxRate
+        embP.setDescription(rows[0].income + " <:DNR:782312774083674163> daily (untaxed) || " + Math.floor(rows[0].income * actualTax) + " <:DNR:782312774083674163> daily (taxed) \n 🧍 Population: " + rows[0].population + "\n Population Growth: " + rows[0].population_growth)
+        rows[0].map != null ? embP.setImage(rows[0].map) : embP.setImage("https://cdn.discordapp.com/attachments/559418842430963723/775017785969475634/unknown.png")
+        return embP;
+      }
+    })
+  })
+}
+
+
+
 clientdc.ws.on("INTERACTION_CREATE", async interaction => {
   switch(interaction.data.name) {
     case "ping":
-    if(interaction.member.roles.includes("548455006693752852")) {
-      clientdc.api.interactions(interaction.id, interaction.token).callback.post({
-        data: {
-          type: 4,
+      if (interaction.member.roles.includes("548455006693752852")) {
+        clientdc.api.interactions(interaction.id, interaction.token).callback.post({
           data: {
-            content: 'Based'
+            type: 4,
+            data: {
+              content: 'Based'
+            }
           }
-        }
-      })
-    }else{
-      clientdc.api.interactions(interaction.id, interaction.token).callback.post({
-        data: {
-          type: 4,
+        })
+      } else {
+        clientdc.api.interactions(interaction.id, interaction.token).callback.post({
           data: {
-            content: 'Pleb'
+            type: 4,
+            data: {
+              content: 'Pleb'
+            }
           }
-        }
-      })
-    }
-    break;
+        })
+      }
+      break;
 
     case "number":
       let n = 0;
-      if(isNaN(parseInt(interaction.data.options[0].value)))
-      {
+      if (isNaN(parseInt(interaction.data.options[0].value))) {
         n = portunus.deromanize(interaction.data.options[0].value);
-      }else n = portunus.romanize(parseInt(interaction.data.options[0].value));
+      } else n = portunus.romanize(parseInt(interaction.data.options[0].value));
 
       let emb = new Discord.MessageEmbed();
       emb.setColor('#8f0713');
       emb.setDescription(n);
-      emb.setTitle("𝐈𝐌𝐏𝐄𝐑𝐀𝐓𝐎𝐑·𝐏𝐕𝐁𝐋𝐈𝐕𝐒","https://cdn.glitch.com/24cdd29f-170e-4ac8-9dc2-8abc1cbbaeaa%2Fimageedit_1_3956664875.png?v=1588186424473");
+      emb.setTitle("𝐈𝐌𝐏𝐄𝐑𝐀𝐓𝐎𝐑·𝐏𝐕𝐁𝐋𝐈𝐕𝐒", "https://cdn.glitch.com/24cdd29f-170e-4ac8-9dc2-8abc1cbbaeaa%2Fimageedit_1_3956664875.png?v=1588186424473");
       emb.setFooter("Roman numeral conversion powered by our most humble Imperator");
 
       clientdc.api.interactions(interaction.id, interaction.token).callback.post({
@@ -529,7 +585,7 @@ clientdc.ws.on("INTERACTION_CREATE", async interaction => {
       })
       break;
     case "mute":
-      if(interaction.member.roles.includes("549712921450774556") || interaction.member.roles.includes("546654987061821440")) {
+      if (interaction.member.roles.includes("549712921450774556") || interaction.member.roles.includes("546654987061821440")) {
         const target = interaction.data.options[0];
         if (target) {
 
@@ -539,13 +595,12 @@ clientdc.ws.on("INTERACTION_CREATE", async interaction => {
           let member = clientdc.guilds.cache.get(interaction.guild_id).members.cache.get(target.value);
 
 
-
           member.roles.add(muteRole.id);
           let emb = new Discord.MessageEmbed();
           emb.setColor('#8f0713');
 
-          interaction.data.options[2]? emb.setDescription(`<@${member.user.id}> has been muted for ${ms(ms(interaction.data.options[1].value))}, Reason: ${interaction.data.options[2].value}`) : emb.setDescription(`<@${member.user.id}> has been muted for ${ms(ms(interaction.data.options[1].value))}`);
-          emb.setTitle("𝐈𝐌𝐏𝐄𝐑𝐀𝐓𝐎𝐑·𝐏𝐕𝐁𝐋𝐈𝐕𝐒","https://cdn.glitch.com/24cdd29f-170e-4ac8-9dc2-8abc1cbbaeaa%2Fimageedit_1_3956664875.png?v=1588186424473");
+          interaction.data.options[2] ? emb.setDescription(`<@${member.user.id}> has been muted for ${ms(ms(interaction.data.options[1].value))}, Reason: ${interaction.data.options[2].value}`) : emb.setDescription(`<@${member.user.id}> has been muted for ${ms(ms(interaction.data.options[1].value))}`);
+          emb.setTitle("𝐈𝐌𝐏𝐄𝐑𝐀𝐓𝐎𝐑·𝐏𝐕𝐁𝐋𝐈𝐕𝐒", "https://cdn.glitch.com/24cdd29f-170e-4ac8-9dc2-8abc1cbbaeaa%2Fimageedit_1_3956664875.png?v=1588186424473");
           emb.setFooter("Muting powered by our most humble Imperator");
 
           clientdc.api.interactions(interaction.id, interaction.token).callback.post({
@@ -564,7 +619,7 @@ clientdc.ws.on("INTERACTION_CREATE", async interaction => {
           let emb = new Discord.MessageEmbed();
           emb.setColor('#8f0713');
           emb.setDescription("Cant find member");
-          emb.setTitle("𝐈𝐌𝐏𝐄𝐑𝐀𝐓𝐎𝐑·𝐏𝐕𝐁𝐋𝐈𝐕𝐒","https://cdn.glitch.com/24cdd29f-170e-4ac8-9dc2-8abc1cbbaeaa%2Fimageedit_1_3956664875.png?v=1588186424473");
+          emb.setTitle("𝐈𝐌𝐏𝐄𝐑𝐀𝐓𝐎𝐑·𝐏𝐕𝐁𝐋𝐈𝐕𝐒", "https://cdn.glitch.com/24cdd29f-170e-4ac8-9dc2-8abc1cbbaeaa%2Fimageedit_1_3956664875.png?v=1588186424473");
           emb.setFooter("Muting powered by our most humble Imperator");
 
           clientdc.api.interactions(interaction.id, interaction.token).callback.post({
@@ -576,11 +631,11 @@ clientdc.ws.on("INTERACTION_CREATE", async interaction => {
             }
           })
         }
-      }else{
+      } else {
         let emb = new Discord.MessageEmbed();
         emb.setColor('#8f0713');
         emb.setDescription("You do not have the permission to mute a user");
-        emb.setTitle("𝐈𝐌𝐏𝐄𝐑𝐀𝐓𝐎𝐑·𝐏𝐕𝐁𝐋𝐈𝐕𝐒","https://cdn.glitch.com/24cdd29f-170e-4ac8-9dc2-8abc1cbbaeaa%2Fimageedit_1_3956664875.png?v=1588186424473");
+        emb.setTitle("𝐈𝐌𝐏𝐄𝐑𝐀𝐓𝐎𝐑·𝐏𝐕𝐁𝐋𝐈𝐕𝐒", "https://cdn.glitch.com/24cdd29f-170e-4ac8-9dc2-8abc1cbbaeaa%2Fimageedit_1_3956664875.png?v=1588186424473");
         emb.setFooter("Muting powered by our most humble Imperator");
 
         clientdc.api.interactions(interaction.id, interaction.token).callback.post({
@@ -595,7 +650,7 @@ clientdc.ws.on("INTERACTION_CREATE", async interaction => {
       break;
 
     case "unmute":
-      if(interaction.member.roles.includes("549712921450774556") || interaction.member.roles.includes("546654987061821440")) {
+      if (interaction.member.roles.includes("549712921450774556") || interaction.member.roles.includes("546654987061821440")) {
         const target = interaction.data.options[0];
         if (target) {
 
@@ -605,12 +660,11 @@ clientdc.ws.on("INTERACTION_CREATE", async interaction => {
           let member = clientdc.guilds.cache.get(interaction.guild_id).members.cache.get(target.value);
 
 
-
           member.roles.remove(muteRole.id);
           let emb = new Discord.MessageEmbed();
           emb.setColor('#8f0713');
           emb.setDescription(`<@${member.user.id}> has been unmuted`);
-          emb.setTitle("𝐈𝐌𝐏𝐄𝐑𝐀𝐓𝐎𝐑·𝐏𝐕𝐁𝐋𝐈𝐕𝐒","https://cdn.glitch.com/24cdd29f-170e-4ac8-9dc2-8abc1cbbaeaa%2Fimageedit_1_3956664875.png?v=1588186424473");
+          emb.setTitle("𝐈𝐌𝐏𝐄𝐑𝐀𝐓𝐎𝐑·𝐏𝐕𝐁𝐋𝐈𝐕𝐒", "https://cdn.glitch.com/24cdd29f-170e-4ac8-9dc2-8abc1cbbaeaa%2Fimageedit_1_3956664875.png?v=1588186424473");
           emb.setFooter("Muting powered by our most humble Imperator");
 
           clientdc.api.interactions(interaction.id, interaction.token).callback.post({
@@ -622,24 +676,21 @@ clientdc.ws.on("INTERACTION_CREATE", async interaction => {
             }
           })
 
+        }
+
+
       }
-
-
-  }
       break;
     case "ban":
-      if(interaction.member.roles.includes("549712921450774556") || interaction.member.roles.includes("546654987061821440")) {
+      if (interaction.member.roles.includes("549712921450774556") || interaction.member.roles.includes("546654987061821440")) {
         const target = interaction.data.options[0];
         if (target) {
 
           let member = clientdc.guilds.cache.get(interaction.guild_id).members.cache.get(interaction.data.options[0].value);
 
 
-
-
-
-          if(interaction.data.options[1]){
-            member.ban(target.value, { reason: interaction.data.options[1].value}).then(ban => {
+          if (interaction.data.options[1]) {
+            member.ban(target.value, {reason: interaction.data.options[1].value}).then(ban => {
               let emb = new Discord.MessageEmbed();
               emb.setColor('#8f0713');
               emb.setDescription(`<@${member.user.id}> has been Executed in the name of the Imperator`);
@@ -654,11 +705,12 @@ clientdc.ws.on("INTERACTION_CREATE", async interaction => {
                     embeds: [emb]
                   }
                 }
-              })}).catch(err => clientdc.api.interactions(interaction.id, interaction.token).callback.post({
-            data: {
-              type: 4,
+              })
+            }).catch(err => clientdc.api.interactions(interaction.id, interaction.token).callback.post({
               data: {
-                content: "Cannot Ban this user"
+                type: 4,
+                data: {
+                  content: "Cannot Ban this user"
                 }
               }
             }))
@@ -694,67 +746,51 @@ clientdc.ws.on("INTERACTION_CREATE", async interaction => {
       }
       break;
     case "showprovince":
-      let embP = new Discord.MessageEmbed();
-      embP.setFooter("Provinces presented by your humble Imperator");
-      embP.setThumbnail('https://cdn.discordapp.com/attachments/548918811391295489/846080867138011156/unknown.png');
-      embP.setColor('#cd1121');
+
 
       let provinceName = interaction.data.options[0].value;
-      //capitalize every first Letter
-      provinceName = provinceName.toLowerCase();
-      provinceWords = provinceName.split(" ");
-      let province = "";
-      provinceWords.forEach(p => {
-        province += p[0].toUpperCase() + p.substring(1)+" "
-      });
-      province = province.trim();
-      console.log(province);
-      embP.setTitle(province);
-      //to Calculate income Brackets we fetch the list of all Provinces to determine its order
+
       db.all("SELECT * FROM Province ORDER BY income DESC",[],(err,order) => {
-        db.all("SELECT resource, population, income, map, population_growth, DiscordID, province.province AS pro FROM Province JOIN Resources,Governor ON prov_id =    Resources.province AND Governor.gov_ID = Province.Governor WHERE Province.province = '"+province+"'",[],(err,rows) => {
-
-          if (err){console.log(err)}
+        db.all("SELECT resource, population, income, map, population_growth, DiscordID, province.province AS pro FROM Province JOIN Resources,Governor ON prov_id =    Resources.province AND Governor.gov_ID = Province.Governor WHERE Province.province = '" + province + "'", [], (err, rows) => {
           if (rows[0]) {
-            rows.forEach((row) => {
-              embP.addField("Resource", row.resource);
-            })
-            //problem with discord caching not picking up a particular user, hard coded for now
-            let id;
-            rows[0].DiscordID ? id = rows[0].DiscordID : id = "no"
-            clientdc.guilds.cache.get('514135876909924352').members.fetch(id).then(u =>{
-              let av = u.user.displayAvatarURL();
-              embP.setAuthor(u.displayName,av);
-              let provinceOrder = 0;
-              for(let i = 0; i < order.length; i++){
-                provinceOrder++;
-                if(order[i].province === rows[0].pro){
-                  i = order.length;
-                }
-              }
-              let actualTax = provinceOrder <= 5 ? 1 -taxRateTop5 : 1 - taxRate
-              embP.setDescription(rows[0].income+" <:DNR:782312774083674163> daily (untaxed) || "+Math.floor(rows[0].income*actualTax)+" <:DNR:782312774083674163> daily (taxed) \n 🧍 Population: "+rows[0].population+"\n Population Growth: "+rows[0].population_growth)
-              rows[0].map != null ? embP.setImage(rows[0].map) : embP.setImage("https://cdn.discordapp.com/attachments/559418842430963723/775017785969475634/unknown.png")
 
+            let id;
+            id = rows[0].DiscordID;
+            clientdc.guilds.cache.get('514135876909924352').members.fetch(id).then(u => {
               clientdc.api.interactions(interaction.id, interaction.token).callback.post({
                 data: {
                   type: 4,
                   data: {
-                    embeds: [embP]
+                    embeds: [createEmbedSingleProvince(u, provinceName)]
                   }
                 }
               })
+            }).catch(error => {
+              clientdc.users.fetch(id).then(u => {
+                clientdc.api.interactions(interaction.id, interaction.token).callback.post({
+                  data: {
+                    type: 4,
+                    data: {
+                      embeds: [createEmbedSingleProvince(u, provinceName)]
+                    }
+                  }
+
+                })
+              })
+            }).catch(error => {
+              clientdc.api.interactions(interaction.id, interaction.token).callback.post({
+                data: {
+                  type: 4,
+                  data: {
+                    content: "Invalid Province name"
+                  }
+                }
+              });
             })
-          }else clientdc.api.interactions(interaction.id, interaction.token).callback.post({
-            data: {
-              type: 4,
-              data: {
-                content: "Invalid Province name"
-              }
-            }
-          });
-        });
-      });
+          }
+        })
+      })
+
       break;
     case "provinces":
 
@@ -1805,7 +1841,7 @@ clientdc.on("message", message => {
             }
           }
          
-          emb.setTitle(province);
+
 
       db.all("SELECT * FROM Province ORDER BY income DESC",[],(err,order) => {      
         db.all("SELECT resource, population, income, map, population_growth, DiscordID, province.province AS pro FROM Province JOIN Resources,Governor ON prov_id =    Resources.province AND Governor.gov_ID = Province.Governor WHERE Province.province = '"+province+"'",[],(err,rows) => {
@@ -1815,9 +1851,9 @@ clientdc.on("message", message => {
             rows.forEach((row) => {
             emb.addField("Resource", row.resource);
           })
-            //problem with discord caching not picking up a particular user, hard coded for now
+
             let id;
-            rows[0].DiscordID ? id = rows[0].DiscordID : id = "no" 
+            id = rows[0].DiscordID;
             clientdc.guilds.cache.get('514135876909924352').members.fetch(id).then(u =>{
             let av = u.user.displayAvatarURL();
             emb.setAuthor(u.displayName,av);
@@ -1831,7 +1867,7 @@ clientdc.on("message", message => {
             let actualTax = provinceOrder <= 5 ? 1 -taxRateTop5 : 1 - taxRate
             emb.setDescription(rows[0].income+" <:DNR:782312774083674163> daily (untaxed) || "+Math.floor(rows[0].income*actualTax)+" <:DNR:782312774083674163> daily (taxed) \n 🧍 Population: "+rows[0].population+"\n"+" Population Growth: "+rows[0].population_growth)
             rows[0].map != null ? emb.setImage(rows[0].map) : emb.setImage("https://cdn.discordapp.com/attachments/559418842430963723/775017785969475634/unknown.png")
-            message.channel.send(emb);
+            message.channel.send(createEmbedSingleProvince(u,province));
             })
           }else message.channel.send("not a valid province name");
         });

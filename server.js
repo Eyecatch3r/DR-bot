@@ -484,34 +484,23 @@ function createProvinceEmbed(picURL) {
 
 function createEmbedSingleProvince(u, provinceName) {
 
-  provinceName = provinceName.toLowerCase();
-  provinceWords = provinceName.split(" ");
-  let province = "";
-  provinceWords.forEach(p => {
-    province += p[0].toUpperCase() + p.substring(1)+" "
-  });
-  province = province.trim();
-  console.log(province);
 
   let embP = new Discord.MessageEmbed();
-  embP.setTitle(province);
+  embP.setTitle(provinceName);
   embP.setFooter("Provinces presented by your humble Imperator");
   embP.setThumbnail('https://cdn.discordapp.com/attachments/548918811391295489/846080867138011156/unknown.png');
   embP.setColor('#cd1121');
 
   //to Calculate income Brackets we fetch the list of all Provinces to determine its order
-  db.all("SELECT * FROM Province ORDER BY income DESC",[],(err,order) => {
-    db.all("SELECT resource, population, income, map, population_growth, DiscordID, province.province AS pro FROM Province JOIN Resources,Governor ON prov_id =    Resources.province AND Governor.gov_ID = Province.Governor WHERE Province.province = '"+province+"'",[],(err,rows) => {
-
-      if (err) {
-        console.log(err)
-      }
+  let order = db2.prepare("SELECT * FROM Province ORDER BY income DESC").all();
+    let rows = db2.prepare("SELECT resource, population, income, map, population_growth, DiscordID, province.province AS pro FROM Province JOIN Resources,Governor ON prov_id =    Resources.province AND Governor.gov_ID = Province.Governor WHERE Province.province = '"+provinceName+"'");
+      console.log(provinceName);
       if (rows[0]) {
         rows.forEach((row) => {
           embP.addField("Resource", row.resource);
         })
 
-        if(u.displayAvatarURL()){
+        if(u.username){
           let av = u.displayAvatarURL();
           embP.setAuthor(u.username, av);
         } else {
@@ -533,8 +522,10 @@ function createEmbedSingleProvince(u, provinceName) {
         rows[0].map != null ? embP.setImage(rows[0].map) : embP.setImage("https://cdn.discordapp.com/attachments/559418842430963723/775017785969475634/unknown.png")
         return embP;
       }
-    })
-  })
+      else {
+        return embP;
+      }
+
 }
 
 
@@ -748,8 +739,15 @@ clientdc.ws.on("INTERACTION_CREATE", async interaction => {
     case "showprovince":
 
 
-      let provinceName = interaction.data.options[0].value;
+      let provinceName = interaction.data.options[0].value.toLowerCase();
 
+      provinceWords = provinceName.split(" ");
+      let province = "";
+      provinceWords.forEach(p => {
+        province += p[0].toUpperCase() + p.substring(1)+" "
+      });
+      province = province.trim();
+      console.log(province);
       db.all("SELECT * FROM Province ORDER BY income DESC",[],(err,order) => {
         db.all("SELECT resource, population, income, map, population_growth, DiscordID, province.province AS pro FROM Province JOIN Resources,Governor ON prov_id =    Resources.province AND Governor.gov_ID = Province.Governor WHERE Province.province = '" + province + "'", [], (err, rows) => {
           if (rows[0]) {
@@ -757,35 +755,77 @@ clientdc.ws.on("INTERACTION_CREATE", async interaction => {
             let id;
             id = rows[0].DiscordID;
             clientdc.guilds.cache.get('514135876909924352').members.fetch(id).then(u => {
+              let embP = new Discord.MessageEmbed();
+              embP.setTitle(province);
+              embP.setFooter("Provinces presented by your humble Imperator");
+              embP.setThumbnail('https://cdn.discordapp.com/attachments/548918811391295489/846080867138011156/unknown.png');
+              embP.setColor('#cd1121');
+
+                for (let row of rows) {
+                  embP.addField("Resource", row.resource);
+                }
+
+                if(u.username){
+                  let av = u.displayAvatarURL();
+                  embP.setAuthor(u.username, av);
+                } else {
+                  let av = u.user.displayAvatarURL();
+                  embP.setAuthor(u.displayName, av);
+                }
+
+
+
+                let provinceOrder = 0;
+                for (let i = 0; i < order.length; i++) {
+                  provinceOrder++;
+                  if (order[i].province === rows[0].pro) {
+                    i = order.length;
+                  }
+                }
+                let actualTax = provinceOrder <= 5 ? 1 - taxRateTop5 : 1 - taxRate
+                embP.setDescription(rows[0].income + " <:DNR:782312774083674163> daily (untaxed) || " + Math.floor(rows[0].income * actualTax) + " <:DNR:782312774083674163> daily (taxed) \n 🧍 Population: " + rows[0].population + "\n Population Growth: " + rows[0].population_growth)
+                rows[0].map != null ? embP.setImage(rows[0].map) : embP.setImage("https://cdn.discordapp.com/attachments/559418842430963723/775017785969475634/unknown.png")
+
+
+
+
               clientdc.api.interactions(interaction.id, interaction.token).callback.post({
                 data: {
                   type: 4,
                   data: {
-                    embeds: [createEmbedSingleProvince(u, provinceName)]
+                    embeds: [embP]
                   }
                 }
               })
             }).catch(error => {
-              clientdc.users.fetch(id).then(u => {
+              if(error){
+                clientdc.users.fetch(id).then(u => {
+                  let embed = createEmbedSingleProvince(u, province);
+
+                  clientdc.api.interactions(interaction.id, interaction.token).callback.post({
+                    data: {
+                      type: 4,
+                      data: {
+                        embeds: [embed]
+                      }
+                    }
+
+                  })
+                })
+              }
+
+            }).catch(error => {
+              if(error){
                 clientdc.api.interactions(interaction.id, interaction.token).callback.post({
                   data: {
                     type: 4,
                     data: {
-                      embeds: [createEmbedSingleProvince(u, provinceName)]
+                      content: "Invalid Province name"
                     }
                   }
+                });
+              }
 
-                })
-              })
-            }).catch(error => {
-              clientdc.api.interactions(interaction.id, interaction.token).callback.post({
-                data: {
-                  type: 4,
-                  data: {
-                    content: "Invalid Province name"
-                  }
-                }
-              });
             })
           }
         })
@@ -1867,7 +1907,7 @@ clientdc.on("message", message => {
             let actualTax = provinceOrder <= 5 ? 1 -taxRateTop5 : 1 - taxRate
             emb.setDescription(rows[0].income+" <:DNR:782312774083674163> daily (untaxed) || "+Math.floor(rows[0].income*actualTax)+" <:DNR:782312774083674163> daily (taxed) \n 🧍 Population: "+rows[0].population+"\n"+" Population Growth: "+rows[0].population_growth)
             rows[0].map != null ? emb.setImage(rows[0].map) : emb.setImage("https://cdn.discordapp.com/attachments/559418842430963723/775017785969475634/unknown.png")
-            message.channel.send(createEmbedSingleProvince(u,province));
+            message.channel.send(emb);
             })
           }else message.channel.send("not a valid province name");
         });
@@ -3115,7 +3155,7 @@ clientdc.on("message", async message => {
 
 clientdc.on("messageDelete", message => {
   
-  if (message.author.id === "582262708511178776" && message.guild.id === "769941406718230529") {
+  if (message.author.id === "806496535961272350" && message.guild.id === "769941406718230529") {
     let emb = new Discord.MessageEmbed()
     emb.setAuthor(message.author.username,message.author.avatarURL())
     emb.addField("What she deleted",message.content)

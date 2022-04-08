@@ -2,11 +2,8 @@
 // where your node app starts
 
 // init project
-const express = require("express");
-var assets = require("./assets");
-const fs = require("fs");
+
 const bible = require("bible-english");
-const app = express();
 let portunus = require('romans');
 const http = require("http");
 require('dotenv').config()
@@ -14,10 +11,10 @@ const can = require("canvas");
 const { Client } = require('unb-api');
 const client = new Client('eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJhcHBfaWQiOiI3Mjg5NjU5MTQ0NzY4MDY2ODUiLCJpYXQiOjE1OTM4Njk0MTd9._E6dCtkLswWgDySTPihh32Al9tvHPxFuxqY_eBk8waQ');
 const GuildID = "514135876909924352";
-const Tree = require("treeify");
 var CronJob = require('node-cron');
 const ImageCharts = require('image-charts');
 const ms = require('ms');
+let numberOfProvinces;
 const { GoogleSpreadsheet } = require("google-spreadsheet");
 const doc = new GoogleSpreadsheet('1Mci7KdAbGP3s_VWzzTCvLT3wEDN7XbO_zoRrHr0_Lfw');
 const db2 = require('better-sqlite3-with-prebuilds')('DR.db', {timeout: 5000});
@@ -37,7 +34,7 @@ const wikiFacts = require('wikifakt');
 const tr = require('translate');
 tr.key = 'trnsl.1.1.20200515T222139Z.a68c11f6ccb16bd4.b2bb25b5f6b3c103701bbe0015c7998ab237fa98';
 tr.engine = 'yandex';
-app.use("/assets", assets);
+
 const arrayList = require("arraylist");
 const Discord = require("discord.js");
 const clientdc = new Discord.Client();
@@ -49,7 +46,7 @@ let taxRate = 0.6;
 let taxRateTop5 = 0.65;
 
 clientdc.login(process.env.DISCORD_TOKEN);
-app.use(require("./guides"));
+
 
 
 //register Slash interactions with the client
@@ -73,21 +70,25 @@ async function updateProvinceIncome(){
   doc.loadInfo().then(() => {
 
     const sheet = doc.sheetsByIndex[0];
-    sheet.loadCells('A1:Q25').then(() => {
-      for (let i = 2; i <= 25; i++) {
+    sheet.loadCells('A1:Q26').then(() => {
+      for (let i = 2; i <= 26; i++) {
+        let number = new Intl.NumberFormat('latin', { style: 'decimal', useGrouping: 'true' }).format(sheet.getCellByA1('Q' + i).formattedValue);
+
         db.run(`UPDATE Province SET income = ${sheet.getCellByA1('Q' + i).formattedValue} WHERE prov_id = ${i - 1}`);
       }
     });
       const sheetPop = doc.sheetsByIndex[2];
-      sheetPop.loadCells('AG4:AK29').then(() => {
-        for (let i = 4; i <= 27; i++) {
+      sheetPop.loadCells('AN4:AO28').then(() => {
+        for (let i = 4; i <= 28; i++) {
 
-          db.run(`UPDATE Province SET population = '${sheetPop.getCellByA1('AG' + i).formattedValue}' WHERE prov_id = '${i - 3}'`);
+
+          let number = new Intl.NumberFormat('latin', { style: 'decimal', useGrouping: 'true' }).format(sheetPop.getCellByA1('AN' + i).formattedValue);
+          db.run(`UPDATE Province SET population = '${sheetPop.getCellByA1('AN' + i).formattedValue}' WHERE prov_id = '${i - 3}'`);
         }
 
-        for (let i = 4; i <= 27; i++) {
+        for (let i = 4; i <= 28; i++) {
 
-          db.run(`UPDATE Province SET population_growth = '${sheetPop.getCellByA1('AH' + i).formattedValue}' WHERE prov_id = ${i - 3}`);
+          db.run(`UPDATE Province SET population_growth = '${sheetPop.getCellByA1('AO' + i).formattedValue}' WHERE prov_id = ${i - 3}`);
         }
       });
       updateProvinceMessage();
@@ -236,7 +237,7 @@ function updateEmbedMessage(message) {
           .then(messages => messages.first().edit(secEmb));
     } else {
 
-      const args2 = new Array();
+      const args2 = [];
       const length = (msgs.length % 2 === 0) ? (msgs.length) : (msgs.length + 1);
 
       for (var i = length / 2; i <= length; i++) {
@@ -277,6 +278,24 @@ function updateEmbedMessage(message) {
     }
 
   });
+}
+
+function postMussoFact(){
+  let order = db2.prepare("SELECT fact FROM Mussofact").all();
+  const randomElement = order[Math.floor(Math.random() * order.length)].fact;
+
+  let embed = new Discord.MessageEmbed();
+
+  embed.setTitle("Mussolini facts");
+  embed.setColor("0x000000");
+  embed.setFooter(
+      "Facts powered by our most humble Imperator"
+  );
+
+  embed.addField("Fact:",randomElement);
+    clientdc.channels.cache
+      .get("514135876909924354").send(embed);
+
 }
 
 function updateProvinceMessage() {
@@ -370,6 +389,17 @@ function updateProvinceMessage() {
   });
 }
 
+function updateRPDate(RPName) {
+ let date = db2.prepare("SELECT * FROM Currentdates WHERE RP_Server = ?").get(RPName);
+
+  date++;
+
+  clientdc.channels.cache
+      .get("960998378265780281").send(date);
+
+  db2.prepare('UPDATE Currentdates SET date = date + 1 WHERE RP_Server = ?').run(RPName);
+}
+
 clientdc.on("ready", (interaction) => {
   //Slash commands
 
@@ -379,14 +409,12 @@ clientdc.on("ready", (interaction) => {
   updateEmbed();
 
 
-  db.all("SELECT * FROM candidates", [], (err, rows) => {
+  db.get("SELECT COUNT(Governor) FROM Province", [], (err, row) => {
     if (err) {
       throw err;
     }
-    rows.forEach(row => {
-      console.log("cID \n" + row.cID);
-      console.log("DiscordID \n" + row.DiscordID);
-    });
+
+    row[0] = numberOfProvinces;
   });
 
   db.all("SELECT * FROM CandidateElections", [], (err, rows) => {
@@ -419,6 +447,43 @@ clientdc.on("ready", (interaction) => {
     timezone: "Europe/Berlin"
   });
 
+  CronJob.schedule('0 0 * * *', () => {
+    updateRPDate("Medieval");
+  },{
+    scheduled: true,
+    timezone: "Europe/Berlin"
+  });
+
+  CronJob.schedule('0 6 * * *', () => {
+    updateRPDate("Medieval");
+    },{
+    scheduled: true,
+    timezone: "Europe/Berlin"
+  });
+
+  CronJob.schedule('0 12 * * *', () => {
+    updateRPDate("Medieval");
+    },{
+    scheduled: true,
+    timezone: "Europe/Berlin"
+  });
+
+  CronJob.schedule('0 18 * * *', () => {
+    updateRPDate("Medieval");
+    },{
+    scheduled: true,
+    timezone: "Europe/Berlin"
+  });
+
+
+
+  CronJob.schedule('0 11 * * MON', () => {
+    postMussoFact();
+    },{
+    scheduled: true,
+    timezone: "Europe/Berlin"
+  });
+
   CronJob.schedule('0 2 * * *', () => {
     
      provinceIncome()
@@ -428,34 +493,19 @@ clientdc.on("ready", (interaction) => {
   });
 
   CronJob.schedule('* * * * *', () => {
-
     updateProvinceIncome();
   },{
     scheduled: true,
     timezone: "Europe/Berlin"
   });
   
-   CronJob.schedule('0 3 * * *', () => {
+   CronJob.schedule('0 3 * * 1', () => {
     collectTaxes();
-     
   },{
     scheduled: true,
     timezone: "Europe/Berlin"
   }); 
   
-  CronJob.schedule('0 0 * * *', () => {
-    db.run("UPDATE Province SET Boosted = false");
-     
-  },{
-    scheduled: true,
-    timezone: "Europe/Berlin"
-  });
-  
-  CronJob.schedule('0 23 * * SUN', () => {
-    db.run("DELETE FROM MOTIONS")},{
-    scheduled: true,
-    timezone: "Europe/Berlin"
-  });
 
 
 
@@ -527,6 +577,8 @@ function createEmbedSingleProvince(u, provinceName) {
       }
 
 }
+
+
 
 
 
@@ -678,59 +730,70 @@ clientdc.ws.on("INTERACTION_CREATE", async interaction => {
         if (target) {
 
           let member = clientdc.guilds.cache.get(interaction.guild_id).members.cache.get(interaction.data.options[0].value);
+          if(!member.roles.cache.has("546654987061821440")){
+            if (interaction.data.options[1]) {
+              member.ban(target.value, {reason: interaction.data.options[1].value}).then(ban => {
+                let emb = new Discord.MessageEmbed();
+                emb.setColor('#8f0713');
+                emb.setDescription(`<@${member.user.id}> has been Executed in the name of the Imperator`);
+                emb.setTitle("𝐈𝐌𝐏𝐄𝐑𝐀𝐓𝐎𝐑·𝐏𝐕𝐁𝐋𝐈𝐕𝐒", "https://cdn.glitch.com/24cdd29f-170e-4ac8-9dc2-8abc1cbbaeaa%2Fimageedit_1_3956664875.png?v=1588186424473");
+                emb.setImage("https://i.pinimg.com/originals/7f/03/a2/7f03a2a21b82d96679788401c3ef323f.jpg");
+                emb.setFooter("Banning powered by our most humble Imperator");
 
-
-          if (interaction.data.options[1]) {
-            member.ban(target.value, {reason: interaction.data.options[1].value}).then(ban => {
-              let emb = new Discord.MessageEmbed();
-              emb.setColor('#8f0713');
-              emb.setDescription(`<@${member.user.id}> has been Executed in the name of the Imperator`);
-              emb.setTitle("𝐈𝐌𝐏𝐄𝐑𝐀𝐓𝐎𝐑·𝐏𝐕𝐁𝐋𝐈𝐕𝐒", "https://cdn.glitch.com/24cdd29f-170e-4ac8-9dc2-8abc1cbbaeaa%2Fimageedit_1_3956664875.png?v=1588186424473");
-              emb.setImage("https://i.pinimg.com/originals/7f/03/a2/7f03a2a21b82d96679788401c3ef323f.jpg");
-              emb.setFooter("Banning powered by our most humble Imperator");
-
-              clientdc.api.interactions(interaction.id, interaction.token).callback.post({
+                clientdc.api.interactions(interaction.id, interaction.token).callback.post({
+                  data: {
+                    type: 4,
+                    data: {
+                      embeds: [emb]
+                    }
+                  }
+                })
+              }).catch(err => clientdc.api.interactions(interaction.id, interaction.token).callback.post({
                 data: {
                   type: 4,
                   data: {
-                    embeds: [emb]
+                    content: "Cannot Ban this user"
                   }
                 }
-              })
-            }).catch(err => clientdc.api.interactions(interaction.id, interaction.token).callback.post({
+              }))
+            } else {
+              member.ban().then(ban => {
+                let emb = new Discord.MessageEmbed();
+                emb.setColor('#8f0713');
+                emb.setDescription(`<@${member.user.id}> has been Executed in the name of the Imperator`);
+                emb.setTitle("𝐈𝐌𝐏𝐄𝐑𝐀𝐓𝐎𝐑·𝐏𝐕𝐁𝐋𝐈𝐕𝐒", "https://cdn.glitch.com/24cdd29f-170e-4ac8-9dc2-8abc1cbbaeaa%2Fimageedit_1_3956664875.png?v=1588186424473");
+                emb.setImage("https://i.pinimg.com/originals/7f/03/a2/7f03a2a21b82d96679788401c3ef323f.jpg");
+                emb.setFooter("Banning powered by our most humble Imperator");
+
+                clientdc.api.interactions(interaction.id, interaction.token).callback.post({
+                  data: {
+                    type: 4,
+                    data: {
+                      embeds: [emb]
+                    }
+                  }
+                })
+              }).catch(err => clientdc.api.interactions(interaction.id, interaction.token).callback.post({
+                data: {
+                  type: 4,
+                  data: {
+                    content: "Cannot Ban this user"
+                  }
+                }
+              }));
+            }
+          }else {
+            clientdc.api.interactions(interaction.id, interaction.token).callback.post({
               data: {
                 type: 4,
                 data: {
                   content: "Cannot Ban this user"
                 }
               }
-            }))
-          } else {
-            member.ban().then(ban => {
-              let emb = new Discord.MessageEmbed();
-              emb.setColor('#8f0713');
-              emb.setDescription(`<@${member.user.id}> has been Executed in the name of the Imperator`);
-              emb.setTitle("𝐈𝐌𝐏𝐄𝐑𝐀𝐓𝐎𝐑·𝐏𝐕𝐁𝐋𝐈𝐕𝐒", "https://cdn.glitch.com/24cdd29f-170e-4ac8-9dc2-8abc1cbbaeaa%2Fimageedit_1_3956664875.png?v=1588186424473");
-              emb.setImage("https://i.pinimg.com/originals/7f/03/a2/7f03a2a21b82d96679788401c3ef323f.jpg");
-              emb.setFooter("Banning powered by our most humble Imperator");
-
-              clientdc.api.interactions(interaction.id, interaction.token).callback.post({
-                data: {
-                  type: 4,
-                  data: {
-                    embeds: [emb]
-                  }
-                }
-              })
-            }).catch(err => clientdc.api.interactions(interaction.id, interaction.token).callback.post({
-              data: {
-                type: 4,
-                data: {
-                  content: "Cannot Ban this user"
-                }
-              }
-            }));
+            })
           }
+
+
         }
 
 
@@ -834,7 +897,7 @@ clientdc.ws.on("INTERACTION_CREATE", async interaction => {
       break;
     case "provinces":
 
-      let provinces = createProvinceEmbed("https://cdn.discordapp.com/attachments/548918811391295489/856238924305661952/unknown.png");
+      let provinces = createProvinceEmbed("https://cdn.discordapp.com/attachments/543787157127561216/932676494466113626/unknown.png");
       let factionButton = new disbut.MessageButton()
           .setStyle('red') //default: blurple
           .setLabel('Faction Map') //default: NO_LABEL_PROVIDED
@@ -1086,7 +1149,7 @@ function collectTaxes(){
 
 clientdc.on('clickButton', async (button) => {
   if (button.id === 'faction_map') {
-    let provinces = createProvinceEmbed("https://cdn.discordapp.com/attachments/548918811391295489/856238924305661952/unknown.png");
+    let provinces = createProvinceEmbed("https://cdn.discordapp.com/attachments/543787157127561216/932676494466113626/unknown.png");
     let factionButton = new disbut.MessageButton()
         .setStyle('red') //default: blurple
         .setLabel('Faction Map') //default: NO_LABEL_PROVIDED
@@ -1105,7 +1168,7 @@ clientdc.on('clickButton', async (button) => {
   }
   else
   if (button.id === 'province_map') {
-    let provinces = createProvinceEmbed("https://cdn.discordapp.com/attachments/548918811391295489/856238924305661952/unknown.png");
+    let provinces = createProvinceEmbed("https://cdn.discordapp.com/attachments/543787157127561216/932676494466113626/unknown.png");
     let factionButton = new disbut.MessageButton()
         .setStyle('red')
         .setLabel('Faction Map')
@@ -1125,7 +1188,7 @@ clientdc.on('clickButton', async (button) => {
   }
   else
     if (button.id === 'culture_map') {
-      let provinces = createProvinceEmbed("https://cdn.discordapp.com/attachments/548918811391295489/856238924305661952/unknown.pngg");
+      let provinces = createProvinceEmbed("https://cdn.discordapp.com/attachments/543787157127561216/932676494466113626/unknown.pngg");
       let factionButton = new disbut.MessageButton()
           .setStyle('red')
           .setLabel('Faction Map')
@@ -1160,7 +1223,7 @@ db.all(sql, [], (err, rows) => {
 
 
 
-async function updateDate() {
+ function updateDate() {
   if (dateformat() !== date) {
     date = new Date();
     //console.log(dateformat("isoDate"));
@@ -1169,9 +1232,9 @@ async function updateDate() {
     if (dates[1].startsWith("0")) {
       dates[1] = dates[1].substring(1);
     }
-    //console.log(dates[1] + dates[2]);
-    //console.log(dateformat(date, "longTime", true));
-    //console.log(time[0] + time[1]);
+    console.log(dates[1] + dates[2]);
+    console.log(dateformat(date, "longTime", true));
+    console.log(time[0] + time[1]);
   }
 }
 
@@ -1290,7 +1353,41 @@ function addTransaction(amount,reason){
 }
 
 const command = process.env.Prefix;
+
+function sanitizeQuery(query) {
+  for (let i = 0; i < query.length; i++) {
+    if (query.charAt(i).equals("'")){
+      query.substring(0,i)+"'"+query.substring(i,query.length);
+    }
+  }
+}
+
 clientdc.on("message", message => {
+
+  /*let interaction = clientdc.interactions
+      .createCommand({
+        name: "set Date",
+        description: "Sets the date for the RP (in years)",
+        options: [
+          {
+            name: "Date",
+            required: true,
+            description: "year you want to set it to",
+            type: 3
+          },
+          {
+            name: "RP Server",
+            required: true,
+            description: "year you want to set it to",
+            type: 3
+          }
+
+        ]
+      },"960998377833779210")
+      .then(console.log)
+      .catch(console.error);
+  console.log(interaction);*/
+
   if (message.content === command+"help") {
     let emb = new Discord.MessageEmbed();
     emb.setColor(message.member.displayHexColor);
@@ -1717,6 +1814,10 @@ clientdc.on("message", message => {
       clientdc.channels.cache.get("791427239601766482").send(emb);
     }
   }
+
+  if(message.content.toLowerCase().includes(command+"tax")){
+    collectTaxes();
+  }
   
   if(message.content.toLowerCase().includes(command+"alterlegion")){
     if(message.member.roles.cache.has('546654987061821440') || message.member.roles.cache.has('565594839828398100') ||    message.member.roles.cache.has('704023155487932457')){
@@ -1813,7 +1914,7 @@ clientdc.on("message", message => {
   }
     
   if(message.content.toLowerCase() === command+"provinces"){
-    let emb = createProvinceEmbed("https://cdn.discordapp.com/attachments/548918811391295489/856238924305661952/unknown.png");
+    let emb = createProvinceEmbed("https://cdn.discordapp.com/attachments/543787157127561216/932676494466113626/unknown.png");
     let factionButton = new disbut.MessageButton()
         .setStyle('red') //default: blurple
         .setLabel('Faction Map') //default: NO_LABEL_PROVIDED
@@ -2605,7 +2706,7 @@ clientdc.on("message", message => {
       const answer = ["yes"];
       const filter = response => {return answer.includes(response.content.toLowerCase())};
       message.channel.send("do you really want to motion?").then(() => {
-        message.channel.awaitMessages(filter,{ max: 1, time: 3000, errors: ['time'] }).then( collected => {
+        message.channel.awaitMessages(filter,{ max: 1, time: 5000, errors: ['time'] }).then( collected => {
 
 
           const args = message.content.split(" ");
@@ -2622,6 +2723,8 @@ clientdc.on("message", message => {
           for (i = 1; i < args.length; i++) {
             inp += args[i] + " ";
           }
+
+          //sanitizeQuery(inp);
           db.all(
               `INSERT INTO Motions(motion,creator) VALUES('${inp}','${message.member.id}')`,
               [],
@@ -3100,10 +3203,13 @@ clientdc.on("message", async message => {
 
         }
 
-        if (message.content.toLowerCase().includes("canis") && message.channel.id === "543787717725519892") {
-          message.channel.send(
-              "https://lh3.googleusercontent.com/pw/ACtC-3ei9pLdPL1wJ3B7FtjbDyEsNHlUQeE8eCITVyQ8uUf_BxaAJaaG3LChL2mMoKjoKh_Zk35cQS9J2CdLjpqB91hOoqS_1Zvf09O4gvnafBjf_YM-kMoswDQMPH66ZI0eVd-TIlAInxWfHYBrNjadAfqG=w963-h1286-no?authuser=0"
-          );
+        if (message.content.toLowerCase().includes("-musso")) {
+          message.channel.send("Wait for Mussolini monday you impatient fuck");
+        }
+
+        if (message.content.toLowerCase().includes("vote here")) {
+          message.react('885508940169871390');
+          message.react('885508939985350666');
 
         }
 
@@ -3126,10 +3232,10 @@ clientdc.on("message", async message => {
           let args = message.content.split(" ")
           if(args[1].includes("+")){
             let prob = args[1].split("+");
-            message.channel.send(parseInt((Math.random() * prob[0]) + parseInt(prob[1])));
+            message.channel.send(parseInt((Math.random() * prob[0]) + parseInt(prob[1])).toLocaleString());
           }
           else{
-            message.channel.send(parseInt(Math.random()*args[1]))
+            message.channel.send(parseInt(Math.random()*args[1]).toLocaleString());
           }
       }
         if (message.content.toLowerCase().startsWith("!") && message.channel.id === "630588104184430643"){
@@ -3164,13 +3270,3 @@ clientdc.on("messageDelete", message => {
   }
 });
 
-// http://expressjs.com/en/starter/static-files.html
-app.use(express.static("public"));
-// listen for requests :)
-const listener = app.listen(process.env.PORT, function() {
-  console.log("Your app is listening on port " + listener.address().port);
-
-  setInterval(() => {
-    http.get(`http://${process.env.PROJECT_DOMAIN}.glitch.me/`);
-  }, 280000);
-});

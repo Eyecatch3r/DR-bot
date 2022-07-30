@@ -78,22 +78,17 @@ async function updateProvinceIncome(){
     const sheet = doc.sheetsByIndex[0];
     sheet.loadCells('A1:Q26').then(() => {
       for (let i = 2; i <= 26; i++) {
-        let number = new Intl.NumberFormat('latin', { style: 'decimal', useGrouping: 'true' }).format(sheet.getCellByA1('Q' + i).formattedValue);
-
         db.run(`UPDATE Province SET income = ${sheet.getCellByA1('Q' + i).formattedValue} WHERE prov_id = ${i - 1}`);
       }
     });
-    const sheetPop = doc.sheetsByIndex[2];
+    const sheetPop = doc.sheetsByIndex[3];
     sheetPop.loadCells('AN4:AO28').then(() => {
       for (let i = 4; i <= 28; i++) {
 
-
-        let number = new Intl.NumberFormat('latin', { style: 'decimal', useGrouping: 'true' }).format(sheetPop.getCellByA1('AN' + i).formattedValue);
         db.run(`UPDATE Province SET population = '${sheetPop.getCellByA1('AN' + i).formattedValue}' WHERE prov_id = '${i - 3}'`);
       }
 
       for (let i = 4; i <= 28; i++) {
-
         db.run(`UPDATE Province SET population_growth = '${sheetPop.getCellByA1('AO' + i).formattedValue}' WHERE prov_id = ${i - 3}`);
       }
     });

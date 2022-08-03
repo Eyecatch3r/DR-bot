@@ -120,7 +120,6 @@ function updateEmbed() {
       throw err;
     }
     rows.forEach(row => {
-      //message.channel.send(row.motion);
       if (clientdc.users.cache.get(row.creator) !== undefined) {
         let msg =
             row.motion +
@@ -391,44 +390,54 @@ function updateRPDate(RPName) {
   db2.prepare('UPDATE Currentdates SET year = year + 1 WHERE RP_Server = ?').run(RPName);
 }
 
+
+function registerSlashCommands() {
+  const rest = new REST({version: '10'}).setToken(process.env.DISCORD_TOKEN);
+  let commands = [];
+  let smotion = new SlashCommandBuilder()
+      .setName('smotion')
+      .setDescription('Shows the motion with the corresponding ID')
+      .addNumberOption(option => option.setName('motionid').setDescription('Corresponding ID of the motion')
+          .setRequired(true).setMinValue(0).setMaxValue(50).setRequired(true));
+  let motions = new SlashCommandBuilder()
+      .setName('motions')
+      .setDescription('Displays all current Motions');
+
+  let deletemotion = new SlashCommandBuilder()
+      .setName('deletemotion')
+      .setDescription('deletes the motion with the corresponding ID')
+      .addNumberOption(option => option.setMinValue(0).setRequired(true).setName('motionid').setDescription('Corresponding ID of the motion'));
+
+
+  let motion = new SlashCommandBuilder()
+      .setName('motion')
+      .setDescription('propose a motion to the Senate')
+      .addStringOption(option => option.setName('motion').setDescription('the proposed motion').setRequired(true))
+  commands.push(motions,smotion,deletemotion,motion);
+  const clientId = "700662464856981564";
+  const guildId = "514135876909924352";
+  (async () => {
+    try {
+      await rest.put(
+          Routes.applicationGuildCommands(clientId, guildId),
+          {body: commands},
+      );
+
+      console.log('Registered commands');
+    } catch (error) {
+      console.error(error);
+    }
+  })();
+}
+
 clientdc.on("ready", (interaction) => {
-  //Slash commands
-
-
+//Register slash commands here
+  registerSlashCommands();
 
 
   updateEmbed();
 
 
-  db.get("SELECT COUNT(Governor) FROM Province", [], (err, row) => {
-    if (err) {
-      throw err;
-    }
-
-    row[0] = numberOfProvinces;
-  });
-
-  db.all("SELECT * FROM CandidateElections", [], (err, rows) => {
-    if (err) {
-      throw err;
-    }
-    rows.forEach(row => {
-      console.log("ceID \n" + row.ceID);
-      console.log("candidate \n" + row.candidate);
-      console.log("Election \n" + row.Election);
-    });
-  });
-
-  db.all("SELECT * FROM Elections", [], (err, rows) => {
-    if (err) {
-      throw err;
-    }
-    rows.forEach(row => {
-      console.log("eID \n" + row.eID);
-      console.log("Title \n" + row.Title);
-      console.log("Month \n" + row.Month);
-    });
-  });
 
 
   CronJob.schedule('0 19 * * SUN', () => {
@@ -477,10 +486,6 @@ clientdc.on("ready", (interaction) => {
     scheduled: true,
     timezone: "Europe/Berlin"
   });
-
-
-
-
 });
 
 function createProvinceEmbed(picURL,indexStart,indexEnd) {
@@ -543,10 +548,6 @@ function createEmbedSingleProvince(u, provinceName) {
   }
 
 }
-
-
-
-
 
 clientdc.on("interactionCreate", async interaction => {
 
@@ -843,6 +844,331 @@ clientdc.on("interactionCreate", async interaction => {
 
       }
       break;
+    case "motions":
+      if (
+          interaction.member.roles.cache.has("543783180130320385") ||
+          interaction.member.roles.cache.has("550392133991923738")
+      ) {
+        let embed = new Discord.EmbedBuilder();
+
+        embed.setTitle("Motions");
+        embed.setColor("0xcc0000");
+        embed.setFooter(
+            {text:  "discussions powered by our most humble Imperator", iconURL: 'https://cdn.discordapp.com/attachments/548918811391295489/776740280266784778/purpleDR.png'}
+        );
+        embed.setThumbnail(
+            "https://cdn.discordapp.com/attachments/704000578568716368/1003781074528252004/unknown.png"
+        );
+        embed.setAuthor(
+            {name: "𝐈𝐌𝐏𝐄𝐑𝐀𝐓𝐎𝐑·𝐏𝐕𝐁𝐋𝐈𝐕𝐒",
+              iconURL: "https://cdn.glitch.com/24cdd29f-170e-4ac8-9dc2-8abc1cbbaeaa%2Fimageedit_1_3956664875.png?v=1588186424473", url: "https://cdn.glitch.com/24cdd29f-170e-4ac8-9dc2-8abc1cbbaeaa%2Fimageedit_1_3956664875.png?v=1588186424473"});
+        let msgs = [];
+        let sql2 = `SELECT * FROM Motions;`;
+        db.all(sql2, [], (err, rows) => {
+          if (err) {
+            throw err;
+          }
+          rows.forEach(row => {
+            let msg =
+                row.motion +
+                "\n" +
+                "From:" +
+                "<@!"+ row.creator +">"+
+                "\n" +
+                "motion ID:" +
+                row.mID +
+                "";
+            msgs.push(msg);
+          });
+
+
+
+          if (msgs.length <= 25) {
+            msgs.forEach(msg => embed.addFields({ name: "motions", value:  msg +"\n"+msgs.indexOf(msg)}));
+
+            interaction.reply({ embeds: [embed] });
+          } else {
+            var secEmb = new Discord.EmbedBuilder();
+
+            secEmb.setTitle("Motions second page");
+            secEmb.setColor("0xcc0000");
+            secEmb.setFooter(
+                {text:  "discussions powered by our most humble Imperator", iconURL: 'https://cdn.discordapp.com/attachments/548918811391295489/776740280266784778/purpleDR.png'}
+            );
+            secEmb.setThumbnail(
+                "https://cdn.discordapp.com/attachments/704000578568716368/1003781074528252004/unknown.png"
+            );
+            secEmb.setAuthor(
+                {name: "𝐈𝐌𝐏𝐄𝐑𝐀𝐓𝐎𝐑·𝐏𝐕𝐁𝐋𝐈𝐕𝐒",
+                  iconURL: "https://cdn.glitch.com/24cdd29f-170e-4ac8-9dc2-8abc1cbbaeaa%2Fimageedit_1_3956664875.png?v=1588186424473", url: "https://cdn.glitch.com/24cdd29f-170e-4ac8-9dc2-8abc1cbbaeaa%2Fimageedit_1_3956664875.png?v=1588186424473"});
+            secEmb.setDescription("Motions to discuss in Senate meetings");
+
+            const args2 = [];
+            const length = (msgs.length % 2 === 0) ? (msgs.length) : (msgs.length + 1);
+
+            for (var i = length / 2; i <= length; i++) {
+              args2.push(msgs[i]);
+
+
+              msgs.splice(i,1);
+
+            }
+            for(var i = args2.length-1; i >= 0; i--){if(args2[i] === undefined){args2.pop()}}
+            var secEmb = new Discord.EmbedBuilder();
+
+            secEmb.setTitle("Motions");
+            secEmb.setColor("0xcc0000");
+            secEmb.setFooter(
+                {text:  "discussions powered by our most humble Imperator", iconURL: 'https://cdn.discordapp.com/attachments/548918811391295489/776740280266784778/purpleDR.png'}
+            );
+            secEmb.setThumbnail(
+                "https://cdn.discordapp.com/attachments/704000578568716368/1003781074528252004/unknown.png"
+            );
+            secEmb.setAuthor(
+                {name: "𝐈𝐌𝐏𝐄𝐑𝐀𝐓𝐎𝐑·𝐏𝐕𝐁𝐋𝐈𝐕𝐒",
+                  iconURL: "https://cdn.glitch.com/24cdd29f-170e-4ac8-9dc2-8abc1cbbaeaa%2Fimageedit_1_3956664875.png?v=1588186424473", url: "https://cdn.glitch.com/24cdd29f-170e-4ac8-9dc2-8abc1cbbaeaa%2Fimageedit_1_3956664875.png?v=1588186424473"});
+            secEmb.setDescription("Motions to discuss in Senate meetings");
+
+            args2.forEach(msg => secEmb.addFields({ name: "motion", value:  msg +"/"+parseInt(args2.indexOf(msg) + msgs.length, 10), inline: false}));
+            msgs.forEach(msg2 => embed.addFields({ name: "motion", value:  msg2 +"/"+msgs.indexOf(msg2), inline: false}));
+            interaction.reply({ embeds: [embed,secEmb] });
+          }
+
+        });
+      } else interaction.reply("not a Senator/Tribune broski");
+
+      break;
+    case "smotion":
+      let embed = new Discord.EmbedBuilder();
+      const motionId = interaction.options.getNumber('motionid');
+      embed.setTitle("Motion ID:" + motionId);
+      embed.setColor("0xcc0000");
+      embed.setFooter(
+          {text:  "discussions powered by our most humble Imperator", iconURL: 'https://cdn.discordapp.com/attachments/548918811391295489/776740280266784778/purpleDR.png'}
+      );
+
+      let available = false;
+        let sql2 = `SELECT * FROM Motions WHERE mID = ` + motionId;
+        db.all(sql2, [], (err, rows) => {
+          if (err) {
+            throw err;
+          }
+          //search motion with Primary Key
+          rows.forEach(row => {
+            available = true;
+            if(row.motion.includes(".png") || row.motion.includes(".jpg") || row.motion.includes(".jpeg"))
+            {
+              if(!row.motion.startsWith("http"))
+              {
+                const args2 = row.motion.split("http");
+                embed.addFields({name: "Motion in question",value: args2[0],inline: true});
+                embed.setImage("http"+args2[1]);
+              }else{
+                embed.addFields({name: "Motion in question",value: "Picture in question",inline: true});
+                let args3 = row.motion.split(" ");
+                embed.setImage(args3[0]);
+                embed.setAuthor(
+                    { name: "𝐈𝐌𝐏𝐄𝐑𝐀𝐓𝐎𝐑·𝐏𝐕𝐁𝐋𝐈𝐕𝐒",
+                      iconURL: clientdc.users.cache.get(row.creator).avatarURL()}
+                );
+              }
+            }else {
+
+              embed.addFields({ name:
+                        "Motion in question", value:
+                    row.motion +
+                    "\n From:" +
+                    "<@!" + row.creator + ">", inline:
+                        true
+                  }
+              );
+              console.log(row.motion);
+              embed.setAuthor({ name: "𝐈𝐌𝐏𝐄𝐑𝐀𝐓𝐎𝐑·𝐏𝐕𝐁𝐋𝐈𝐕𝐒",
+                iconURL: clientdc.users.cache.get(row.creator).avatarURL()}
+              );
+            }
+          });
+          //if no primary key is submitted as an argument the motion is searched after its position
+          if (!available) {
+            let availablenumber = false;
+            const mot = [];
+            db.all('SELECT * FROM Motions',[],(err,rows) => {
+
+              const link = [];
+              const creator = [];
+              if (!rows[motionId]){
+                interaction.reply("Motion with this ID not found");
+              }
+              else {
+                rows.forEach(row => {
+                  mot.push(row.motion + "\n From:" + "<@!" + rows[motionId].creator + ">");
+                  link.push(row.motion);
+                  creator.push(row.creator)
+                });
+
+
+                if (mot[motionId].includes(".png") || mot[motionId].includes(".jpg") || mot[motionId].includes(".jpeg")) {
+                  if (!mot[motionId].startsWith("http")) {
+
+                    args2 = link[motionId].split("http");
+                    embed.addFields({name: "Motion in question", value: args2[0], inline: true});
+                    embed.setImage("http" + args2[1]);
+
+                    embed.setAuthor({
+                          name:
+                              "𝐈𝐌𝐏𝐄𝐑𝐀𝐓𝐎𝐑·𝐏𝐕𝐁𝐋𝐈𝐕𝐒",
+                          iconURL: clientdc.users.cache.get(creator[motionId[1]]).avatarURL()
+                        }
+                    );
+                    interaction.reply({embeds: [embed]});
+                  } else {
+                    embed.addFields({name: 'Motion in question', value: 'Picture in Question'});
+                    embed.setImage(link[motionId[1]]);
+
+
+                    embed.setAuthor(
+                        {
+                          name:
+                              "𝐈𝐌𝐏𝐄𝐑𝐀𝐓𝐎𝐑·𝐏𝐕𝐁𝐋𝐈𝐕𝐒",
+                          iconURL: clientdc.users.cache.get(creator[motionId[1]]).avatarURL()
+                        }
+                    );
+                    interaction.reply({embeds: [embed]});
+                  }
+                } else {
+
+
+                  if (mot.length >= 25) {
+
+                    var args2 = [];
+                    const length = (mot.length % 2 === 0) ? (mot.length) : (mot.length + 1);
+
+                    for (var i = length / 2; i <= length; i++) {
+                      args2.push(mot[i]);
+
+
+                      mot.splice(i, 1);
+
+                    }
+                    for (var i = args2.length - 1; i >= 0; i--) {
+                      if (args2[i] === undefined) {
+                        args2.pop()
+                      }
+                    }
+
+                    if (mot[motionId]) {
+                      embed.setTitle("Motion number:" + motionId)
+                      embed.addFields({name: "Motion in question", value: mot[motionid], inline: false});
+                    } else if (args2[motionId - mot.length]) {
+                      embed.addFields({name: "Motion in question", value: args2[motionId - mot.length], inline: false});
+                    } else {
+                      embed.addFields({name: "Motion in question", value: "no motion with such ID", inline: false});
+                    }
+                    let avatarURL;
+                    clientdc.users.fetch(creator[motionId]).then(member => {
+                      avatarURL = member.avatarURL();
+                      embed.addFields({name: "Motion in question", value: mot[motionId], inline: false});
+                      embed.setAuthor({
+                        name:
+                            "𝐈𝐌𝐏𝐄𝐑𝐀𝐓𝐎𝐑·𝐏𝐕𝐁𝐋𝐈𝐕𝐒", iconURL: avatarURL
+                      });
+                      interaction.reply({embeds: [embed]});
+                    })
+                  } else {
+                    let avatarURL;
+                    clientdc.users.fetch(creator[motionId]).then(member => {
+                      avatarURL = member.avatarURL();
+                      embed.addFields({name: "Motion in question", value: mot[motionId], inline: false});
+                      embed.setAuthor(
+                          {
+                            name:
+                                "𝐈𝐌𝐏𝐄𝐑𝐀𝐓𝐎𝐑·𝐏𝐕𝐁𝐋𝐈𝐕𝐒", iconURL: avatarURL
+                          });
+                      interaction.reply({embeds: [embed]});
+                    })
+                  }
+
+
+                }
+              }
+            });
+          }
+          if(available) interaction.reply({ embeds: [embed] });
+        });
+
+      break;
+    case "deletemotion":
+      if (
+          interaction.member.roles.cache.has("649362430446796815") ||
+          interaction.member.roles.cache.has("565594839828398100") ||
+          interaction.member.roles.cache.has("514143501697679361") ||
+          interaction.member.roles.cache.has("546654987061821440")
+      ) {
+        let motiontodelete = interaction.options.getNumber('motionid');
+        db.all("DELETE FROM Motions WHERE mID =" + motiontodelete, [], (err, rows) => {
+          if (err) {
+            interaction.reply("wrong ID");
+          }
+          interaction.reply("motion deleted");
+
+          updateEmbedMessage(interaction);
+        });
+      } else {
+        interaction.reply("you do not have the permission to delete a motion");
+      }
+      break;
+    case "motion":
+      if (
+          interaction.member.roles.cache.has("543783180130320385") ||
+          interaction.member.roles.cache.has("550392133991923738")
+      ) {
+        const answer = ["yes"];
+        const filter = response => {return answer.includes(response.content.toLowerCase())};
+        interaction.reply("do you really want to motion?").then(() => {
+          const collector = interaction.channel.createMessageCollector({filter, max: 1, time: 5000});
+          collector.on('collect', collected => {
+
+
+            const inp = interaction.options.getString('motion');
+            console.log(
+                "INSERT INTO Motions(motion,creator) VALUES(" +
+                "'" +
+                inp +
+                "'" +
+                "," +
+                interaction.member.id +
+                ");"
+            );
+            db.all(
+                `INSERT INTO Motions(motion,creator) VALUES('${inp}','${interaction.member.id}')`,
+                [],
+                (err, rows) => {
+                  if (err) {
+                    interaction.editReply("sth went wrong");
+                    console.log(err);
+                  } else {
+                    interaction.editReply("duly noted");
+                    updateEmbedMessage(interaction);
+                  }
+                }
+            );
+
+
+          })
+          collector.on('end' ,collected => {
+            if (collected.size === 0){
+              interaction.editReply('no motion noted');
+            }
+
+          });
+        });
+      }
+      else {
+        interaction.reply(
+            "you do not have any authority to propose motions, please turn to your corresponding Senator or Tribune (if you're a filthy Pleb)"
+        );
+      }
+      break;
     default:
       break;
   }});
@@ -863,7 +1189,7 @@ function provinceIncome(){
     emb2.setColor("0x00008b");
     
     emb2.setThumbnail("https://cdn.discordapp.com/attachments/548918811391295489/776740280266784778/purpleDR.png");
-    emb.setAuthor("𝐈𝐌𝐏𝐄𝐑𝐀𝐓𝐎𝐑·𝐏𝐕𝐁𝐋𝐈𝐕𝐒","https://cdn.glitch.com/24cdd29f-170e-4ac8-9dc2-8abc1cbbaeaa%2Fimageedit_1_3956664875.png?v=158818642447");
+    emb2.setAuthor({name: "𝐈𝐌𝐏𝐄𝐑𝐀𝐓𝐎𝐑·𝐏𝐕𝐁𝐋𝐈𝐕𝐒", iconURL: 'https://cdn.glitch.com/24cdd29f-170e-4ac8-9dc2-8abc1cbbaeaa%2Fimageedit_1_3956664875.png?v=1588186424473'});
     for(let i = 0; i < rows.length; i++){
       let incometax = rows[i].income;
       if(i < 5){
@@ -1933,302 +2259,6 @@ clientdc.on("messageCreate", message => {
     message.channel.send(
         "https://cdn.discordapp.com/attachments/514135876909924354/821497674174955558/dynasty3_final.png"
     );
-  }
-
-  if (message.content.toLowerCase().includes(command + "smotion")) {
-    let embed = new Discord.EmbedBuilder();
-    var args = message.content.split(" ");
-    embed.setTitle("Motion ID:" + args[1]);
-    embed.setColor("0xcc0000");
-    embed.setFooter(
-        {text:  "discussions powered by our most humble Imperator", iconURL: 'https://cdn.discordapp.com/attachments/548918811391295489/776740280266784778/purpleDR.png'}
-      );
-
-    let available = false;
-    if(args[1]){
-      let sql2 = `SELECT * FROM Motions WHERE mID = ` + args[1];
-      db.all(sql2, [], (err, rows) => {
-        if (err) {
-          throw err;
-        }
-        //search motion with Primary Key
-
-        rows.forEach(row => {
-          available = true;
-          if(row.motion.includes(".png") || row.motion.includes(".jpg") || row.motion.includes(".jpeg"))
-          {
-            if(!row.motion.startsWith("http"))
-            {
-              const args2 = row.motion.split("http");
-              embed.addFields({name: "Motion in question",value: args2[0],inline: true});
-              embed.setImage("http"+args2[1]);
-            }else{
-              embed.addFields({name: "Motion in question",value: "Picture in question",inline: true});
-              let args3 = row.motion.split(" ");
-              embed.setImage(args3[0]);
-              embed.setAuthor(
-                  { name: "𝐈𝐌𝐏𝐄𝐑𝐀𝐓𝐎𝐑·𝐏𝐕𝐁𝐋𝐈𝐕𝐒",
-                    iconURL: clientdc.users.cache.get(row.creator).avatarURL()}
-              );
-            }
-          }else {
-
-            embed.addFields({ name:
-                  "Motion in question", value:
-                  row.motion +
-                  "\n From:" +
-                  "<@!" + row.creator + ">", inline:
-                  true
-                }
-            );
-            console.log(row.motion);
-            embed.setAuthor({ name: "𝐈𝐌𝐏𝐄𝐑𝐀𝐓𝐎𝐑·𝐏𝐕𝐁𝐋𝐈𝐕𝐒",
-                iconURL: clientdc.users.cache.get(row.creator).avatarURL()}
-            );
-          }
-        });
-        //if no primary key is submitted as an argument the motion is searched after its position
-        if (!available) {
-          let availablenumber = false;
-          const mot = new Array();
-          db.all('SELECT * FROM Motions',[],(err,rows) => {
-            const args = message.content.split(" ");
-            const link = new Array();
-            const creator = new Array();
-            rows.forEach(row => {mot.push(row.motion +"\n From:" +"<@!"+rows[args[1]].creator+">"); link.push(row.motion); creator.push(row.creator)});
-
-            if(mot[args[1]].includes(".png") || mot[args[1]].includes(".jpg") || mot[args[1]].includes(".jpeg"))
-            {
-              if(!mot[args[1]].startsWith("http"))
-              {
-
-                args2 = link[args[1]].split("http");
-                embed.addFields({name: "Motion in question",value: args2[0],inline: true});
-                embed.setImage("http"+args2[1]);
-
-                embed.setAuthor({name:
-                    "𝐈𝐌𝐏𝐄𝐑𝐀𝐓𝐎𝐑·𝐏𝐕𝐁𝐋𝐈𝐕𝐒",
-                    iconURL: clientdc.users.cache.get(creator[args[1]]).avatarURL()}
-                );
-                message.channel.send({ embeds: [embed] });
-              }else{
-                embed.addFields({name: 'Motion in question', value: 'Picture in Question' });
-                embed.setImage(link[args[1]]);
-
-
-                embed.setAuthor(
-                    {name:
-                          "𝐈𝐌𝐏𝐄𝐑𝐀𝐓𝐎𝐑·𝐏𝐕𝐁𝐋𝐈𝐕𝐒",
-                      iconURL: clientdc.users.cache.get(creator[args[1]]).avatarURL()}
-                );
-                message.channel.send({ embeds: [embed] });
-              }
-            }else {
-
-
-              if(mot.length >= 25)
-              {
-
-                var args2 = [];
-                const length = (mot.length % 2 == 0) ? (mot.length) : (mot.length + 1);
-
-                for (var i = length / 2; i <= length; i++) {
-                  args2.push(mot[i]);
-
-
-                  mot.splice(i,1);
-
-                }
-                for(var i = args2.length-1; i >= 0; i--){if(args2[i] === undefined){args2.pop()}}
-
-                if(mot[args[1]]) {embed.setTitle("Motion number:"+args[1])
-                  embed.addFields({name: "Motion in question", value: mot[args[1]],inline: false});} else if(args2[args[1]-mot.length]) {embed.addFields({name: "Motion in question", value: args2[args[1]-mot.length],inline: false});} else{embed.addFields({name: "Motion in question", value: "no motion with such ID", inline:  false});}
-                let avatarURL;
-                clientdc.users.fetch(creator[args[1]]).then(member => {
-                  avatarURL = member.avatarURL();
-                  embed.addFields({name: "Motion in question", value: mot[args[1]], inline: false}); embed.setAuthor({name:
-                      "𝐈𝐌𝐏𝐄𝐑𝐀𝐓𝐎𝐑·𝐏𝐕𝐁𝐋𝐈𝐕𝐒", iconURL: avatarURL});
-                  message.channel.send({ embeds: [embed] });
-                })
-              }
-              else {
-                let avatarURL;
-                clientdc.users.fetch(creator[args[1]]).then(member => {
-                  avatarURL = member.avatarURL();
-                  embed.addFields({name: "Motion in question", value: mot[args[1]],inline: false}); embed.setAuthor(
-                      {name:
-                  "𝐈𝐌𝐏𝐄𝐑𝐀𝐓𝐎𝐑·𝐏𝐕𝐁𝐋𝐈𝐕𝐒", iconURL: avatarURL});
-                  message.channel.send({ embeds: [embed] });
-                })
-              }
-
-
-            }
-          });
-
-
-
-
-        }
-
-        if(available) message.channel.send({ embeds: [embed] });
-      });
-    }
-  }
-
-  if (message.content.toLowerCase() === command + "motions") {
-    if (
-        message.member.roles.cache.has("543783180130320385") ||
-        message.member.roles.cache.has("550392133991923738")
-    ) {
-      let embed = new Discord.EmbedBuilder();
-
-      embed.setTitle("Motions");
-      embed.setColor("0xcc0000");
-      embed.setFooter(
-          {text:  "discussions powered by our most humble Imperator", iconURL: 'https://cdn.discordapp.com/attachments/548918811391295489/776740280266784778/purpleDR.png'}
-      );
-      embed.setThumbnail(
-          "https://cdn.discordapp.com/attachments/548918811391295489/776740280266784778/purpleDR.png"
-      );
-      embed.setAuthor(
-          {name: "𝐈𝐌𝐏𝐄𝐑𝐀𝐓𝐎𝐑·𝐏𝐕𝐁𝐋𝐈𝐕𝐒",
-              iconURL: "https://cdn.glitch.com/24cdd29f-170e-4ac8-9dc2-8abc1cbbaeaa%2Fimageedit_1_3956664875.png?v=1588186424473", url: "https://cdn.glitch.com/24cdd29f-170e-4ac8-9dc2-8abc1cbbaeaa%2Fimageedit_1_3956664875.png?v=1588186424473"});
-      let msgs = [];
-      let sql2 = `SELECT * FROM Motions;`;
-      db.all(sql2, [], (err, rows) => {
-        if (err) {
-          throw err;
-        }
-        rows.forEach(row => {
-          let msg =
-              row.motion +
-              "\n" +
-              "From:" +
-              "<@!"+ row.creator +">"+
-              "\n" +
-              "motion ID:" +
-              row.mID +
-              "";
-          msgs.push(msg);
-        });
-
-
-
-        if (msgs.length <= 25) {
-          msgs.forEach(msg => embed.addFields({ name: "motions", value:  msg +"\n"+msgs.indexOf(msg)}));
-
-          message.channel.send({ embeds: [embed] });
-        } else {
-          var secEmb = new Discord.EmbedBuilder();
-
-          secEmb.setTitle("Motions second page");
-          secEmb.setColor("0xcc0000");
-          secEmb.setFooter(
-              {text:  "discussions powered by our most humble Imperator", iconURL: 'https://cdn.discordapp.com/attachments/548918811391295489/776740280266784778/purpleDR.png'}
-      );
-          secEmb.setThumbnail(
-              "https://cdn.discordapp.com/attachments/548918811391295489/776740280266784778/purpleDR.png"
-          );
-          secEmb.setAuthor(
-          {name: "𝐈𝐌𝐏𝐄𝐑𝐀𝐓𝐎𝐑·𝐏𝐕𝐁𝐋𝐈𝐕𝐒",
-              iconURL: "https://cdn.glitch.com/24cdd29f-170e-4ac8-9dc2-8abc1cbbaeaa%2Fimageedit_1_3956664875.png?v=1588186424473", url: "https://cdn.glitch.com/24cdd29f-170e-4ac8-9dc2-8abc1cbbaeaa%2Fimageedit_1_3956664875.png?v=1588186424473"});
-          secEmb.setDescription("Motions to discuss in Senate meetings");
-
-          const args2 = [];
-          const length = (msgs.length % 2 === 0) ? (msgs.length) : (msgs.length + 1);
-
-          for (var i = length / 2; i <= length; i++) {
-            args2.push(msgs[i]);
-
-
-            msgs.splice(i,1);
-
-          }
-          for(var i = args2.length-1; i >= 0; i--){if(args2[i] === undefined){args2.pop()}}
-          var secEmb = new Discord.EmbedBuilder();
-
-          secEmb.setTitle("Motions");
-          secEmb.setColor("0xcc0000");
-          secEmb.setFooter(
-              {text:  "discussions powered by our most humble Imperator", iconURL: 'https://cdn.discordapp.com/attachments/548918811391295489/776740280266784778/purpleDR.png'}
-      );
-          secEmb.setThumbnail(
-              "https://cdn.discordapp.com/attachments/548918811391295489/776740280266784778/purpleDR.png"
-          );
-          secEmb.setAuthor(
-          {name: "𝐈𝐌𝐏𝐄𝐑𝐀𝐓𝐎𝐑·𝐏𝐕𝐁𝐋𝐈𝐕𝐒",
-              iconURL: "https://cdn.glitch.com/24cdd29f-170e-4ac8-9dc2-8abc1cbbaeaa%2Fimageedit_1_3956664875.png?v=1588186424473", url: "https://cdn.glitch.com/24cdd29f-170e-4ac8-9dc2-8abc1cbbaeaa%2Fimageedit_1_3956664875.png?v=1588186424473"});
-          secEmb.setDescription("Motions to discuss in Senate meetings");
-
-          args2.forEach(msg => secEmb.addFields({ name: "motion", value:  msg +"/"+parseInt(args2.indexOf(msg) + msgs.length, 10), inline: false}));
-          msgs.forEach(msg2 => embed.addFields({ name: "motion", value:  msg2 +"/"+msgs.indexOf(msg2), inline: false}));
-          message.channel.send({ embeds: [embed,secEmb] });
-        }
-
-      });
-    } else message.channel.send("not a Senator/Tribune broski");
-  }
-
-  if (message.content.toLowerCase().includes(command + "motion ")) {
-    if (
-        message.member.roles.cache.has("543783180130320385") ||
-        message.member.roles.cache.has("550392133991923738")
-    ) {
-      const answer = ["yes"];
-      const filter = response => {return answer.includes(response.content.toLowerCase())};
-      message.channel.send("do you really want to motion?").then(() => {
-        const collector = message.channel.createMessageCollector({filter, max: 1, time: 5000});
-        collector.on('collect', collected => {
-
-
-          const args = message.content.split(" ");
-          console.log(
-              "INSERT INTO Motions(motion,creator) VALUES(" +
-              "'" +
-              args +
-              "'" +
-              "," +
-              message.member.id +
-              ");"
-          );
-          let inp = "";
-          for (i = 1; i < args.length; i++) {
-            inp += args[i] + " ";
-          }
-
-          //sanitizeQuery(inp);
-          db.all(
-              `INSERT INTO Motions(motion,creator) VALUES('${inp}','${message.member.id}')`,
-              [],
-              (err, rows) => {
-                if (err) {
-                  message.channel.send("sth went wrong");
-                  console.log(err);
-                } else {
-                  message.channel.send("duly noted");
-                  updateEmbedMessage(message);
-                }
-              }
-          );
-
-
-        })
-        collector.on('end' ,collected => {
-          if (collected.size === 0){
-            message.channel.send('no motion noted');
-          }
-
-        });
-      });
-
-
-    }
-    else {
-      message.channel.send(
-          "you do not have any authority to propose motions, please turn to your corresponding Senator or Tribune (if you're a filthy Pleb)"
-      );
-    }
   }
 
   if (message.content.toLowerCase().includes(command + "challenge" ) && message.channel.id === "557659811723083787") {

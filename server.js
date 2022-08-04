@@ -408,11 +408,51 @@ function registerSlashCommands() {
       .setDescription('deletes the motion with the corresponding ID')
       .addNumberOption(option => option.setMinValue(0).setRequired(true).setName('motionid').setDescription('Corresponding ID of the motion'));
 
-
   let motion = new SlashCommandBuilder()
       .setName('motion')
       .setDescription('propose a motion to the Senate')
       .addStringOption(option => option.setName('motion').setDescription('the proposed motion').setRequired(true))
+
+  let globalCommands = [];
+
+  let mute = new SlashCommandBuilder()
+      .setName('mute')
+      .setDescription('mutes a member')
+      .addUserOption(option => option.setDescription('member to mute').setName('member').setRequired(true))
+      .addStringOption(option => option.setName('duration').setDescription('Duration of the mute').setRequired(true))
+
+  let unmute = new SlashCommandBuilder()
+      .setName('unmute')
+      .setDescription('unmutes a member')
+      .addUserOption(option => option.setDescription('member to unmute').setName('member').setRequired(true))
+
+  let ban = new SlashCommandBuilder()
+      .setName('ban')
+      .setDescription('bans a member')
+      .addUserOption(option => option.setDescription('member to ban').setName('member').setRequired(true))
+      .addStringOption(option => option.setName('reason').setDescription('Reason for the ban').setRequired(false))
+
+  let unban = new SlashCommandBuilder()
+      .setName('unban')
+      .setDescription('unbans a member')
+      .addUserOption(option => option.setDescription('member to unban').setName('member').setRequired(true))
+
+  let kick = new SlashCommandBuilder()
+      .setName('kick')
+      .setDescription('kicks a member')
+      .addUserOption(option => option.setDescription('member to kick').setName('member').setRequired(true))
+      .addStringOption(option => option.setName('reason').setDescription('Reason for the kick').setRequired(false))
+
+  let provinces = new SlashCommandBuilder()
+      .setName('provinces')
+      .setDescription('Lists all Provinces');
+
+  let showprovinces = new SlashCommandBuilder()
+      .setName('showprovince')
+      .setDescription('Displays a province')
+      .addStringOption(option => option.setName('province').setDescription('Name of the Province').setRequired(true))
+
+  globalCommands.push(ban,unban,mute,unmute,kick,provinces,showprovinces);
   commands.push(motions,smotion,deletemotion,motion);
   const clientId = "700662464856981564";
   const guildId = "514135876909924352";
@@ -423,6 +463,10 @@ function registerSlashCommands() {
           {body: commands},
       );
 
+      await rest.put(
+          Routes.applicationCommands(clientId),
+          { body: globalCommands },
+      );
       console.log('Registered commands');
     } catch (error) {
       console.error(error);
@@ -642,24 +686,36 @@ clientdc.on("interactionCreate", async interaction => {
       break;
     case "ban":
       if (interaction.member.roles.cache.has("549712921450774556") || interaction.member.roles.cache.has("546654987061821440")) {
-        const target = interaction.options.getMember('member');
-        if (target) {
-
-          let member = target;
+        const member = interaction.options.getMember('member');
+        const reason = interaction.options.getString('reason');
+        if (reason) {
           if(!member.roles.cache.has("546654987061821440")){
-              member.ban().then(ban => {
+              member.ban({reason: reason}).then(ban => {
                 let emb = new Discord.EmbedBuilder();
                 emb.setColor('#8f0713');
-                emb.setDescription(`<@${member.user.id}> has been Executed in the name of the Imperator`);
+                emb.setDescription(`<@${member.user.id}> has been Executed in the name of the Imperator, Reason: ${reason}`);
                 emb.setTitle("𝐈𝐌𝐏𝐄𝐑𝐀𝐓𝐎𝐑·𝐏𝐕𝐁𝐋𝐈𝐕𝐒", "https://cdn.glitch.com/24cdd29f-170e-4ac8-9dc2-8abc1cbbaeaa%2Fimageedit_1_3956664875.png?v=1588186424473");
                 emb.setImage("https://i.pinimg.com/originals/7f/03/a2/7f03a2a21b82d96679788401c3ef323f.jpg");
-                
+
                 interaction.editReply({embeds: [emb]})
               }).catch(err => interaction.reply("Cannot Ban this user"));
             }else {
             interaction.reply("Cannot Ban this user")
           }
+        } else {
+          if(!member.roles.cache.has("546654987061821440")){
+            member.ban().then(ban => {
+              let emb = new Discord.EmbedBuilder();
+              emb.setColor('#8f0713');
+              emb.setDescription(`<@${member.user.id}> has been Executed in the name of the Imperator`);
+              emb.setTitle("𝐈𝐌𝐏𝐄𝐑𝐀𝐓𝐎𝐑·𝐏𝐕𝐁𝐋𝐈𝐕𝐒", "https://cdn.glitch.com/24cdd29f-170e-4ac8-9dc2-8abc1cbbaeaa%2Fimageedit_1_3956664875.png?v=1588186424473");
+              emb.setImage("https://i.pinimg.com/originals/7f/03/a2/7f03a2a21b82d96679788401c3ef323f.jpg");
 
+              interaction.editReply({embeds: [emb]})
+            }).catch(err => interaction.reply("Cannot Ban this user"));
+          }else {
+            interaction.reply("Cannot Ban this user")
+          }
         }
 
 
@@ -776,72 +832,45 @@ clientdc.on("interactionCreate", async interaction => {
       break;
     case "kick":
       if(interaction.member.roles.cache.has("549712921450774556") || interaction.member.roles.cache.has("546654987061821440")) {
-        const target = interaction.options[0];
-        if (target) {
+        const member = interaction.options.getNumber('member');
+        let EmbedBuilder = new Discord.EmbedBuilder();
+          if(interaction.options.getString('reason')){
+            member.kick(member, { reason: interaction.options.getString('reason')}).then(ban => {
 
-          let member = clientdc.guilds.cache.get(interaction.guildId).members.cache.get(interaction.options[0].value);
-
-
-
-
-
-          if(interaction.options[1]){
-            member.kick(target.value, { reason: interaction.options[1].value}).then(ban => {
-              let EmbedBuilder = new Discord.EmbedBuilder();
               EmbedBuilder.setColor('#8f0713');
               EmbedBuilder.setDescription(`<@${member.id}> has been sent to Germania to fend off Barbarians in the name of the Imperator`);
               EmbedBuilder.setTitle("𝐈𝐌𝐏𝐄𝐑𝐀𝐓𝐎𝐑·𝐏𝐕𝐁𝐋𝐈𝐕𝐒", "https://cdn.glitch.com/24cdd29f-170e-4ac8-9dc2-8abc1cbbaeaa%2Fimageedit_1_3956664875.png?v=1588186424473");
               EmbedBuilder.setImage("https://i.pinimg.com/originals/22/b7/c9/22b7c9ed82e411d5c66037e820427622.jpg");
               
-              clientdc.api.interactions(interaction.id, interaction.token).callback.post({
-                data: {
-                  type: 4,
-                  data: {
-                    embeds: [EmbedBuilder]
-                  }
-                }
-              })}).catch(err => {
-              clientdc.api.interactions(interaction.id, interaction.token).callback.post({
-                data: {
-                  type: 4,
-                  data: {
-                    content: "Cannot kick this user"
-                  }
-                }
-              })
+              interaction.reply({embeds: [EmbedBuilder]});
+              }).catch(err => {
+              EmbedBuilder.setColor('#8f0713');
+              EmbedBuilder.setDescription(`Cannot ban this user!`);
+              EmbedBuilder.addFields({name: 'Error', value: error});
+              EmbedBuilder.setTitle("𝐈𝐌𝐏𝐄𝐑𝐀𝐓𝐎𝐑·𝐏𝐕𝐁𝐋𝐈𝐕𝐒", "https://cdn.glitch.com/24cdd29f-170e-4ac8-9dc2-8abc1cbbaeaa%2Fimageedit_1_3956664875.png?v=1588186424473");
+              EmbedBuilder.setImage("https://i.pinimg.com/originals/22/b7/c9/22b7c9ed82e411d5c66037e820427622.jpg");
+              interaction.reply({embeds: [EmbedBuilder]})
               console.log(err);
             });
           } else {
             member.kick().then(ban => {
-              let EmbedBuilder = new Discord.EmbedBuilder();
+
               EmbedBuilder.setColor('#8f0713');
               EmbedBuilder.setDescription(`<@${member.id}> has been sent to Germania to fend off Barbarians in the name of the Imperator`);
               EmbedBuilder.setTitle("𝐈𝐌𝐏𝐄𝐑𝐀𝐓𝐎𝐑·𝐏𝐕𝐁𝐋𝐈𝐕𝐒", "https://cdn.glitch.com/24cdd29f-170e-4ac8-9dc2-8abc1cbbaeaa%2Fimageedit_1_3956664875.png?v=1588186424473");
               EmbedBuilder.setImage("https://i.pinimg.com/originals/22/b7/c9/22b7c9ed82e411d5c66037e820427622.jpg");
               
-              clientdc.api.interactions(interaction.id, interaction.token).callback.post({
-                data: {
-                  type: 4,
-                  data: {
-                    embeds: [EmbedBuilder]
-                  }
-                }
-              })
+              interaction.reply({embeds: [EmbedBuilder]})
             }).catch(err => {
-              clientdc.api.interactions(interaction.id, interaction.token).callback.post({
-                data: {
-                  type: 4,
-                  data: {
-                    content: "Cannot kick this user"
-                  }
-                }
-              })
+              EmbedBuilder.setColor('#8f0713');
+              EmbedBuilder.setDescription(`Cannot ban this user!`);
+              EmbedBuilder.addFields({name: 'Error', value: error});
+              EmbedBuilder.setTitle("𝐈𝐌𝐏𝐄𝐑𝐀𝐓𝐎𝐑·𝐏𝐕𝐁𝐋𝐈𝐕𝐒", "https://cdn.glitch.com/24cdd29f-170e-4ac8-9dc2-8abc1cbbaeaa%2Fimageedit_1_3956664875.png?v=1588186424473");
+              EmbedBuilder.setImage("https://i.pinimg.com/originals/22/b7/c9/22b7c9ed82e411d5c66037e820427622.jpg");
+              interaction.reply({embeds: [EmbedBuilder]})
               console.log(err);
             });
           }
-        }
-
-
       }
       break;
     case "motions":
@@ -2531,26 +2560,6 @@ clientdc.on("messageCreate", message => {
     }
   }
 
-  if (message.content.toLowerCase().includes(command + "deletemotion")) {
-    if (
-        message.member.roles.cache.has("649362430446796815") ||
-        message.member.roles.cache.has("565594839828398100") ||
-        message.member.roles.cache.has("514143501697679361") ||
-        message.member.roles.cache.has("546654987061821440")
-    ) {
-      var args = message.content.split(" ");
-      db.all("DELETE FROM Motions WHERE mID =" + args[1], [], (err, rows) => {
-        if (err) {
-          message.channel.send("wrong ID");
-        }
-        message.channel.send("motion deleted");
-
-        updateEmbedMessage(message);
-      });
-    } else {
-      message.channel.send("you do not have the permission to delete a motion");
-    }
-  }
 
   if (message.content.toLowerCase().includes(command + "deleteallmotions") || message.content.toLowerCase().includes("ave imperator publius") && message.channel.id === 549645921487421495) {
     if (

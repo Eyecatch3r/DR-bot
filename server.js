@@ -70,6 +70,10 @@ if (dates[1].startsWith("0")) {
   dates[1] = dates[1].substring(1);
 }
 
+async function updateProvinceResources(){
+  
+}
+
 async function updateProvinceIncome(){
 
   doc.loadInfo().then(() => {
@@ -548,49 +552,14 @@ function createProvinceEmbed(picURL,indexStart,indexEnd) {
   return provinces;
 }
 
-function createEmbedSingleProvince(u, provinceName) {
-
-
-  let embP = new Discord.EmbedBuilder();
-  embP.setTitle(provinceName);
-    embP.setThumbnail('https://cdn.discordapp.com/attachments/548918811391295489/846080867138011156/unknown.png');
-  embP.setColor('#cd1121');
-
-  //to Calculate income Brackets we fetch the list of all Provinces to determine its order
-  let order = db2.prepare("SELECT * FROM Province ORDER BY income DESC").all();
-  let rows = db2.prepare("SELECT resource, population, income, map, population_growth, DiscordID, province.province AS pro FROM Province JOIN Resources,Governor ON prov_id =    Resources.province AND Governor.gov_ID = Province.Governor WHERE Province.province = '"+provinceName+"'");
-  console.log(provinceName);
-  if (rows[0]) {
-    rows.forEach((row) => {
-      embP.addFields({ name: "Resource", value:  row.resource });
-    })
-
-    if(u.username){
-      let av = u.displayAvatarURL();
-      embP.setAuthor({ name: u.username, iconURL: av});
-    } else {
-      let av = u.user.displayAvatarURL();
-      embP.setAuthor({name: u.displayName, iconURL: av});
-    }
-
-
-
-    let provinceOrder = 0;
-    for (let i = 0; i < order.length; i++) {
-      provinceOrder++;
-      if (order[i].province === rows[0].pro) {
-        i = order.length;
-      }
-    }
-    let actualTax = provinceOrder <= 5 ? 1 - taxRateTop5 : 1 - taxRate
-    embP.setDescription(rows[0].income + " <:DNR:782312774083674163> daily (untaxed) || " + Math.floor(rows[0].income * actualTax) + " <:DNR:782312774083674163> daily (taxed) \n 🧍 Population: " + rows[0].population + "\n Population Growth: " + rows[0].population_growth)
-    rows[0].map != null ? embP.setImage(rows[0].map) : embP.setImage("https://cdn.discordapp.com/attachments/559418842430963723/775017785969475634/unknown.png")
-    return embP;
-  }
-  else {
-    return embP;
+function capitalizeWords(provinceName) {
+  let words = provinceName.split(' ');
+  let capitalizedName = '';
+  for (let i = 0; i < words.length; i++) {
+    capitalizedName += words[i].charAt(0).toUpperCase() + words[i].slice(1)+' ';
   }
 
+  return capitalizedName.trim();
 }
 
 clientdc.on("interactionCreate", async interaction => {
@@ -722,72 +691,68 @@ clientdc.on("interactionCreate", async interaction => {
       }
       break;
     case "showprovince":
+      clientdc.users.fetch(interaction.user.id).then(u => {
+        let provinceName = interaction.options.getString('province').toLowerCase();
+        provinceName = capitalizeWords(provinceName);
+        let embP = new Discord.EmbedBuilder();
+        embP.setTitle(provinceName);
+        embP.setThumbnail('https://cdn.discordapp.com/attachments/548918811391295489/846080867138011156/unknown.png');
+        embP.setColor('#cd1121');
 
-
-      let provinceName = interaction.options.getString('province').toLowerCase();
-      let provinceWords = provinceName.split(" ");
-      let province = "";
-      provinceWords.forEach(p => {
-        province += p[0].toUpperCase() + p.substring(1)+" "
-      });
-      province = province.trim();
-      console.log(province);
-      db.all("SELECT * FROM Province ORDER BY income DESC",[],(err,order) => {
-        db.all("SELECT resource, population, income, map, population_growth, DiscordID, province.province AS pro FROM Province JOIN Resources,Governor ON prov_id =    Resources.province AND Governor.gov_ID = Province.Governor WHERE Province.province = '" + province + "'", [], (err, rows) => {
-          if (rows[0]) {
-
-            let id;
-            id = rows[0].DiscordID;
-            clientdc.guilds.cache.get('514135876909924352').members.fetch(id).then(u => {
-              let embP = new Discord.EmbedBuilder();
-              embP.setTitle(province);
-              embP.setThumbnail('https://cdn.discordapp.com/attachments/548918811391295489/846080867138011156/unknown.png');
-              embP.setColor('#cd1121');
-
-              for (let row of rows) {
-                embP.addFields({name: "Resource", value: row.resource});
-              }
-
-              if (u.username) {
-                let av = u.displayAvatarURL();
-                embP.setAuthor({name: u.username, iconURL: av});
+        doc.loadInfo().then(() => {
+          const sheet = doc.sheetsByIndex[0];
+          sheet.loadCells('A1:J26').then(() => {
+            //to Calculate income Brackets we fetch the list of all Provinces to determine its order
+            let rows = db2.prepare("SELECT * FROM Province ORDER BY income DESC").all();
+            let province = db2.prepare('SELECT * FROM Province JOIN Governor ON province.Governor = Governor.gov_ID WHERE province = ?').get(provinceName);
+            let resource = db2.prepare('SELECT * FROM Resources WHERE province = ?').get(provinceName);
+            console.log(provinceName);
+            if (province) {
+              let member = interaction.guild.members.cache.get(province.DiscordID);
+              if(member.displayName){
+                let av = member.user.displayAvatarURL();
+                embP.setAuthor({name: member.displayName, iconURL: av});
               } else {
-                let av = u.user.displayAvatarURL();
-                embP.setAuthor({name: u.displayName, iconURL: av});
+                let av = member.displayAvatarURL();
+                embP.setAuthor({ name: member.user.username, iconURL: av});
               }
-
 
               let provinceOrder = 0;
-              for (let i = 0; i < order.length; i++) {
+              for (let i = 0; i < rows.length; i++) {
+
+                if (rows[i].province === provinceName) {
+                  i = rows.length;
+                }
                 provinceOrder++;
-                if (order[i].province === rows[0].pro) {
-                  i = order.length;
+              }
+
+              let provinceIndex = -1;
+              for (let i = 2; i <= 26; i++) {
+                if(sheet.getCellByA1('B'+i).formattedValue === provinceName){
+                  provinceIndex = i;
                 }
               }
+              console.log(provinceIndex)
+              for (let i = 0; i < 7; i++) {
+                let cell = sheet.getCellByA1( String.fromCharCode(68 + i)+provinceIndex).formattedValue;
+                if (cell){
+                  embP.addFields({ name: "Resource", value:  cell });
+                }
+              }
+
+
               let actualTax = provinceOrder <= 5 ? 1 - taxRateTop5 : 1 - taxRate
-              embP.setDescription(rows[0].income + " <:DNR:782312774083674163> daily (untaxed) || " + Math.floor(rows[0].income * actualTax) + " <:DNR:782312774083674163> daily (taxed) \n 🧍 Population: " + rows[0].population + "\n Population Growth: " + rows[0].population_growth)
-              rows[0].map != null ? embP.setImage(rows[0].map) : embP.setImage("https://cdn.discordapp.com/attachments/559418842430963723/775017785969475634/unknown.png")
+              embP.setDescription(province.income + " <:DNR:782312774083674163> daily (untaxed) || " + Math.floor(province.income * actualTax) + " <:DNR:782312774083674163> daily (taxed) \n 🧍 Population: " + province.population + "\n Population Growth: " + province.population_growth)
+              province.map != null ? embP.setImage(province.map) : embP.setImage("https://cdn.discordapp.com/attachments/559418842430963723/775017785969475634/unknown.png")
 
-
-              interaction.reply({embeds: [embP]}).catch(error => {
-                if (error) {
-                  clientdc.users.fetch(id).then(u => {
-                    let embed = createEmbedSingleProvince(u, province);
-
-                    interaction.reply({embeds: [embed]});
-                  })
-                }
-
-              }).catch(error => {
-                if (error) {
-                  interaction.reply("wrong Province name")
-                }
-              });
-
-            })
-          }
-        }
-        )})
+              interaction.reply({embeds: [embP]});
+            }
+            else {
+              interaction.reply('Wrong Province Name');
+            }
+          });
+        })
+      })
       break;
     case "provinces":
 
@@ -1226,7 +1191,7 @@ function provinceIncome(){
         totalIncomeAllProvincesBrutto += incometax;
         incometax *= (1 - taxRateTop5);
         incometax = rows[i].Boosted? incometax+incometax*0.01 : incometax;
-        //parseInt(rows[i].Admin) !== 0? client.editUserBalance(GuildID, String(rows[i].Admin), { cash: 0, bank: incometax*0.1}):
+        parseInt(rows[i].Admin) !== 0? client.editUserBalance(GuildID, String(rows[i].Admin), { cash: 0, bank: incometax*0.3}):
         totalIncomeAllProvincesNetto += incometax;
         client.editUserBalance(GuildID, String(rows[i].DiscordID), { cash: 0, bank: incometax})
         console.log(String(rows[i].DiscordID))
@@ -1235,7 +1200,7 @@ function provinceIncome(){
         totalIncomeAllProvincesBrutto += incometax;
         incometax *= (1 - taxRate);
         incometax = rows[i].Boosted? incometax+incometax*0.01 : incometax;
-        //parseInt(rows[i].Admin) !== 0? client.editUserBalance(GuildID, String(rows[i].Admin), { cash: 0, bank: incometax*0.1}, "province admin income"):
+        parseInt(rows[i].Admin) !== 0? client.editUserBalance(GuildID, String(rows[i].Admin), { cash: 0, bank: incometax*0.1}, "province admin income"):
         totalIncomeAllProvincesNetto += incometax;
         client.editUserBalance(GuildID, String(rows[i].DiscordID), { cash: 0, bank: incometax}, "province income")
       }

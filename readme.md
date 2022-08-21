@@ -6,7 +6,7 @@
 this is the official Discord Romanum bot
 =============
 
-## **Changes to Version 3.0**
+## **Version 3.5**
 
 **Province System**
  - added Province commands
@@ -27,7 +27,7 @@ this is the official Discord Romanum bot
 
 **Miscellaneous**
 - added Slash commands
-- added Ping slash command
+- added Ping slash commands
 - added Roman numeral slash command
 
 Author: Eyecatcher#7783

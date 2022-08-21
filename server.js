@@ -43,7 +43,6 @@ const arrayList = require("arraylist");
 const Discord = require("discord.js");
 const { GatewayIntentBits, Partials,ChannelType } = require('discord.js');
 const clientdc = new Discord.Client({ partials: [Partials.Channel,Partials.GuildMember,Partials.Message,Partials.Reaction,Partials.User],intents: [GatewayIntentBits.Guilds,GatewayIntentBits.DirectMessages,GatewayIntentBits.GuildBans,GatewayIntentBits.GuildMembers,GatewayIntentBits.GuildMessageReactions,GatewayIntentBits.GuildMessages,GatewayIntentBits.GuildPresences,GatewayIntentBits.MessageContent]});
-const interactions = require("discord-slash-commands-client");
 //global variables
 let BattleAlreadyCommenced = false;
 let taxRate = 0.6;
@@ -53,12 +52,7 @@ clientdc.login(process.env.DISCORD_TOKEN);
 
 
 
-//register Slash interactions with the client
 
-clientdc.interactions = new interactions.Client(
-    process.env.DISCORD_TOKEN,
-    "700662464856981564"
-);
 
 //compare dates with the current date
 const dateformat = require("dateformat");
@@ -456,7 +450,12 @@ function registerSlashCommands() {
       .setDescription('Displays a province')
       .addStringOption(option => option.setName('province').setDescription('Name of the Province').setRequired(true))
 
-  globalCommands.push(ban,unban,mute,unmute,kick,provinces,showprovinces);
+  let challenge = new SlashCommandBuilder()
+      .setName("challenge")
+      .setDescription('Initiate a Gladiator battle!')
+      .addStringOption(option => option.setName('first').setDescription('Name of the first Gladiator').setRequired(true))
+      .addStringOption(option => option.setName('second').setDescription('Name of the second Gladiator').setRequired(true))
+  globalCommands.push(ban,unban,mute,unmute,kick,provinces,showprovinces,challenge);
   commands.push(motions,smotion,deletemotion,motion);
   const clientId = "700662464856981564";
   const guildId = "514135876909924352";
@@ -1167,6 +1166,54 @@ clientdc.on("interactionCreate", async interaction => {
             "you do not have any authority to propose motions, please turn to your corresponding Senator or Tribune (if you're a filthy Pleb)"
         );
       }
+      break;
+    case 'challenge':
+
+      let args = [interaction.options.getString('first'),interaction.options.getString('second')];
+
+        let glademb = new Discord.EmbedBuilder();
+        glademb.setImage("https://qph.fs.quoracdn.net/main-qimg-03cc5a7d16ec433984a39059446d5c4b");
+        glademb.addFields({ name: args[0], value: "100" , inline: true});
+        glademb.addFields({ name: args[1], value: "100",inline: true});
+        glademb.setColor(0x630330);
+        interaction.reply({ embeds: [glademb] }).then(res => {
+          let cturn = false;
+          let hp1 = 100;
+          let hp2 = 100;
+
+          let int = setInterval(function(php1, php2){
+
+
+            const num = Math.random();
+            if(cturn === true){hp1 -= Math.floor(Math.random() * 31);
+              if(hp1 < 0){hp1 = 0}
+              let emb2 = new Discord.EmbedBuilder();
+              emb2.setImage("https://qph.fs.quoracdn.net/main-qimg-03cc5a7d16ec433984a39059446d5c4b");
+              emb2.addFields({ name: args[0], value: hp1.toString(), inline: true});
+              emb2.addFields({ name: args[1], value: hp2.toString(), inline: true});
+              emb2.setColor(0x630330);
+              interaction.editReply({embeds: [emb2]});
+              cturn = false;
+            }else {hp2 -= Math.floor(Math.random() * 31)
+              if(hp2 < 0){hp2 = 0}
+              let emb2 = new Discord.EmbedBuilder();
+              emb2.setImage("https://qph.fs.quoracdn.net/main-qimg-03cc5a7d16ec433984a39059446d5c4b");
+              emb2.addFields({ name: args[0], value: hp1.toString(), inline: true});
+              emb2.addFields({ name: args[1], value: hp2.toString(), inline: true});
+              emb2.setColor(0x630330);
+              interaction.editReply({embeds: [emb2]});
+              cturn = true;
+            }
+            if(hp1 === 0 || hp2 === 0){clearInterval(int); let emb3 = new Discord.EmbedBuilder(); emb3.addFields({ name: "Winner", value: hp1 === 0 ? args[1] : args[0] }); emb3.setImage("https://www.history.com/.image/c_fill%2Ccs_srgb%2Cfl_progressive%2Ch_400%2Cq_auto:good%2Cw_620/MTU3ODc4NjAzNTMwOTA1MzEx/list-10-things-you-may-not-know-about-gladiators-2.jpg");
+            emb3.setColor(0xFFD700);
+              interaction.editReply({embeds: [emb3]}).catch(err => console.log(err))}
+          },1500);
+
+
+        });
+
+
+
       break;
     default:
       break;
@@ -2251,97 +2298,6 @@ clientdc.on("messageCreate", message => {
     message.channel.send(
         "https://cdn.discordapp.com/attachments/514135876909924354/821497674174955558/dynasty3_final.png"
     );
-  }
-
-  if (message.content.toLowerCase().includes(command + "challenge" ) && message.channel.id === "557659811723083787") {
-    let args = message.content.split(" ");
-    if(args.length === 2){
-      let emb = new Discord.EmbedBuilder();
-      emb.setImage("https://qph.fs.quoracdn.net/main-qimg-03cc5a7d16ec433984a39059446d5c4b");
-      emb.addFields({ name: message.author.username, value: "100" , inline: true});
-      emb.addFields({ name: args[1], value: "100", inline: true});
-      emb.setColor("0xFFFFFF");
-      message.channel.send({ embeds: [emb] }).then(res => {
-        let cturn = false;
-        let hp1 = 100;
-        let hp2 = 100;
-
-        let int = setInterval(function(php1, php2){
-
-
-          let num = Math.random();
-          if(cturn === true){hp1 -= Math.floor(Math.random() * 31);
-            if(hp1 < 0){hp1 = 0}
-            let emb2 = new Discord.EmbedBuilder();
-            emb2.setImage("https://qph.fs.quoracdn.net/main-qimg-03cc5a7d16ec433984a39059446d5c4b");
-            emb2.addFields({ name: message.author.username, value: hp1, inline: true});
-            emb2.addFields({ name: args[1], value: hp2.toString(), inline: true});
-            emb2.
-            emb2.setColor("0x8B0000");
-            res.edit({embeds: [emb2]});
-            cturn = false;
-          }else {hp2 -= Math.floor(Math.random() * 31)
-            if(hp2 < 0){hp2 = 0}
-            let emb2 = new Discord.EmbedBuilder();
-            emb2.setImage("https://qph.fs.quoracdn.net/main-qimg-03cc5a7d16ec433984a39059446d5c4b");
-            emb2.addFields({ name: message.author.username, value: hp, inline: true});
-            emb2.addFields({ name: args[1], value: hp2.toString(), inline: true});
-            emb2.setColor("0x8B0000");
-            res.edit({embeds: [emb2]});
-            cturn = true;
-          }
-          if(hp1 === 0 || hp2 === 0){clearInterval(int); let emb3 = new Discord.EmbedBuilder(); emb3.addFields({ name: "Winner", value: hp1 === 0 ? args[1] : message.author.username }); emb3.setImage("https://www.history.com/.image/c_fill%2Ccs_srgb%2Cfl_progressive%2Ch_400%2Cq_auto:good%2Cw_620/MTU3ODc4NjAzNTMwOTA1MzEx/list-10-things-you-may-not-know-about-gladiators-2.jpg"); emb3.
-          emb3.setColor("0xFFDF00");
-            res.edit({embeds: [emb3]}).catch(err => console.log(err))}
-        },1500);
-
-
-      });
-    }else if(args.length === 3){
-      let emb = new Discord.EmbedBuilder();
-      emb.setImage("https://qph.fs.quoracdn.net/main-qimg-03cc5a7d16ec433984a39059446d5c4b");
-      emb.addFields({ name: args[1], value: "100" , inline: true});
-      emb.addFields({ name: args[2], value: "100",inline: true});
-      emb.setColor("0xFFFFFF");
-      message.channel.send({ embeds: [emb] }).then(res => {
-        let cturn = false;
-        let hp1 = 100;
-        let hp2 = 100;
-
-        let int = setInterval(function(php1, php2){
-
-
-          const num = Math.random();
-          if(cturn === true){hp1 -= Math.floor(Math.random() * 31);
-            if(hp1 < 0){hp1 = 0}
-            let emb2 = new Discord.EmbedBuilder();
-            emb2.setImage("https://qph.fs.quoracdn.net/main-qimg-03cc5a7d16ec433984a39059446d5c4b");
-            emb2.addFields({ name: args[1], value: hp1.toString(), inline: true});
-            emb2.addFields({ name: args[2], value: hp2.toString(), inline: true});
-            emb2.
-            emb2.setColor("DARK_PURPLE");
-            res.edit({embeds: [emb2]});
-            cturn = false;
-          }else {hp2 -= Math.floor(Math.random() * 31)
-            if(hp2 < 0){hp2 = 0}
-            let emb2 = new Discord.EmbedBuilder();
-            emb2.setImage("https://qph.fs.quoracdn.net/main-qimg-03cc5a7d16ec433984a39059446d5c4b");
-            emb2.addFields({ name: args[1], value: hp1.toString(), inline: true});
-            emb2.addFields({ name: args[2], value: hp2.toString(), inline: true});
-            emb2.
-            emb2.setColor("DARK_PURPLE");
-            res.edit({embeds: [emb2]});
-            cturn = true;
-          }
-          if(hp1 === 0 || hp2 === 0){clearInterval(int); let emb3 = new Discord.EmbedBuilder(); emb3.addFields({ name: "Winner", value: hp1 === 0 ? args[2] : args[1] }); emb3.setImage("https://www.history.com/.image/c_fill%2Ccs_srgb%2Cfl_progressive%2Ch_400%2Cq_auto:good%2Cw_620/MTU3ODc4NjAzNTMwOTA1MzEx/list-10-things-you-may-not-know-about-gladiators-2.jpg"); emb3.
-          emb3.setColor("GOLD");
-            res.edit({embeds: [emb3]}).catch(err => console.log(err))}
-        },1500);
-
-
-      });
-
-    }else{message.channel.send("invalid parameters given")}
   }
 
   if (message.content.toLowerCase().includes(command + "bet" )) {

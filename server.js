@@ -1240,13 +1240,13 @@ function provinceIncome(){
       let incomeUntaxed = rows[i].income;
       let currentTaxrate = i < 5? taxRateTop5: taxRate;
       if(incomeUntaxed !== 0){
-        client.editUserBalance(GuildID, "700662464856981564", { cash: 0, bank: incomeUntaxed*currentTaxrate})
+        client.editUserBalance(GuildID, "700662464856981564", { cash: 0, bank: incomeUntaxed*currentTaxrate}).catch(error => console.log(error));
         totalIncomeAllProvincesBrutto += incomeUntaxed;
         incomeUntaxed *= (1 - currentTaxrate);
         incomeUntaxed = rows[i].Boosted? incomeUntaxed+incomeUntaxed*0.01 : incomeUntaxed;
         parseInt(rows[i].Admin) !== 0? client.editUserBalance(GuildID, String(rows[i].Admin), { cash: 0, bank: incomeUntaxed*0.3}):
             totalIncomeAllProvincesNetto += incomeUntaxed;
-        client.editUserBalance(GuildID, String(rows[i].DiscordID), { cash: 0, bank: incomeUntaxed})
+        client.editUserBalance(GuildID, String(rows[i].DiscordID), { cash: 0, bank: incomeUntaxed}).catch(error => console.log(error));
         console.log(String(rows[i].DiscordID))
       }
       //Discord Api restriction only 25 fields allowed

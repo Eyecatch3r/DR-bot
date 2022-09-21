@@ -1239,15 +1239,19 @@ function provinceIncome(){
     for(let i = 0; i < rows.length; i++){
       let incomeUntaxed = rows[i].income;
       let currentTaxrate = i < 5? taxRateTop5: taxRate;
+      if (rows[i].DiscordID === '325296044739133450') currentTaxrate = 0;
+      console.log(String(rows[i].DiscordID));
+      console.log(i);
       if(incomeUntaxed !== 0){
-        client.editUserBalance(GuildID, "700662464856981564", { cash: 0, bank: incomeUntaxed*currentTaxrate}).catch(error => console.log(error));
+        if (currentTaxrate !== 0) {client.editUserBalance(GuildID, "700662464856981564", { cash: 0, bank: incomeUntaxed*currentTaxrate}).catch(error => console.log(error))};
         totalIncomeAllProvincesBrutto += incomeUntaxed;
         incomeUntaxed *= (1 - currentTaxrate);
         incomeUntaxed = rows[i].Boosted? incomeUntaxed+incomeUntaxed*0.01 : incomeUntaxed;
         parseInt(rows[i].Admin) !== 0? client.editUserBalance(GuildID, String(rows[i].Admin), { cash: 0, bank: incomeUntaxed*0.3}):
             totalIncomeAllProvincesNetto += incomeUntaxed;
         client.editUserBalance(GuildID, String(rows[i].DiscordID), { cash: 0, bank: incomeUntaxed}).catch(error => console.log(error));
-        console.log(String(rows[i].DiscordID))
+
+        console.log(incomeUntaxed);
       }
       //Discord Api restriction only 25 fields allowed
       if(i < 25){
@@ -2569,7 +2573,7 @@ clientdc.on("messageCreate", async message => {
           message.channel.send("its Constantinople smh");
         }
 
-        if (message.channel.type === 1) {
+        if (message.channel.type === 1 && message.content.includes('-')) {
           console.log(message.content);
           var args = message.content.split("-");
           clientdc.channels.cache.get(args[0]).send(args[1]);

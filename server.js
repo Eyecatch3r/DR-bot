@@ -95,76 +95,6 @@ async function updateProvinceIncome(){
 
 }
 
-function updateEmbed() {
-  const mainEmb = new Discord.EmbedBuilder();
-
-  mainEmb.setTitle("Motions");
-  mainEmb.setColor("0xcc0000");
-  mainEmb.setFooter(
-      {text:  "discussions powered by our most humble Imperator", iconURL: 'https://cdn.discordapp.com/attachments/548918811391295489/776740280266784778/purpleDR.png'}
-  );
-  mainEmb.setThumbnail(
-      "https://cdn.discordapp.com/attachments/548918811391295489/776740280266784778/purpleDR.png"
-  );
-  mainEmb.setAuthor(
-      {name: "𝐈𝐌𝐏𝐄𝐑𝐀𝐓𝐎𝐑·𝐏𝐕𝐁𝐋𝐈𝐕𝐒",
-        iconURL: "https://cdn.glitch.com/24cdd29f-170e-4ac8-9dc2-8abc1cbbaeaa%2Fimageedit_1_3956664875.png?v=1588186424473", url: "https://cdn.glitch.com/24cdd29f-170e-4ac8-9dc2-8abc1cbbaeaa%2Fimageedit_1_3956664875.png?v=1588186424473"});
-  mainEmb.setDescription("Motions to discuss in Senate meetings");
-
-  let msgs = [];
-  let sql2 = 'SELECT * FROM Motions';
-  db.all(sql2, [], (err, rows) => {
-    if (err) {
-      throw err;
-    }
-    rows.forEach(row => {
-      if (clientdc.users.cache.get(row.creator) !== undefined) {
-        let msg =
-            row.motion +
-            "\n" +
-            "From:" +
-            "<@!"+row.creator+">"+
-            "\n" +
-            "motion ID:" +
-            row.mID +
-            "\n" +
-            "--------------------" +
-            "\n";
-        msgs.push(msg);
-      }
-    });
-
-    if (msgs.length <= 25) {
-      msgs.forEach(msg => mainEmb.addFields({ name: "Motion", value: msg}));
-    } else {
-      const args2 = [];
-      for (let i = msgs.length; i > msgs.length / 2; i--) {
-        args2.push(msgs[i]);
-        msgs.pop();
-      }
-      msgs.forEach(msg => mainEmb.addFields({ name: "Motion", value: msg}));
-
-      const secEmb = new Discord.EmbedBuilder();
-
-      secEmb.setTitle("Motions");
-      secEmb.setColor("0xcc0000");
-      secEmb.setFooter(
-          {text:  "discussions powered by our most humble Imperator", iconURL: 'https://cdn.discordapp.com/attachments/548918811391295489/776740280266784778/purpleDR.png'}
-      );
-      secEmb.setThumbnail(
-          "https://cdn.discordapp.com/attachments/548918811391295489/776740280266784778/purpleDR.png"
-      );
-      secEmb.setAuthor(
-          {name: "𝐈𝐌𝐏𝐄𝐑𝐀𝐓𝐎𝐑·𝐏𝐕𝐁𝐋𝐈𝐕𝐒",
-            iconURL: "https://cdn.glitch.com/24cdd29f-170e-4ac8-9dc2-8abc1cbbaeaa%2Fimageedit_1_3956664875.png?v=1588186424473", url: "https://cdn.glitch.com/24cdd29f-170e-4ac8-9dc2-8abc1cbbaeaa%2Fimageedit_1_3956664875.png?v=1588186424473"});
-      secEmb.setDescription("Motions to discuss in Senate meetings");
-
-      args2.forEach(msg => secEmb.addFields({ name: "Motion", value: msg}));
-    }
-    //clientdc.channels.cache.get("705136080105767004").send(test);
-  });
-}
-
 function updateEmbedMessage(message) {
   let embed = new Discord.EmbedBuilder();
 
@@ -205,7 +135,11 @@ function updateEmbedMessage(message) {
       //message.channel.send(row.mID);
     });
     if (msgs.length <= 25) {
-      msgs.forEach(msg => embed.addFields({ name: "motions", value:  msg +"/"+msgs.indexOf(msg)}));
+      for(let i = 0; i < msgs.length; i++){
+        let m = msgs[i]
+        embed.addFields({ name: "motions", value:  m +"/"+i})
+      }
+      //msgs.forEach(msg => embed.addFields({ name: "motions", value:  msg +"/"+msgs.indexOf(msg)}));
       secEmb = new Discord.EmbedBuilder();
 
 
@@ -292,7 +226,7 @@ function updateProvinceMessage() {
   let embed = new Discord.EmbedBuilder();
 
   embed.setTitle("Provinces");
-  embed.setColor("0xcc0000");
+  embed.setColor("DarkRed");
   embed.setFooter({ text:
         "Provinces powered by our most humble Imperator", iconURL:  "https://cdn.discordapp.com/attachments/548918811391295489/776740280266784778/purpleDR.png"
   });
@@ -392,6 +326,18 @@ function updateRPDate(RPName) {
 function registerSlashCommands() {
   const rest = new REST({version: '10'}).setToken(process.env.DISCORD_TOKEN);
   let commands = [];
+  let registerGovernor = new SlashCommandBuilder()
+      .setName('registergovernor')
+      .setDescription('adds a new Governor')
+      .addStringOption(option => option.setName('discordid').setDescription('Discord ID')
+          .setRequired(true))
+      .addStringOption(option => option.setName('name').setDescription('Discord handle').setRequired(true));
+  let appointProvince = new SlashCommandBuilder()
+      .setName('appointprovince')
+      .setDescription('appoints a governor to a province')
+      .addStringOption(option => option.setName('governor').setDescription('Name of the Governor given')
+          .setRequired(true))
+      .addStringOption(option => option.setName('province').setDescription('Name of the Province given').setRequired(true));
   let smotion = new SlashCommandBuilder()
       .setName('smotion')
       .setDescription('Shows the motion with the corresponding ID')
@@ -456,7 +402,7 @@ function registerSlashCommands() {
       .addStringOption(option => option.setName('first').setDescription('Name of the first Gladiator').setRequired(true))
       .addStringOption(option => option.setName('second').setDescription('Name of the second Gladiator').setRequired(true))
   globalCommands.push(ban,unban,mute,unmute,kick,provinces,showprovinces,challenge);
-  commands.push(motions,smotion,deletemotion,motion);
+  commands.push(motions,smotion,deletemotion,motion,registerGovernor,appointProvince);
   const clientId = "700662464856981564";
   const guildId = "514135876909924352";
   (async () => {
@@ -480,11 +426,6 @@ function registerSlashCommands() {
 clientdc.on("ready", (interaction) => {
 //Register slash commands here
   registerSlashCommands();
-
-
-  updateEmbed();
-
-
 
 
   CronJob.schedule('0 19 * * SUN', () => {
@@ -658,29 +599,28 @@ clientdc.on("interactionCreate", async interaction => {
         const reason = interaction.options.getString('reason');
         if (reason) {
           if(!member.roles.cache.has("546654987061821440")){
-            member.ban({reason: reason}).then(ban => {
-              let emb = new Discord.EmbedBuilder();
-              emb.setColor('#8f0713');
-              emb.setDescription(`<@${member.user.id}> has been Executed in the name of the Imperator, Reason: ${reason}`);
-              emb.setTitle("𝐈𝐌𝐏𝐄𝐑𝐀𝐓𝐎𝐑·𝐏𝐕𝐁𝐋𝐈𝐕𝐒", "https://cdn.glitch.com/24cdd29f-170e-4ac8-9dc2-8abc1cbbaeaa%2Fimageedit_1_3956664875.png?v=1588186424473");
-              emb.setImage("https://i.pinimg.com/originals/7f/03/a2/7f03a2a21b82d96679788401c3ef323f.jpg");
+            member.ban({reason: reason}).catch(err => interaction.reply("Cannot Ban this user"));
+            let emb = new Discord.EmbedBuilder();
+            emb.setColor('#8f0713');
+            emb.setDescription(`<@${member.user.id}> has been Executed in the name of the Imperator, Reason: ${reason}`);
+            emb.setTitle("𝐈𝐌𝐏𝐄𝐑𝐀𝐓𝐎𝐑·𝐏𝐕𝐁𝐋𝐈𝐕𝐒", "https://cdn.glitch.com/24cdd29f-170e-4ac8-9dc2-8abc1cbbaeaa%2Fimageedit_1_3956664875.png?v=1588186424473");
+            emb.setImage("https://i.pinimg.com/originals/7f/03/a2/7f03a2a21b82d96679788401c3ef323f.jpg");
 
-              interaction.editReply({embeds: [emb]})
-            }).catch(err => interaction.reply("Cannot Ban this user"));
+            interaction.reply({embeds: [emb]})
           }else {
             interaction.reply("Cannot Ban this user")
           }
         } else {
           if(!member.roles.cache.has("546654987061821440")){
-            member.ban().then(ban => {
-              let emb = new Discord.EmbedBuilder();
-              emb.setColor('#8f0713');
-              emb.setDescription(`<@${member.user.id}> has been Executed in the name of the Imperator`);
-              emb.setTitle("𝐈𝐌𝐏𝐄𝐑𝐀𝐓𝐎𝐑·𝐏𝐕𝐁𝐋𝐈𝐕𝐒", "https://cdn.glitch.com/24cdd29f-170e-4ac8-9dc2-8abc1cbbaeaa%2Fimageedit_1_3956664875.png?v=1588186424473");
-              emb.setImage("https://i.pinimg.com/originals/7f/03/a2/7f03a2a21b82d96679788401c3ef323f.jpg");
+            member.ban().catch(err => interaction.editReply("Cannot Ban this user"));
+            let emb = new Discord.EmbedBuilder();
+            emb.setColor('#8f0713');
+            emb.setDescription(`<@${member.user.id}> has been Executed in the name of the Imperator`);
+            emb.setTitle("𝐈𝐌𝐏𝐄𝐑𝐀𝐓𝐎𝐑·𝐏𝐕𝐁𝐋𝐈𝐕𝐒", "https://cdn.glitch.com/24cdd29f-170e-4ac8-9dc2-8abc1cbbaeaa%2Fimageedit_1_3956664875.png?v=1588186424473");
+            emb.setImage("https://i.pinimg.com/originals/7f/03/a2/7f03a2a21b82d96679788401c3ef323f.jpg");
 
-              interaction.editReply({embeds: [emb]})
-            }).catch(err => interaction.reply("Cannot Ban this user"));
+            interaction.reply({embeds: [emb]})
+
           }else {
             interaction.reply("Cannot Ban this user")
           }
@@ -855,7 +795,7 @@ clientdc.on("interactionCreate", async interaction => {
             {text:  "discussions powered by our most humble Imperator", iconURL: 'https://cdn.discordapp.com/attachments/548918811391295489/776740280266784778/purpleDR.png'}
         );
         embed.setThumbnail(
-            "https://cdn.discordapp.com/attachments/704000578568716368/1003781074528252004/unknown.png"
+            "https://media.discordapp.net/attachments/1066485143700774974/1067049962245992469/Blobby_Discordium_Romanum_senate_meeting_21605f84-2d81-4933-8b90-c396b6c6d41a.png?width=837&height=837"
         );
         embed.setAuthor(
             {name: "𝐈𝐌𝐏𝐄𝐑𝐀𝐓𝐎𝐑·𝐏𝐕𝐁𝐋𝐈𝐕𝐒",
@@ -882,7 +822,8 @@ clientdc.on("interactionCreate", async interaction => {
 
 
           if (msgs.length <= 25) {
-            msgs.forEach(msg => embed.addFields({ name: "motions", value:  msg +"\n"+msgs.indexOf(msg)}));
+
+            msgs.forEach(msg => embed.addFields({ name: "motions", value:  msg +"/"+msgs.indexOf(msg)}));
 
             interaction.reply({ embeds: [embed] });
           } else {
@@ -920,7 +861,7 @@ clientdc.on("interactionCreate", async interaction => {
                 {text:  "discussions powered by our most humble Imperator", iconURL: 'https://cdn.discordapp.com/attachments/548918811391295489/776740280266784778/purpleDR.png'}
             );
             secEmb.setThumbnail(
-                "https://cdn.discordapp.com/attachments/704000578568716368/1003781074528252004/unknown.png"
+                "https://media.discordapp.net/attachments/1066485143700774974/1067049962245992469/Blobby_Discordium_Romanum_senate_meeting_21605f84-2d81-4933-8b90-c396b6c6d41a.png?width=837&height=837"
             );
             secEmb.setAuthor(
                 {name: "𝐈𝐌𝐏𝐄𝐑𝐀𝐓𝐎𝐑·𝐏𝐕𝐁𝐋𝐈𝐕𝐒",
@@ -1171,49 +1112,73 @@ clientdc.on("interactionCreate", async interaction => {
 
       let args = [interaction.options.getString('first'),interaction.options.getString('second')];
 
-        let glademb = new Discord.EmbedBuilder();
-        glademb.setImage("https://qph.fs.quoracdn.net/main-qimg-03cc5a7d16ec433984a39059446d5c4b");
-        glademb.addFields({ name: args[0], value: "100" , inline: true});
-        glademb.addFields({ name: args[1], value: "100",inline: true});
-        glademb.setColor(0x630330);
-        interaction.reply({ embeds: [glademb] }).then(res => {
-          let cturn = false;
-          let hp1 = 100;
-          let hp2 = 100;
+      let glademb = new Discord.EmbedBuilder();
+      glademb.setImage("https://qph.fs.quoracdn.net/main-qimg-03cc5a7d16ec433984a39059446d5c4b");
+      glademb.addFields({ name: args[0], value: "100" , inline: true});
+      glademb.addFields({ name: args[1], value: "100",inline: true});
+      glademb.setColor(0x630330);
+      interaction.reply({ embeds: [glademb] }).then(res => {
+        let cturn = false;
+        let hp1 = 100;
+        let hp2 = 100;
 
-          let int = setInterval(function(php1, php2){
+        let int = setInterval(function(php1, php2){
 
 
-            const num = Math.random();
-            if(cturn === true){hp1 -= Math.floor(Math.random() * 31);
-              if(hp1 < 0){hp1 = 0}
-              let emb2 = new Discord.EmbedBuilder();
-              emb2.setImage("https://qph.fs.quoracdn.net/main-qimg-03cc5a7d16ec433984a39059446d5c4b");
-              emb2.addFields({ name: args[0], value: hp1.toString(), inline: true});
-              emb2.addFields({ name: args[1], value: hp2.toString(), inline: true});
-              emb2.setColor(0x630330);
-              interaction.editReply({embeds: [emb2]});
-              cturn = false;
-            }else {hp2 -= Math.floor(Math.random() * 31)
-              if(hp2 < 0){hp2 = 0}
-              let emb2 = new Discord.EmbedBuilder();
-              emb2.setImage("https://qph.fs.quoracdn.net/main-qimg-03cc5a7d16ec433984a39059446d5c4b");
-              emb2.addFields({ name: args[0], value: hp1.toString(), inline: true});
-              emb2.addFields({ name: args[1], value: hp2.toString(), inline: true});
-              emb2.setColor(0x630330);
-              interaction.editReply({embeds: [emb2]});
-              cturn = true;
-            }
-            if(hp1 === 0 || hp2 === 0){clearInterval(int); let emb3 = new Discord.EmbedBuilder(); emb3.addFields({ name: "Winner", value: hp1 === 0 ? args[1] : args[0] }); emb3.setImage("https://www.history.com/.image/c_fill%2Ccs_srgb%2Cfl_progressive%2Ch_400%2Cq_auto:good%2Cw_620/MTU3ODc4NjAzNTMwOTA1MzEx/list-10-things-you-may-not-know-about-gladiators-2.jpg");
+          const num = Math.random();
+          if(cturn === true){hp1 -= Math.floor(Math.random() * 31);
+            if(hp1 < 0){hp1 = 0}
+            let emb2 = new Discord.EmbedBuilder();
+            emb2.setImage("https://qph.fs.quoracdn.net/main-qimg-03cc5a7d16ec433984a39059446d5c4b");
+            emb2.addFields({ name: args[0], value: hp1.toString(), inline: true});
+            emb2.addFields({ name: args[1], value: hp2.toString(), inline: true});
+            emb2.setColor(0x630330);
+            interaction.editReply({embeds: [emb2]});
+            cturn = false;
+          }else {hp2 -= Math.floor(Math.random() * 31)
+            if(hp2 < 0){hp2 = 0}
+            let emb2 = new Discord.EmbedBuilder();
+            emb2.setImage("https://qph.fs.quoracdn.net/main-qimg-03cc5a7d16ec433984a39059446d5c4b");
+            emb2.addFields({ name: args[0], value: hp1.toString(), inline: true});
+            emb2.addFields({ name: args[1], value: hp2.toString(), inline: true});
+            emb2.setColor(0x630330);
+            interaction.editReply({embeds: [emb2]});
+            cturn = true;
+          }
+          if(hp1 === 0 || hp2 === 0){clearInterval(int); let emb3 = new Discord.EmbedBuilder(); emb3.addFields({ name: "Winner", value: hp1 === 0 ? args[1] : args[0] }); emb3.setImage("https://www.history.com/.image/c_fill%2Ccs_srgb%2Cfl_progressive%2Ch_400%2Cq_auto:good%2Cw_620/MTU3ODc4NjAzNTMwOTA1MzEx/list-10-things-you-may-not-know-about-gladiators-2.jpg");
             emb3.setColor(0xFFD700);
-              interaction.editReply({embeds: [emb3]}).catch(err => console.log(err))}
-          },1500);
+            interaction.editReply({embeds: [emb3]}).catch(err => console.log(err))}
+        },1500);
 
 
-        });
+      });
 
 
 
+      break;
+
+    case "registergovernor":
+
+      try {
+        db2.prepare("INSERT INTO Governor(DiscordID,governor) VALUES(?,?)").run(interaction.options.getString("discordid"),interaction.options.getString("name"))
+      } catch (e) {
+        console.log(e)
+       interaction.reply("Something went wrong.")
+      }
+      interaction.reply("Governor "+interaction.options.getString("name")+" successfully added!");
+      break;
+    case "appointprovince":
+
+      try {
+        let govId = db2.prepare("SELECT gov_ID FROM Governor WHERE governor = ?").get(interaction.options.getString("governor"));
+
+        db2.prepare("UPDATE Province SET Governor = ? WHERE province = ?").run(govId.gov_ID,interaction.options.getString("province"))
+
+        interaction.reply("Governor "+interaction.options.getString("governor")+" appointed for "+interaction.options.getString("province"))
+      } catch (e){
+        interaction.reply("Something went wrong.")
+        console.log(e)
+      }
       break;
     default:
       break;
@@ -2370,8 +2335,7 @@ clientdc.on("messageCreate", message => {
                   emb2.setImage("https://qph.fs.quoracdn.net/main-qimg-03cc5a7d16ec433984a39059446d5c4b");
                   emb2.addFields({ name: message.author.username, value: hp1.toString(), inline: true});
                   emb2.addFields({ name: args[1], value: hp2.toString(), inline: true});
-                  emb2.
-                  emb2.setColor("DARK_PURPLE");
+                  emb2.setColor(0x630330);
                   res.edit({embeds: [emb2]});
                   cturn = false;
                 }else {hp2 -= Math.floor(Math.random() * 31)
@@ -2380,13 +2344,12 @@ clientdc.on("messageCreate", message => {
                   emb2.setImage("https://qph.fs.quoracdn.net/main-qimg-03cc5a7d16ec433984a39059446d5c4b");
                   emb2.addFields({ name: message.author.username, value: hp1.toString(), inline: true});
                   emb2.addFields({ name: args[1], value: hp2.toString(), inline: true});
-                  emb2.
-                  emb2.setColor("DARK_PURPLE");
+                  emb2.setColor(0x630330);
                   res.edit({embeds: [emb2]});
                   cturn = true;
                 }
-                if(hp1 === 0 || hp2 === 0){clearInterval(int); let emb3 = new Discord.EmbedBuilder(); emb3.addFields({ name: "Winner", value: hp1 === 0 ? args[1] : message.author.username }); emb3.setImage("https://www.history.com/.image/c_fill%2Ccs_srgb%2Cfl_progressive%2Ch_400%2Cq_auto:good%2Cw_620/MTU3ODc4NjAzNTMwOTA1MzEx/list-10-things-you-may-not-know-about-gladiators-2.jpg"); emb3.
-                emb3.setColor("GOLD");
+                if(hp1 === 0 || hp2 === 0){clearInterval(int); let emb3 = new Discord.EmbedBuilder(); emb3.addFields({ name: "Winner", value: hp1 === 0 ? args[1] : message.author.username }); emb3.setImage("https://www.history.com/.image/c_fill%2Ccs_srgb%2Cfl_progressive%2Ch_400%2Cq_auto:good%2Cw_620/MTU3ODc4NjAzNTMwOTA1MzEx/list-10-things-you-may-not-know-about-gladiators-2.jpg");
+                  emb3.setColor(0xFFD700);
                   res.edit({embeds: [emb3]})
                   let winner;
                   hp1 === 0 ? winner = args[1] : winner = message.author.username;
@@ -2431,8 +2394,7 @@ clientdc.on("messageCreate", message => {
                   emb2.setImage("https://qph.fs.quoracdn.net/main-qimg-03cc5a7d16ec433984a39059446d5c4b");
                   emb2.addFields({ name: args[1], value: hp1.toString(), inline: true});
                   emb2.addFields({ name: args[2], value: hp2.toString(), inline: true});
-                  emb2.
-                  emb2.setColor("DARK_PURPLE");
+                  emb2.setColor(0x630330);
                   res.edit({embeds: [emb2]});
                   cturn = false;
                 }else {
@@ -2442,13 +2404,12 @@ clientdc.on("messageCreate", message => {
                   emb2.setImage("https://qph.fs.quoracdn.net/main-qimg-03cc5a7d16ec433984a39059446d5c4b");
                   emb2.addFields({ name: args[1], value: hp1.toString(), inline: true});
                   emb2.addFields({ name: args[2], value: hp2.toString(), inline: true});
-                  emb2.
-                  emb2.setColor("DARK_PURPLE");
+                  emb2.setColor(0x630330);
                   res.edit({embeds: [emb2]});
                   cturn = true;
                 }
-                if(hp1 === 0 || hp2 === 0){clearInterval(int); let emb3 = new Discord.EmbedBuilder(); emb3.addFields({ name: "Winner", value: hp1 === 0 ? args[2] : args[1] }); emb3.setImage("https://www.history.com/.image/c_fill%2Ccs_srgb%2Cfl_progressive%2Ch_400%2Cq_auto:good%2Cw_620/MTU3ODc4NjAzNTMwOTA1MzEx/list-10-things-you-may-not-know-about-gladiators-2.jpg"); emb3.
-                emb3.setColor("GOLD");
+                if(hp1 === 0 || hp2 === 0){clearInterval(int); let emb3 = new Discord.EmbedBuilder(); emb3.addFields({ name: "Winner", value: hp1 === 0 ? args[2] : args[1] }); emb3.setImage("https://www.history.com/.image/c_fill%2Ccs_srgb%2Cfl_progressive%2Ch_400%2Cq_auto:good%2Cw_620/MTU3ODc4NjAzNTMwOTA1MzEx/list-10-things-you-may-not-know-about-gladiators-2.jpg");
+                  emb3.setColor(0xFFD700);
                   res.edit({embeds: [emb3]})
                   let winner;
                   hp1 === 0 ? winner = args[2] : winner = args[1];
@@ -2689,4 +2650,3 @@ clientdc.on("messageCreate", async message => {
       }
     }
 );
-

@@ -7,6 +7,7 @@ const { SlashCommandBuilder,ButtonBuilder,ActionRowBuilder } = require('@discord
 const { REST } = require('@discordjs/rest');
 const { Routes } = require('discord-api-types/v9');
 
+const jsdom = require('jsdom')
 const bible = require("bible-english");
 let portunus = require('romans');
 const http = require("http");
@@ -99,7 +100,7 @@ function updateEmbedMessage(message) {
   let embed = new Discord.EmbedBuilder();
 
   embed.setTitle("Motions");
-  embed.setColor("0xcc0000");
+  embed.setColor("DarkRed");
   embed.setFooter(
       {text:  "discussions powered by our most humble Imperator", iconURL: 'https://cdn.discordapp.com/attachments/548918811391295489/776740280266784778/purpleDR.png'}
   );
@@ -144,7 +145,8 @@ function updateEmbedMessage(message) {
 
 
       secEmb.setTitle("Motions");
-      secEmb.setColor("0xcc0000");
+      secEmb.setColor("DarkRed");
+      secEmb.setColor("DarkRed");
       secEmb.setFooter({text: "Senate Meeting discussions powered by our most humble Imperator", iconURL: 'https://cdn.discordapp.com/attachments/548918811391295489/776740280266784778/purpleDR.png'}
       );
       secEmb.setThumbnail(
@@ -181,7 +183,7 @@ function updateEmbedMessage(message) {
       secEmb = new Discord.EmbedBuilder();
 
       secEmb.setTitle("Motions");
-      secEmb.setColor("0xcc0000");
+      secEmb.setColor("DarkRed");
       secEmb.setThumbnail(
           "https://cdn.discordapp.com/attachments/548918811391295489/776740280266784778/purpleDR.png"
       );
@@ -285,7 +287,7 @@ function updateProvinceMessage() {
       var secEmb = new Discord.EmbedBuilder();
 
       secEmb.setTitle("Provinces");
-      secEmb.setColor("0xcc0000");
+      secEmb.setColor("DarkRed");
       secEmb.setFooter(
           {text:  "discussions powered by our most humble Imperator", iconURL: 'https://cdn.discordapp.com/attachments/548918811391295489/776740280266784778/purpleDR.png'}
       );
@@ -310,6 +312,36 @@ function updateProvinceMessage() {
     }
 
   });
+}
+
+async function fetchCatechismParagraphs() {
+  try {
+    const url = 'https://www.vatican.va/archive/ENG0015/_INDEX.HTM';
+    const response = await axios.get(url);
+
+    // Assuming the paragraphs are enclosed in <p> tags on the page.
+    const paragraphs = response.data.match(/<p>.*?<\/p>/gs);
+
+    if (paragraphs) {
+      const embed = {
+        title: 'Catechism of the Catholic Church',
+        color: 0x0099ff,
+        fields: []
+      };
+
+      paragraphs.forEach((paragraph, index) => {
+        embed.fields.push({ name: `Paragraph ${index + 1}`, value: paragraph });
+      });
+
+      return embed;
+    } else {
+      console.log('Paragraphs not found.');
+      return null;
+    }
+  } catch (error) {
+    console.error('Error fetching data:', error.message);
+    return null;
+  }
 }
 
 function updateRPDate(RPName) {
@@ -402,7 +434,16 @@ function registerSlashCommands() {
       .addStringOption(option => option.setName('first').setDescription('Name of the first Gladiator').setRequired(true))
       .addStringOption(option => option.setName('second').setDescription('Name of the second Gladiator').setRequired(true))
   globalCommands.push(ban,unban,mute,unmute,kick,provinces,showprovinces,challenge);
-  commands.push(motions,smotion,deletemotion,motion,registerGovernor,appointProvince);
+
+  let showCCC = new SlashCommandBuilder()
+      .setName("showcatechism")
+      .setDescription('Displays a Paragraph of the Catechism of the Catholic Church')
+          .setDescription('Fetches a particular paragraph from the Catechism')
+          .addIntegerOption(option =>
+              option.setName('paragraph')
+                  .setDescription('The paragraph number to fetch')
+                  .setRequired(true))
+  commands.push(motions,smotion,deletemotion,motion,registerGovernor,appointProvince,showCCC);
   const clientId = "700662464856981564";
   const guildId = "514135876909924352";
   (async () => {
@@ -435,13 +476,6 @@ clientdc.on("ready", (interaction) => {
     timezone: "Europe/Berlin"
   });
 
-  CronJob.schedule('0 0 * * *', () => {
-    updateRPDate("Medieval");
-  },{
-    scheduled: true,
-    timezone: "Europe/Berlin"
-  });
-
 
 
 
@@ -461,7 +495,7 @@ clientdc.on("ready", (interaction) => {
     timezone: "Europe/Berlin"
   });
 
-  CronJob.schedule('* * * * *', () => {
+  CronJob.schedule('*/5 * * * *', () => {
     updateProvinceIncome();
   },{
     scheduled: true,
@@ -640,7 +674,7 @@ clientdc.on("interactionCreate", async interaction => {
 
         doc.loadInfo().then(() => {
           const sheet = doc.sheetsByIndex[0];
-          sheet.loadCells('A1:J26').then(() => {
+          sheet.loadCells('A1:J27').then(() => {
             //to Calculate income Brackets we fetch the list of all Provinces to determine its order
             let rows = db2.prepare("SELECT * FROM Province ORDER BY income DESC").all();
             let province = db2.prepare('SELECT * FROM Province JOIN Governor ON province.Governor = Governor.gov_ID WHERE province = ?').get(provinceName);
@@ -666,7 +700,7 @@ clientdc.on("interactionCreate", async interaction => {
               }
 
               let provinceIndex = -1;
-              for (let i = 2; i <= 26; i++) {
+              for (let i = 2; i <= 27; i++) {
                 if(sheet.getCellByA1('B'+i).formattedValue === provinceName){
                   provinceIndex = i;
                 }
@@ -700,7 +734,7 @@ clientdc.on("interactionCreate", async interaction => {
       break;
     case "provinces":
 
-      let provinces = createProvinceEmbed("https://cdn.discordapp.com/attachments/543787157127561216/932676494466113626/unknown.png",0,25);
+      let provinces = createProvinceEmbed("https://cdn.discordapp.com/attachments/771315528471806032/1127167638620086352/image.png",0,25);
       const row = new ActionRowBuilder()
           .addComponents(
               new ButtonBuilder()
@@ -790,7 +824,7 @@ clientdc.on("interactionCreate", async interaction => {
         let embed = new Discord.EmbedBuilder();
 
         embed.setTitle("Motions");
-        embed.setColor("0xcc0000");
+        embed.setColor("DarkRed");
         embed.setFooter(
             {text:  "discussions powered by our most humble Imperator", iconURL: 'https://cdn.discordapp.com/attachments/548918811391295489/776740280266784778/purpleDR.png'}
         );
@@ -830,7 +864,7 @@ clientdc.on("interactionCreate", async interaction => {
             var secEmb = new Discord.EmbedBuilder();
 
             secEmb.setTitle("Motions second page");
-            secEmb.setColor("0xcc0000");
+            secEmb.setColor("DarkRed");
             secEmb.setFooter(
                 {text:  "discussions powered by our most humble Imperator", iconURL: 'https://cdn.discordapp.com/attachments/548918811391295489/776740280266784778/purpleDR.png'}
             );
@@ -856,7 +890,7 @@ clientdc.on("interactionCreate", async interaction => {
             var secEmb = new Discord.EmbedBuilder();
 
             secEmb.setTitle("Motions");
-            secEmb.setColor("0xcc0000");
+            secEmb.setColor("DarkRed");
             secEmb.setFooter(
                 {text:  "discussions powered by our most humble Imperator", iconURL: 'https://cdn.discordapp.com/attachments/548918811391295489/776740280266784778/purpleDR.png'}
             );
@@ -881,7 +915,7 @@ clientdc.on("interactionCreate", async interaction => {
       let embed = new Discord.EmbedBuilder();
       const motionId = interaction.options.getNumber('motionid');
       embed.setTitle("Motion ID:" + motionId);
-      embed.setColor("0xcc0000");
+      embed.setColor("DarkRed");
       embed.setFooter(
           {text:  "discussions powered by our most humble Imperator", iconURL: 'https://cdn.discordapp.com/attachments/548918811391295489/776740280266784778/purpleDR.png'}
       );
@@ -997,7 +1031,7 @@ clientdc.on("interactionCreate", async interaction => {
 
                   if (mot[motionId]) {
                     embed.setTitle("Motion number:" + motionId)
-                    embed.addFields({name: "Motion in question", value: mot[motionid], inline: false});
+                    embed.addFields({name: "Motion in question", value: mot[motionId], inline: false});
                   } else if (args2[motionId - mot.length]) {
                     embed.addFields({name: "Motion in question", value: args2[motionId - mot.length], inline: false});
                   } else {
@@ -1163,7 +1197,7 @@ clientdc.on("interactionCreate", async interaction => {
         db2.prepare("INSERT INTO Governor(DiscordID,governor) VALUES(?,?)").run(interaction.options.getString("discordid"),interaction.options.getString("name"))
       } catch (e) {
         console.log(e)
-       interaction.reply("Something went wrong.")
+        interaction.reply("Something went wrong.")
       }
       interaction.reply("Governor "+interaction.options.getString("name")+" successfully added!");
       break;
@@ -1179,6 +1213,21 @@ clientdc.on("interactionCreate", async interaction => {
         interaction.reply("Something went wrong.")
         console.log(e)
       }
+      break;
+
+    case "showcatechism":
+      const paragraph = interaction.options.getInteger('paragraph');
+      const response = await fetch(`https://www.vatican.va/archive/ENG0015/__P${paragraph}.HTM`);
+      const text = await response.text();
+
+      const dom = new JSDOM(text);
+      const content = dom.window.document.querySelectorAll('p')[2].textContent;
+      const CCCembed = new Discord.EmbedBuilder()
+          .setTitle(`Catechism Paragraph ${paragraph}`)
+          .setDescription("test")
+          .setURL(`https://www.vatican.va/archive/ENG0015/__P${paragraph}.HTM`);
+      await interaction.reply({ embeds: [CCCembed] });
+
       break;
     default:
       break;
@@ -1310,7 +1359,7 @@ clientdc.on('interactionCreate', async (button) => {
           );
       await button.update({embeds: [provinces], components: [row]});
     } else if (button.customId === 'pro') {
-      let provinces = createProvinceEmbed("https://cdn.discordapp.com/attachments/543787157127561216/932676494466113626/unknown.png", 0, 25);
+      let provinces = createProvinceEmbed("https://cdn.discordapp.com/attachments/771315528471806032/1127167638620086352/image.png", 0, 25);
       const row = new ActionRowBuilder()
           .addComponents(
               new ButtonBuilder()
@@ -1419,28 +1468,6 @@ clientdc.on("messageReactionAdd",(reaction,user) => {
 
 });
 
-
-clientdc.on("presenceUpdate", (oldPresence, newPresence) => {
-
-  db.all(query, [], (err, rows) => {
-    if (err) {
-      throw err;
-    }
-    rows.forEach(row => {
-      updateDate();
-      if (newPresence.userID === row.DiscordID && row.celebrated === 0) {
-        db.run("UPDATE Birthdates SET celebrated = 1 WHERE bID = " + row.bID);
-        clientdc.channels.cache
-            .get("514135876909924354")
-            .send(
-                "happy Birthday " +
-                newPresence.user.toString() +
-                " :partying_face: :confetti_ball: :tada: "
-            );
-      }
-    });
-  });
-});
 function getUser(mention) {
   if (!mention) return;
 

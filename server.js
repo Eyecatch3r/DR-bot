@@ -19,7 +19,7 @@ var CronJob = require('node-cron');
 const ms = require('ms');
 const { GoogleSpreadsheet } = require("google-spreadsheet");
 const doc = new GoogleSpreadsheet('1Mci7KdAbGP3s_VWzzTCvLT3wEDN7XbO_zoRrHr0_Lfw');
-const db2 = require('better-sqlite3-with-prebuilds')('DR.db', {timeout: 5000});
+const db2 = require('better-sqlite3')('DR.db', {timeout: 5000});
 
 
 doc.useServiceAccountAuth({
@@ -75,12 +75,12 @@ async function updateProvinceIncome(){
     });
     const sheetPop = doc.sheetsByIndex[3];
     sheetPop.loadCells('AN4:AO29').then(() => {
-      for (let i = 4; i <= 28; i++) {
+      for (let i = 4; i <= 29; i++) {
 
         db.run(`UPDATE Province SET population = '${sheetPop.getCellByA1('AN' + i).formattedValue}' WHERE prov_id = '${i - 3}'`);
       }
 
-      for (let i = 4; i <= 29; i++) {
+      for (let i = 4; i <= 28; i++) {
         db.run(`UPDATE Province SET population_growth = '${sheetPop.getCellByA1('AO' + i).formattedValue}' WHERE prov_id = ${i - 3}`);
       }
     });
@@ -208,7 +208,7 @@ function postMussoFact(){
   let embed = new Discord.EmbedBuilder();
 
   embed.setTitle("Mussolini facts");
-  embed.setColor("0x000000");
+  embed.setColor("#000000");
   embed.setFooter({text: "Facts powered by our most humble Imperator", iconURL:  "https://cdn.discordapp.com/attachments/548918811391295489/776740280266784778/purpleDR.png"})
 
 
@@ -297,11 +297,11 @@ function updateProvinceMessage() {
       msgs.forEach(msg2 => embed.addFields({ name: "Provinces", value:  msg2+"\n"+msgs.indexOf(msg2), inline: false}));
       clientdc.guilds.cache.get("514135876909924352").channels.cache
           .get("817410470700515338")
-          .messages.cache.get({ around: "817410715018854410", limit: 1 })
+          .messages.fetch({ around: "817410715018854410", limit: 2 })
           .then(messages => messages.first().edit({embeds: [embed]}));
       clientdc.guilds.cache.get("514135876909924352").channels.cache
           .get("817410470700515338")
-          .messages.cache.get({ around: "817411093537619979", limit: 1 })
+          .messages.fetch({ around: "817411093537619979", limit: 1 })
           .then(messages => messages.first().edit({embeds: [secEmb]}));
     }
 
@@ -402,11 +402,11 @@ function registerSlashCommands() {
   let showCCC = new SlashCommandBuilder()
       .setName("showcatechism")
       .setDescription('Displays a Paragraph of the Catechism of the Catholic Church')
-          .setDescription('Fetches a particular paragraph from the Catechism')
-          .addIntegerOption(option =>
-              option.setName('paragraph')
-                  .setDescription('The paragraph number to fetch')
-                  .setRequired(true))
+      .setDescription('Fetches a particular paragraph from the Catechism')
+      .addIntegerOption(option =>
+          option.setName('paragraph')
+              .setDescription('The paragraph number to fetch')
+              .setRequired(true))
   commands.push(motions,smotion,deletemotion,motion,registerGovernor,appointProvince,showCCC);
   const clientId = "700662464856981564";
   const guildId = "514135876909924352";
@@ -698,7 +698,8 @@ clientdc.on("interactionCreate", async interaction => {
       break;
     case "provinces":
 
-      let provinces = createProvinceEmbed("https://cdn.discordapp.com/attachments/771315528471806032/1127167638620086352/image.png",0,27);
+      let provinces = createProvinceEmbed("https://cdn.discordapp.com/attachments/771315528471806032/1127167638620086352/image.png",0,25);
+
       const row = new ActionRowBuilder()
           .addComponents(
               new ButtonBuilder()
@@ -710,7 +711,13 @@ clientdc.on("interactionCreate", async interaction => {
                   .setLabel('Faction Map'),new ButtonBuilder()
                   .setCustomId('cul')
                   .setStyle('Success')
-                  .setLabel('Culture Map')
+                  .setLabel('Culture Map'),new ButtonBuilder()
+                  .setCustomId('pre')
+                  .setStyle('Primary')
+                  .setLabel('⬅'),new ButtonBuilder()
+                  .setCustomId('nex')
+                  .setStyle('Primary')
+                  .setLabel('➡')
 
           );
       interaction.reply({embeds: [provinces], components: [row]});
@@ -1209,12 +1216,12 @@ function provinceIncome(){
     let emb = new Discord.EmbedBuilder();
     let emb2 = new Discord.EmbedBuilder();
     let over25 = false;
-    emb.setColor("0x00008b");
+    emb.setColor("#00008b");
 
     emb.setThumbnail("https://cdn.discordapp.com/attachments/548918811391295489/776740280266784778/purpleDR.png");
     emb.setAuthor({name: "𝐈𝐌𝐏𝐄𝐑𝐀𝐓𝐎𝐑·𝐏𝐕𝐁𝐋𝐈𝐕𝐒", iconURL: 'https://cdn.glitch.com/24cdd29f-170e-4ac8-9dc2-8abc1cbbaeaa%2Fimageedit_1_3956664875.png?v=1588186424473'});
 
-    emb2.setColor("0x00008b");
+    emb2.setColor("#00008b");
 
     emb2.setThumbnail("https://cdn.discordapp.com/attachments/548918811391295489/776740280266784778/purpleDR.png");
     emb2.setAuthor({name: "𝐈𝐌𝐏𝐄𝐑𝐀𝐓𝐎𝐑·𝐏𝐕𝐁𝐋𝐈𝐕𝐒", iconURL: 'https://cdn.glitch.com/24cdd29f-170e-4ac8-9dc2-8abc1cbbaeaa%2Fimageedit_1_3956664875.png?v=1588186424473'});
@@ -1309,58 +1316,54 @@ function collectTaxes(){
 
 clientdc.on('interactionCreate', async (button) => {
   if (button.isButton()) {
-    if (button.customId === 'fac') {
-      let provinces = createProvinceEmbed("https://cdn.discordapp.com/attachments/543787157127561216/932970514866143262/unknown.png", 0, 25);
-      const row = new ActionRowBuilder()
-          .addComponents(
-              new ButtonBuilder()
-                  .setCustomId('pro')
-                  .setStyle('Primary')
-                  .setLabel('Province Map'),new ButtonBuilder()
-                  .setCustomId('fac')
-                  .setStyle('Secondary') //default: blurple
-                  .setLabel('Faction Map'),new ButtonBuilder()
-                  .setCustomId('cul')
-                  .setStyle('Success')
-                  .setLabel('Culture Map')
-
-          );
-      await button.update({embeds: [provinces], components: [row]});
-    } else if (button.customId === 'pro') {
-      let provinces = createProvinceEmbed("https://cdn.discordapp.com/attachments/771315528471806032/1127167638620086352/image.png", 0, 25);
-      const row = new ActionRowBuilder()
-          .addComponents(
-              new ButtonBuilder()
-                  .setCustomId('pro')
-                  .setStyle('Primary')
-                  .setLabel('Province Map'),new ButtonBuilder()
-                  .setCustomId('fac')
-                  .setStyle('Secondary') //default: blurple
-                  .setLabel('Faction Map'),new ButtonBuilder()
-                  .setCustomId('cul')
-                  .setStyle('Success')
-                  .setLabel('Culture Map')
-
-          );
-      await button.update({embeds: [provinces], components: [row]});
-    } else if (button.customId === 'cul') {
-      let provinces = createProvinceEmbed("https://cdn.discordapp.com/attachments/514135876909924354/813764720607625276/unknown.png", 0, 25);
-      const row = new ActionRowBuilder()
-          .addComponents(
-              new ButtonBuilder()
-                  .setCustomId('pro')
-                  .setStyle('Primary')
-                  .setLabel('Province Map'),new ButtonBuilder()
-                  .setCustomId('fac')
-                  .setStyle('Secondary') //default: blurple
-                  .setLabel('Faction Map'),new ButtonBuilder()
-                  .setCustomId('cul')
-                  .setStyle('Success')
-                  .setLabel('Culture Map')
-
-          );
-      await button.update({embeds: [provinces], components: [row]});
+    switch (button.customId) {
+      case 'fac':
+        var imageUrl = "https://cdn.discordapp.com/attachments/543787157127561216/932970514866143262/unknown.png";
+        break;
+      case 'pre':
+        var imageUrl = "https://cdn.discordapp.com/attachments/771315528471806032/1127167638620086352/image.png";
+        break;
+      case 'pro':
+        var imageUrl = "https://cdn.discordapp.com/attachments/771315528471806032/1127167638620086352/image.png";
+        break;
+      case 'cul':
+        var imageUrl = "https://cdn.discordapp.com/attachments/514135876909924354/813764720607625276/unknown.png";
+        break;
+      case 'nex':
+        var imageUrl = "https://cdn.discordapp.com/attachments/771315528471806032/1127167638620086352/image.png";
+        var embedIndex = { indexStart: 25, indexEnd: 26 };
+        break;
     }
+    let provinces
+    if (embedIndex){
+      provinces = createProvinceEmbed(imageUrl, embedIndex.indexStart, embedIndex.indexEnd);
+    }else {
+      provinces = createProvinceEmbed(imageUrl, 0, 25);
+    }
+    const row = new ActionRowBuilder()
+        .addComponents(
+            new ButtonBuilder()
+                .setCustomId('pro')
+                .setStyle('Primary')
+                .setLabel('Province Map'),
+            new ButtonBuilder()
+                .setCustomId('fac')
+                .setStyle('Secondary')
+                .setLabel('Faction Map'),
+            new ButtonBuilder()
+                .setCustomId('cul')
+                .setStyle('Success')
+                .setLabel('Culture Map'),new ButtonBuilder()
+                .setCustomId('pre')
+                .setStyle('Primary')
+                .setLabel('⬅'),new ButtonBuilder()
+                .setCustomId('nex')
+                .setStyle('Primary')
+                .setLabel('➡')
+        );
+
+    await button.update({ embeds: [provinces], components: [row] });
+
   }
 });
 //simple test query
@@ -1724,7 +1727,7 @@ clientdc.on("messageCreate", message => {
                     }
                   }
                   emb.addFields({ name: d, value:  hp2, inline: true});
-                  emb.setColor("0xFFFFFF");
+                  emb.setColor("#FFFFFF");
                   message.channel.send({ embeds: [emb] }).then(res => {
                     let cturn = false;
 
@@ -1787,7 +1790,7 @@ clientdc.on("messageCreate", message => {
                         emb2.addFields({ name: a, value:  hp1, inline: true});
                         emb2.addFields({ name: d, value:  hp2, inline: true});
                         emb2.
-                        emb2.setColor("0x8B0000");
+                        emb2.setColor("#8B0000");
                         res.edit(emb2);
                         cturn = false;
                       } else {
@@ -1801,7 +1804,7 @@ clientdc.on("messageCreate", message => {
                         emb2.addFields({ name: a, value:  hp1, inline: true});
                         emb2.addFields({ name: d, value:  hp2, inline: true});
                         emb2.
-                        emb2.setColor("0x8B0000");
+                        emb2.setColor("#8B0000");
                         res.edit(emb2);
                         cturn = true;
                       }
@@ -1812,7 +1815,7 @@ clientdc.on("messageCreate", message => {
                         emb3.addFields({ name: "Winner", value:  hp1 === 0 ? d : a });
                         emb3.setImage("https://digitalmapsoftheancientworld.files.wordpress.com/2019/02/2118.png");
                         emb3.
-                        emb3.setColor("0xFFDF00");
+                        emb3.setColor("#FFDF00");
                         res.edit(emb3).catch(err => console.log(err))
                       }
 
@@ -2002,7 +2005,7 @@ clientdc.on("messageCreate", message => {
 
   if(message.content.toLowerCase() === command+"lb"){
     let emb = new Discord.EmbedBuilder();
-    emb.setColor("0xe94606");
+    emb.setColor("#e94606");
     emb.setAuthor({name: "Leaderboard for the most Generalissimo reactions",iconURL: message.author.avatarURL()});
 
     db.all('SELECT * FROM Generals ORDER BY generals DESC',[],(err,rows) => {
@@ -2119,7 +2122,7 @@ clientdc.on("messageCreate", message => {
 
           var emb = new Discord.EmbedBuilder();
           emb.setTitle("SCRIPTVRA SACRA");
-          emb.setColor("0xe2b007");
+          emb.setColor("#e2b007");
           emb.setAuthor({name: "𝐈𝐌𝐏𝐄𝐑𝐀𝐓𝐎𝐑·𝐏𝐕𝐁𝐋𝐈𝐕𝐒",iconURL: "https://cdn.glitch.com/24cdd29f-170e-4ac8-9dc2-8abc1cbbaeaa%2Fimageedit_1_3956664875.png?v=1588186424473"});
           emb.setThumbnail("https://i.imgur.com/xGz7rVU.png");
 
@@ -2129,7 +2132,7 @@ clientdc.on("messageCreate", message => {
 
           var emb = new Discord.EmbedBuilder();
           emb.setTitle("SCRIPTVRA SACRA");
-          emb.setColor("0xe2b007");
+          emb.setColor("#e2b007");
           emb.setAuthor({name: "𝐈𝐌𝐏𝐄𝐑𝐀𝐓𝐎𝐑·𝐏𝐕𝐁𝐋𝐈𝐕𝐒", iconURL: "https://cdn.glitch.com/24cdd29f-170e-4ac8-9dc2-8abc1cbbaeaa%2Fimageedit_1_3956664875.png?v=1588186424473"});
           emb.setThumbnail("https://i.imgur.com/xGz7rVU.png");
 
@@ -2221,7 +2224,7 @@ clientdc.on("messageCreate", message => {
             emb.setImage("https://qph.fs.quoracdn.net/main-qimg-03cc5a7d16ec433984a39059446d5c4b");
             emb.addFields({ name: message.author.username, value: "100", inline: true});
             emb.addFields({ name: args[1], value: "100", inline: true});
-            emb.setColor("0xFFFFFF");
+            emb.setColor("#FFFFFF");
             message.channel.send({ embeds: [emb] }).then(res => {
               let cturn = Math.random() < 0.5;
               let hp1 = 100;
@@ -2280,7 +2283,7 @@ clientdc.on("messageCreate", message => {
             emb.setImage("https://qph.fs.quoracdn.net/main-qimg-03cc5a7d16ec433984a39059446d5c4b");
             emb.addFields({ name: args[1], value: "100", inline: true});
             emb.addFields({ name: args[2], value: "100", inline: true});
-            emb.setColor("0xFFFFFF");
+            emb.setColor("#FFFFFF");
             message.channel.send({ embeds: [emb] }).then(res => {
               let cturn = false;
               let hp1 = 100;

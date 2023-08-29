@@ -3,23 +3,20 @@
 
 // init project
 
-const { SlashCommandBuilder,ButtonBuilder,ActionRowBuilder } = require('@discordjs/builders');
+const { SlashCommandBuilder,ButtonBuilder,ActionRowBuilder, EmbedAuthorOptions} = require('@discordjs/builders');
 const { REST } = require('@discordjs/rest');
 const { Routes } = require('discord-api-types/v9');
 
-const jsdom = require('jsdom')
+const {JSDOM} = require('jsdom')
 const bible = require("bible-english");
 let portunus = require('romans');
 const http = require("http");
 require('dotenv').config()
-const can = require("canvas");
 const { Client } = require('unb-api');
 const client = new Client('eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJhcHBfaWQiOiI3Mjg5NjU5MTQ0NzY4MDY2ODUiLCJpYXQiOjE1OTM4Njk0MTd9._E6dCtkLswWgDySTPihh32Al9tvHPxFuxqY_eBk8waQ');
 const GuildID = "514135876909924352";
 var CronJob = require('node-cron');
-const ImageCharts = require('image-charts');
 const ms = require('ms');
-let numberOfProvinces;
 const { GoogleSpreadsheet } = require("google-spreadsheet");
 const doc = new GoogleSpreadsheet('1Mci7KdAbGP3s_VWzzTCvLT3wEDN7XbO_zoRrHr0_Lfw');
 const db2 = require('better-sqlite3-with-prebuilds')('DR.db', {timeout: 5000});
@@ -29,16 +26,13 @@ doc.useServiceAccountAuth({
   client_email: "dr-bot@dr-bot-313315.iam.gserviceaccount.com",
   private_key: "-----BEGIN PRIVATE KEY-----\nMIIEvAIBADANBgkqhkiG9w0BAQEFAASCBKYwggSiAgEAAoIBAQD5hHjK2Lw0MDtE\ns4XCKFRP8gfRXquD4xBZDZoScRWWHrV0jo5ar38SjocO2MoTib0TMOiq9lg4/qfo\nd7sloOB6jUuH5EAspN9K3G2PQmU/a8b+00ROUd7mqYmy3BplEE/Hx1CUqBIfcsl0\nX+JafHW9l7/5Oaf0pX9c/pmKMNJi6l0cC/o4QM1Gtqmi3D5GAe19xQW3wCrvRmpE\nRBk4Bwt3yeD6oKoORX9ac5771QeCbP47GtohTF2s4bayeohdlfz5Sv7SrFGQiiE9\nMmHfNffbIY0XyV/WZNh5vuVi3B2IACGUsoPn4mm+UCDBF2ZGZC97ZVZfrFPYPXc2\n7tiNZOQpAgMBAAECggEAec5ijVu6nJuDA2nD/WFkr1ZO3LWjcxHQtDiAo0oTKKK7\nIDhLZBfSJ8PuSKAqHdmatJimrHbv4HroiwKQGLFthEYfvin97g1aeBgdX9cgyBIc\nJeAKs1UiRGY1M1xhgj6xQ6yYOMnHdxS5JZd9T4D8lV5UOB0eUb7M6x/a4mws+F3L\n647w0jBKBMhMvDtJWjwXcPa2pI3vvneAJJfAos9GqLhW0KM6f3chKI8EkTlCYzXf\n+SBnXFJK+ywAkqH5PGWIzvgTKGAugqMtF3C3DmIVuBOQbbFm/7H9ae8XSuTTKSR1\nezMkdn+Q/MCoIte9r8js9WNV/vA8/zmGdLtUZE1StQKBgQD+0iJVnOi9mmVPNUt4\nBlAz0txYoLUOJOt4MX6t0L2YvybUwCOazBSCwxWBknCyeNnoFQjrqHr8j5fpWUdL\n5BxSW2xN2tq2kHgqZpCtx9kx7vVmkiGKmbxqZy8BxYH6CKbYsORoxm1TUydgEpPY\ni5nePNorHGXFiO7x3MejTzrpHwKBgQD6rA4k2Y6E/HgBa5bDVwov7M9gtAJVCBIf\n8lU5pOKU9fRPK9pb4sHozjG4XRg4/tmg5BvNQkXRguL7UDva7BYPHVjByLvXdHdV\nIlRrKZryJ6nIK+CXgrq2jY+ZaBNUqyEfmoMXnuyxoEDvUeUEyp7xIf2z9maiq6ij\noPRQ3BzhtwKBgB/pErGj76Vmw08S/ntuVvbWbg+POH0n9HDdyd5caJHLRkKYOR02\nd08UvQm32/MNnUQp9i8ErzoXhU+MhZgkXcOWfU6WnJMGLnYo1+9bOoC9Su/oVtjz\nfZvZhhJzuF4mXTZ/mGrihmhL3n9ydB9HBCLHfg6uBLSi/EE/g6SY1GjDAoGAfpa0\n7dcQKgh1cgIrOKqT8m/cqjE9nENfI9L1Rw8FfcRXhEPZGd4BntfCNCCPQvkwXhfU\nEmwNZih7B/8UuxHOcgOX9wSwF7YxLUUQ7K0uGmv9SaEe4mSadeY3RnlQicmCCLu2\nyA7x6SHMqQ7qYOkSKyPHQ0KDwlJ972Qw/USrMTECgYBFaXCjbmy5JfPiVmawUdod\nuBgtUzAjmQHusyY6ZABLnBqqg4AkfpZu+642RwsWIZghkwTdR1C1fXHBmxo6TBL5\n1uNzEGrnuEyl9vy1vFfcjuERPGauNYM1F2cQ0m+TuNjEDU6mxO9BzKRsNEQ7OrqD\nF/eBdUnQpaDL0xbV4U92VA==\n-----END PRIVATE KEY-----\n",
 
-});
+})
 //init sqlite API
 const dbFile = "./DR.db";
 const sqlite3 = require("sqlite3").verbose();
 const db = new sqlite3.Database(dbFile);
-const randomfacts = require('@dpmcmlxxvi/randomfacts');
 const wikiFacts = require('wikifakt');
-const tr = require('translate');
-tr.key = 'trnsl.1.1.20200515T222139Z.a68c11f6ccb16bd4.b2bb25b5f6b3c103701bbe0015c7998ab237fa98';
-tr.engine = 'yandex';
+
 
 const arrayList = require("arraylist");
 const Discord = require("discord.js");
@@ -74,19 +68,19 @@ async function updateProvinceIncome(){
   doc.loadInfo().then(() => {
 
     const sheet = doc.sheetsByIndex[0];
-    sheet.loadCells('A1:U26').then(() => {
-      for (let i = 2; i <= 26; i++) {
+    sheet.loadCells('A1:U27').then(() => {
+      for (let i = 2; i <= 27; i++) {
         db.run(`UPDATE Province SET income = ${sheet.getCellByA1('S' + i).formattedValue} WHERE prov_id = ${i - 1}`);
       }
     });
     const sheetPop = doc.sheetsByIndex[3];
-    sheetPop.loadCells('AN4:AO28').then(() => {
+    sheetPop.loadCells('AN4:AO29').then(() => {
       for (let i = 4; i <= 28; i++) {
 
         db.run(`UPDATE Province SET population = '${sheetPop.getCellByA1('AN' + i).formattedValue}' WHERE prov_id = '${i - 3}'`);
       }
 
-      for (let i = 4; i <= 28; i++) {
+      for (let i = 4; i <= 29; i++) {
         db.run(`UPDATE Province SET population_growth = '${sheetPop.getCellByA1('AO' + i).formattedValue}' WHERE prov_id = ${i - 3}`);
       }
     });
@@ -312,36 +306,6 @@ function updateProvinceMessage() {
     }
 
   });
-}
-
-async function fetchCatechismParagraphs() {
-  try {
-    const url = 'https://www.vatican.va/archive/ENG0015/_INDEX.HTM';
-    const response = await axios.get(url);
-
-    // Assuming the paragraphs are enclosed in <p> tags on the page.
-    const paragraphs = response.data.match(/<p>.*?<\/p>/gs);
-
-    if (paragraphs) {
-      const embed = {
-        title: 'Catechism of the Catholic Church',
-        color: 0x0099ff,
-        fields: []
-      };
-
-      paragraphs.forEach((paragraph, index) => {
-        embed.fields.push({ name: `Paragraph ${index + 1}`, value: paragraph });
-      });
-
-      return embed;
-    } else {
-      console.log('Paragraphs not found.');
-      return null;
-    }
-  } catch (error) {
-    console.error('Error fetching data:', error.message);
-    return null;
-  }
 }
 
 function updateRPDate(RPName) {
@@ -734,7 +698,7 @@ clientdc.on("interactionCreate", async interaction => {
       break;
     case "provinces":
 
-      let provinces = createProvinceEmbed("https://cdn.discordapp.com/attachments/771315528471806032/1127167638620086352/image.png",0,25);
+      let provinces = createProvinceEmbed("https://cdn.discordapp.com/attachments/771315528471806032/1127167638620086352/image.png",0,27);
       const row = new ActionRowBuilder()
           .addComponents(
               new ButtonBuilder()
@@ -1224,8 +1188,12 @@ clientdc.on("interactionCreate", async interaction => {
       const content = dom.window.document.querySelectorAll('p')[2].textContent;
       const CCCembed = new Discord.EmbedBuilder()
           .setTitle(`Catechism Paragraph ${paragraph}`)
-          .setDescription("test")
-          .setURL(`https://www.vatican.va/archive/ENG0015/__P${paragraph}.HTM`);
+          .setDescription(content)
+          .setURL(`https://www.vatican.va/archive/ENG0015/__P${paragraph}.HTM`)
+          .setColor("Gold")
+          .setFooter({text: "Pontifex Bovio I", iconURL: 'https://cdn.discordapp.com/attachments/548918811391295489/776740280266784778/purpleDR.png'})
+          .setAuthor({name: "Catechismus Catholicae Ecclesiae", iconURL: "https://cdn.discordapp.com/attachments/704000578568716368/1135879059285479494/png-transparent-chi-rho-symbol-christianity-symbol-miscellaneous-angle-text-removebg-preview.png"})
+          .setThumbnail("https://cdn.discordapp.com/attachments/704000578568716368/1135868008674381844/city-logo-flag-vatican-city-flag-of-vatican-city-flag-of-kazakhstan-2018-video-games-flags-of-the-world-png-clipart-removebg-preview.png")
       await interaction.reply({ embeds: [CCCembed] });
 
       break;
@@ -2099,44 +2067,9 @@ clientdc.on("messageCreate", message => {
           }); });
     message.channel.send("candidate manually inserted");
   }
-  if(message.content.includes(command+"random"))
-  {
-    let statement = "";
-    let args = message.content.split(" ");
-    for (var i = 1; i < args.length; i++) {
-      statement += " "+args[i];
-    }
 
-    let emb = new Discord.EmbedBuilder();
-    emb.setColor(message.member.displayHexColor);
-    emb.setDescription(randomfacts.make(statement));
-    emb.setTitle("𝐈𝐌𝐏𝐄𝐑𝐀𝐓𝐎𝐑·𝐏𝐕𝐁𝐋𝐈𝐕𝐒","https://cdn.glitch.com/24cdd29f-170e-4ac8-9dc2-8abc1cbbaeaa%2Fimageedit_1_3956664875.png?v=1588186424473");
-    message.channel.send({ embeds: [emb] });
 
-  }
 
-  if(message.content.toLowerCase().includes(command+"chart"))
-  {
-    let args = message.content.split(" ");
-    let tit = "";
-    let val = "t:";
-    for(let i = 1; i < args.length; i++)
-    {
-      if(i % 2 === 0){val += args[i]+","}else{tit += args[i]+"|";}
-
-    }
-
-    console.log(tit+"\n"+val);
-    let pieChart = ImageCharts().cht('p3').chs('250x190') // 700px x 190px
-        .chd(val) // 2 data points: 60 and 40
-        .chl(tit).chtt("chart").toURL();
-    let attachment = new Discord.MessageAttachment(pieChart,"test.png");
-    let emb = new Discord.EmbedBuilder();
-    emb.setImage(pieChart);
-
-    message.channel.send({ embeds: [emb] });
-
-  }
 
 
   if(message.content.toLowerCase().includes(command+"wiki"))
@@ -2209,65 +2142,7 @@ clientdc.on("messageCreate", message => {
 
 
   }
-  if(message.content.toLowerCase().includes(command+"quote"))
-  {
-    var args = message.content.split(" ");
-    let arg = "";
-    for(var i = 1; i<args.length; i++){arg += " "+args[i];}
 
-    const canvas = can.createCanvas(700, 250);
-    const ctx = canvas.getContext('2d');
-
-    const background =  new can.Image();
-    background.src = './Rome.jpg';
-    if(true){
-      //ctx.drawImage(background, 0, 0, canvas.width, canvas.height);
-    }
-
-    ctx.strokeStyle = '#ffffff';
-
-    ctx.fillRect(0, 0, canvas.width, canvas.height);
-    ctx.strokeRect(0,0,canvas.width,canvas.height);
-
-    // Assign the decided font to the canvas
-    ctx.font = applyText(canvas, arg,60);
-    ctx.fillStyle = '#ffffff';
-    ctx.fillText(arg, canvas.width / 3, canvas.height / 3.5);
-
-    const author = message.guild.members.cache.get(message.author.id).displayName;
-    ctx.font = applyText(canvas,author,15);
-
-
-    ctx.fillText("- "+author+"-  \n"+dateformat("longDate"), canvas.width / 2, canvas.height / 1.1);
-
-    // Pick up the pen
-    ctx.beginPath();
-    const gradient = ctx.createRadialGradient(165, 165, 0,
-        225, 225, 100);
-
-    // Opaque white in the middle
-    gradient.addColorStop(0, "transparent");
-    gradient.addColorStop(1, "#000");
-
-    ctx.globalCompositeOperation = 'source-atop';
-    ctx.fillStyle = gradient;
-    // Start the arc to form a circle
-    ctx.arc(125, 125, 100, 0, Math.PI * 2, true);
-    // Put the pen down
-    ctx.closePath();
-    // Clip off the region you drew on
-    ctx.clip();
-
-    const avatar = new can.Image();
-    avatar.src = message.author.displayAvatarURL({ format: 'png' });
-    avatar.onload = () => {ctx.drawImage(avatar, 25, 25, 200, 200);
-
-
-      const attachment = new Discord.MessageAttachment(canvas.toBuffer(), 'quote.png');
-
-      message.channel.send(attachment);
-    }
-  }
 
   // If the message is "ping"
   if (message.content === "ping") {

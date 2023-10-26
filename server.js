@@ -353,6 +353,12 @@ function registerSlashCommands() {
       .setDescription('propose a motion to the Senate')
       .addStringOption(option => option.setName('motion').setDescription('the proposed motion').setRequired(true))
 
+
+  let registerCandidates = new SlashCommandBuilder()
+      .setName('registercandidates')
+      .setDescription('registers election candidates')
+      .addStringOption(option => option.setName('election').setDescription('what type of election').setRequired(true))
+
   let globalCommands = [];
 
   let mute = new SlashCommandBuilder()
@@ -407,7 +413,7 @@ function registerSlashCommands() {
           option.setName('paragraph')
               .setDescription('The paragraph number to fetch')
               .setRequired(true))
-  commands.push(motions,smotion,deletemotion,motion,registerGovernor,appointProvince,showCCC);
+  commands.push(motions,smotion,deletemotion,motion,registerGovernor,appointProvince,showCCC,registerCandidates);
   const clientId = "700662464856981564";
   const guildId = "514135876909924352";
   (async () => {
@@ -1204,6 +1210,26 @@ clientdc.on("interactionCreate", async interaction => {
       await interaction.reply({ embeds: [CCCembed] });
 
       break;
+
+    case "registercandidates":
+
+      let election = interaction.options.getString("election")
+
+      const candidateEmb = new Discord.EmbedBuilder()
+          .setTitle(`Register for ${election}`)
+          .setColor("DarkRed")
+          .setThumbnail("https://media.discordapp.net/attachments/1066485143700774974/1067049962245992469/Blobby_Discordium_Romanum_senate_meeting_21605f84-2d81-4933-8b90-c396b6c6d41a.png?width=837&height=837")
+
+      const candidateButton = new ActionRowBuilder()
+          .addComponents(
+              new ButtonBuilder()
+                  .setCustomId('can')
+                  .setStyle('Primary')
+                  .setLabel('Candidate!')
+
+          );
+      await interaction.reply({ embeds: [candidateEmb] ,components: [candidateButton] });
+      break;
     default:
       break;
   }});
@@ -1230,13 +1256,15 @@ function provinceIncome(){
       let currentTaxrate = i < 5? taxRateTop5: taxRate;
       if (rows[i].DiscordID === '325296044739133450') currentTaxrate = 0;
       console.log(String(rows[i].DiscordID));
+      console.log(String(rows[i].province));
       console.log(i);
       if(incomeUntaxed !== 0){
         if (currentTaxrate !== 0) {client.editUserBalance(GuildID, "700662464856981564", { cash: 0, bank: incomeUntaxed*currentTaxrate}).catch(error => console.log(error))};
         totalIncomeAllProvincesBrutto += incomeUntaxed;
         incomeUntaxed *= (1 - currentTaxrate);
         incomeUntaxed = rows[i].Boosted? incomeUntaxed+incomeUntaxed*0.01 : incomeUntaxed;
-        parseInt(rows[i].Admin) !== 0? client.editUserBalance(GuildID, String(rows[i].Admin), { cash: 0, bank: incomeUntaxed*0.3}):
+        console.log(rows[i].Admin)
+        parseInt(rows[i].Admin) !== 0? client.editUserBalance(GuildID, String(rows[i].Admin), { cash: 0, bank: incomeUntaxed*0.3}).catch(error => console.log(error)):
             totalIncomeAllProvincesNetto += incomeUntaxed;
         client.editUserBalance(GuildID, String(rows[i].DiscordID), { cash: 0, bank: incomeUntaxed}).catch(error => console.log(error));
 
@@ -1315,56 +1343,64 @@ function collectTaxes(){
 }
 
 clientdc.on('interactionCreate', async (button) => {
+  let provincebuttons = ['fac','pre','pro','cul','nex'];
   if (button.isButton()) {
-    switch (button.customId) {
-      case 'fac':
-        var imageUrl = "https://cdn.discordapp.com/attachments/543787157127561216/932970514866143262/unknown.png";
-        break;
-      case 'pre':
-        var imageUrl = "https://cdn.discordapp.com/attachments/771315528471806032/1127167638620086352/image.png";
-        break;
-      case 'pro':
-        var imageUrl = "https://cdn.discordapp.com/attachments/771315528471806032/1127167638620086352/image.png";
-        break;
-      case 'cul':
-        var imageUrl = "https://cdn.discordapp.com/attachments/514135876909924354/813764720607625276/unknown.png";
-        break;
-      case 'nex':
-        var imageUrl = "https://cdn.discordapp.com/attachments/771315528471806032/1127167638620086352/image.png";
-        var embedIndex = { indexStart: 25, indexEnd: 26 };
-        break;
-    }
-    let provinces
-    if (embedIndex){
-      provinces = createProvinceEmbed(imageUrl, embedIndex.indexStart, embedIndex.indexEnd);
-    }else {
-      provinces = createProvinceEmbed(imageUrl, 0, 25);
-    }
-    const row = new ActionRowBuilder()
-        .addComponents(
-            new ButtonBuilder()
-                .setCustomId('pro')
-                .setStyle('Primary')
-                .setLabel('Province Map'),
-            new ButtonBuilder()
-                .setCustomId('fac')
-                .setStyle('Secondary')
-                .setLabel('Faction Map'),
-            new ButtonBuilder()
-                .setCustomId('cul')
-                .setStyle('Success')
-                .setLabel('Culture Map'),new ButtonBuilder()
-                .setCustomId('pre')
-                .setStyle('Primary')
-                .setLabel('⬅'),new ButtonBuilder()
-                .setCustomId('nex')
-                .setStyle('Primary')
-                .setLabel('➡')
-        );
+  if (button.id in provincebuttons){
 
-    await button.update({ embeds: [provinces], components: [row] });
+      switch (button.customId) {
+        case 'fac':
+          var imageUrl = "https://cdn.discordapp.com/attachments/543787157127561216/932970514866143262/unknown.png";
+          break;
+        case 'pre':
+          var imageUrl = "https://cdn.discordapp.com/attachments/771315528471806032/1127167638620086352/image.png";
+          break;
+        case 'pro':
+          var imageUrl = "https://cdn.discordapp.com/attachments/771315528471806032/1127167638620086352/image.png";
+          break;
+        case 'cul':
+          var imageUrl = "https://cdn.discordapp.com/attachments/514135876909924354/813764720607625276/unknown.png";
+          break;
+        case 'nex':
+          var imageUrl = "https://cdn.discordapp.com/attachments/771315528471806032/1127167638620086352/image.png";
+          var embedIndex = { indexStart: 25, indexEnd: 26 };
+          break;
+      }
+      let provinces
+      if (embedIndex){
+        provinces = createProvinceEmbed(imageUrl, embedIndex.indexStart, embedIndex.indexEnd);
+      }else {
+        provinces = createProvinceEmbed(imageUrl, 0, 25);
+      }
+      const row = new ActionRowBuilder()
+          .addComponents(
+              new ButtonBuilder()
+                  .setCustomId('pro')
+                  .setStyle('Primary')
+                  .setLabel('Province Map'),
+              new ButtonBuilder()
+                  .setCustomId('fac')
+                  .setStyle('Secondary')
+                  .setLabel('Faction Map'),
+              new ButtonBuilder()
+                  .setCustomId('cul')
+                  .setStyle('Success')
+                  .setLabel('Culture Map'),new ButtonBuilder()
+                  .setCustomId('pre')
+                  .setStyle('Primary')
+                  .setLabel('⬅'),new ButtonBuilder()
+                  .setCustomId('nex')
+                  .setStyle('Primary')
+                  .setLabel('➡')
+          );
 
+      await button.update({ embeds: [provinces], components: [row] });
+
+
+  } else {
+    await button.member.roles.add('703401102795604079')
+    await button.reply({content: 'Successfully registered as a candidate', ephemeral: true})
   }
+}
 });
 //simple test query
 let sql = `SELECT * FROM Birthdates;`;

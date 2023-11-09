@@ -1345,7 +1345,7 @@ function collectTaxes(){
 clientdc.on('interactionCreate', async (button) => {
   let provincebuttons = ['fac','pre','pro','cul','nex'];
   if (button.isButton()) {
-  if (button.id in provincebuttons){
+  if (provincebuttons.includes(button.customId)){
 
       switch (button.customId) {
         case 'fac':
